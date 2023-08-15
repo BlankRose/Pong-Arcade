@@ -1,0 +1,48 @@
+# ############################################################################ #
+#          .-.                                                                 #
+#    __   /   \   __                                                           #
+#   (  `'.\   /.'`  )   Pong-Arcade - docker-compose.yaml                      #
+#    '-._.(;;;)._.-'                                                           #
+#    .-'  ,`"`,  '-.                                                           #
+#   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
+#       //\   /         Last Updated: Tuesday, August 15, 2023 3:30 PM         #
+#      ||  '-'                                                                 #
+# ############################################################################ #
+
+version: '3'
+
+services:
+
+  frontend:
+    container_name: pong-frontend
+    image: pong:frontend
+    build: ./frontend
+    ports:
+      - "5001:3000"
+    networks:
+      - pong-network
+
+#  backend:
+#    container_name: pong-backend
+#    image: pong:backend
+#    build: ./backend
+#    networks:
+#      - pong-network
+#      - pong-data
+
+  database:
+    container_name: pong-database
+    image: postgres:latest
+    networks:
+      - pong-data
+    environment:
+      - POSTGRES_USER=pong
+      - POSTGRES_PASSWORD=pong
+      - POSTGRES_DB=pong
+
+networks:
+
+  pong-network:
+    driver: bridge
+  pong-data:
+    driver: bridge
