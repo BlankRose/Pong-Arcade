@@ -6,6 +6,8 @@ yarn.lock
 .pnp
 coverage/
 build/
+dist/
+.nyc_output/
 .vscode/
 .DS_Store
 .env

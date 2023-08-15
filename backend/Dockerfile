@@ -5,7 +5,7 @@
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Tuesday, August 15, 2023 3:30 PM         #
+#       //\   /         Last Updated: Tuesday, August 15, 2023 4:06 PM         #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
@@ -19,11 +19,9 @@ WORKDIR ${APP_DIR}
 COPY ./package.json .
 RUN npm install
 
-# STEP 3: Build app
-COPY ./public ./public
-COPY ./src ./src
-RUN npm run build
+# STEP 3: Copy source code
+COPY ./app/ .
 
 # STEP 4: Start the application
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
