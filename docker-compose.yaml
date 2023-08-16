@@ -19,20 +19,21 @@ services:
     image: pong-front:latest
     build: ./frontend
     ports:
-      - "${ACCESS_PORT}:3000"
-    networks:
-      - pong-network
+      - "${WEB_ACCESS_PORT}:3000"
+    environment:
+      - REACT_APP_API_PORT=${API_ACCESS_PORT}
 
   # Backend written in NestJS
   backend:
     container_name: pong-backend
     image: pong-back:latest
-    build: ./Backend
+    build: ./backend
+    ports:
+      - "${API_ACCESS_PORT}:3000"
     environment:
       - API_UID=${API_UID}
       - API_SECRET=${API_SECRET}
     networks:
-      - pong-network
       - pong-data
 
   # Database using PostgreSQL
@@ -50,7 +51,5 @@ services:
 
 networks:
 
-  pong-network:
-    driver: bridge
   pong-data:
     driver: bridge

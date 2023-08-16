@@ -28,16 +28,15 @@ if [ -f .env ]; then
 		echo "Aborting..."
 		exit 1
 	fi
+	echo ""
 fi
 
-echo ""
-
-echo -n "42 API Identifier (required): "
+echo "42 API Identifier (required):"
 while [ -z "$api_id" ]; do
 	read -r api_id
 done
 
-echo -n "42 API Secret (required): "
+echo "42 API Secret (required):"
 while [ -z "$api_secret" ]; do
 	read -r api_secret
 done
@@ -66,6 +65,12 @@ if [ -z "$web_port" ]; then
 	web_port="5500"
 fi
 
+echo -n "API Access Port (default: 5501): "
+read -r api_port
+if [ -z "$api_port" ]; then
+	api_port="5501"
+fi
+
 echo ""
 echo "Generating .env file..."
 echo "\
@@ -74,7 +79,8 @@ echo "\
 
 # Web Access Details
 # (http://127.0.0.1:\$ACCESS_PORT/)
-ACCESS_PORT=$web_port
+WEB_ACCESS_PORT=$web_port
+API_ACCESS_PORT=$api_port
 
 # PostgreSQL Information
 POSTGRES_USER=$postgres_user
