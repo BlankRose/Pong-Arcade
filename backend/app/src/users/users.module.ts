@@ -10,4 +10,5 @@ import { User } from './user.entity';
   providers: [UsersService],
   exports: [UsersService], // Important si vous voulez utiliser ce service dans d'autres modules
 })
+
 export class UsersModule {}

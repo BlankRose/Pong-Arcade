@@ -33,6 +33,9 @@ services:
     environment:
       - API_UID=${API_UID}
       - API_SECRET=${API_SECRET}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - pong-data
 

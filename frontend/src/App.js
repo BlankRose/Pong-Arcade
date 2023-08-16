@@ -1,14 +1,16 @@
 import logo from './assets/logo.svg';
 import './styles/App.css';
 
-import backendHandle from './BackAccess'
+import apiHandle from './components/API_Access'
 import { useState, useEffect } from 'react';
+
+import Login from './components/Login';
 
 function App() {
 	const [response, setResponse] = useState("");
 
 	useEffect(() => {
-		backendHandle.get("/").then((res) => {
+		apiHandle.get("/").then((res) => {
 			setResponse(res.data);
 		}).catch((err) => {
 			setResponse("Failed to connect to API... Please retry later.")
@@ -23,6 +25,7 @@ function App() {
 					{response}
 				</p>
 			</header>
+			<Login />
 		</div>
 	);
 }
