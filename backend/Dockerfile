@@ -24,4 +24,4 @@ COPY ./app/ .
 
 # STEP 4: Start the application
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:debug"]

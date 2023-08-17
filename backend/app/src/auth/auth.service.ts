@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt/jwt-payload.interface';
 import { RegisterDto } from './dto/register.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -12,15 +13,6 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
-
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === password) { // Notez que cela devrait utiliser bcrypt pour une vérification sécurisée
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
 
   async validateUserByPayload(payload: JwtPayload): Promise<any> {
     const user = await this.usersService.findOne(payload.username);
@@ -47,5 +39,17 @@ export class AuthService {
     // Vous pouvez retourner ce que vous voulez après l'enregistrement
     // par exemple, vous pourriez immédiatement connecter l'utilisateur et lui retourner un token JWT
     return user;
+  }
+
+  async validateUser(username: string, password: string): Promise<any> {
+    const user = await this.usersService.findOne(username);
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (isPasswordValid) {
+        const { password, ...result } = user;
+        return result;
+      }
+    }
+    return null;
   }
 }
