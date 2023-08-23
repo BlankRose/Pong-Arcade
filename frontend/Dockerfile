@@ -19,11 +19,10 @@ WORKDIR ${APP_DIR}
 COPY ./package.json .
 RUN npm install
 
-# STEP 3: Build app
-COPY ./public ./public
-COPY ./src ./src
-RUN npm run build
+# STEP 3: Retrieve source code
+# COPY ./public ./public
+# COPY ./src ./src
 
 # STEP 4: Start the application
 EXPOSE 3000
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]
