@@ -33,4 +33,15 @@ export class UsersService {
 
     return savedUser;
   }
+
+  async validateUserPassword(username: string, rawPassword: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ where: { username } });
+    if (!user) {
+        return false; // Utilisateur non trouvé
+    }
+    const isMatch = await bcrypt.compare(rawPassword, user.password);
+    return isMatch; // Renvoie true si le mot de passe est valide, false sinon
+  } 
+
+
 }

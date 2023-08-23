@@ -31,6 +31,16 @@ fc: fclean
 fclean: stop
 	-@docker system prune -af
 
+clean2: stop
+	@docker rm -f $(shell docker ps -aq) $(IDC)
+	@docker rmi -f $(shell docker images -aq) $(IDC)
+	@docker volume rm $(shell docker volume ls -q) $(IDC)
+
+clean3:
+	docker-compose down --remove-orphans
+	docker system prune -a
+	docker system prune -a -f --volumes
+
 r: restart
 restart: stop start
 
