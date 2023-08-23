@@ -1,34 +1,47 @@
 import React, { useEffect, useState } from "react";
-//import apiHandle from "./API_Access";
 import "../styles/Login.css";
 
 const apiUID = process.env.REACT_APP_API_UID;
 
-/**
- * Handles logging of an user through the API provided by the 42 network.
- */
 function LoginPage() {
 	const [ authenticated, setAuthenticated ] = useState(false);
-	const webOrigin = `http://${window.location.host}/login`;
+	const [ OAuthPopup, setOAuthPopup ] = useState(null);
+	const webOrigin = `${window.location.protocol}//${window.location.host}/login`;
 
 	useEffect(() => {
-		const handleOAuthCallback = async (event) => {
-			console.log('handleOAuthCallback')
-			if (event.origin === webOrigin) {
-				const authCode = new URLSearchParams(event.data).get('code');
-				console.log(authCode);
-			}
+		if (!OAuthPopup) {
+			return;
 		}
 
-		window.addEventListener('message', handleOAuthCallback);
-		return () => {
-			window.removeEventListener('message', handleOAuthCallback);
-		}
-	})
+		const timer = setInterval(() => {
+			if (!OAuthPopup || OAuthPopup.closed) {
+				setOAuthPopup(null);
+				clearInterval(timer);
+				return;
+			}
+
+			let url;
+			try {
+				url = OAuthPopup.location.href;
+				if (!url)
+					return;
+
+				const authCode = new URL(url).searchParams.get('code');
+				if (authCode) {
+					console.log(`User's Code: ${authCode}`);
+					setAuthenticated(true);
+					OAuthPopup.close();
+				}
+			} catch (error) {
+				return;
+			}
+		}, 500)
+	}, [OAuthPopup])
 
 	const handleLogin = () => {
 		const url = `https://api.intra.42.fr/oauth/authorize?client_id=${apiUID}&redirect_uri=${encodeURIComponent(webOrigin)}&response_type=code`;
-		window.open(url, '_blank');
+		const popup = window.open(url, '_blank', 'width=600,height=800');
+		setOAuthPopup(popup);
 	}
 
 	return (
@@ -40,9 +53,7 @@ function LoginPage() {
 				</div>
 			) : (
 				<div className="login__container">
-					<h1>42 Login</h1>
-					<p>Click the button below to login with your 42 account.</p>
-					<button onClick={handleLogin}>Login</button>
+					<button onClick={handleLogin}>Login with 42 Account</button>
 				</div>
 			)}
 		</div>
