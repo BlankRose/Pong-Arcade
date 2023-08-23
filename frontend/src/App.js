@@ -5,6 +5,7 @@ import apiHandle from './components/API_Access'
 import { useState, useEffect } from 'react';
 
 import Login from './components/Login';
+import Login42 from './components/42Login';
 
 function App() {
 	const [response, setResponse] = useState("");
@@ -26,6 +27,7 @@ function App() {
 				</p>
 			</header>
 			<Login />
+			<Login42 />
 		</div>
 	);
 }

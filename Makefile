@@ -5,7 +5,7 @@
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Wednesday, August 16, 2023 6:26 PM       #
+#       //\   /         Last Updated: Wednesday, August 23, 2023 10:11 AM      #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
@@ -37,9 +37,12 @@ restart: stop start
 re: rebuild
 rebuild: clean start
 
+ip:
+	@ifconfig | grep "inet "
+
 .PHONY: s start sd start_detached \
         e stop c clean fc fclean \
-        r restart re rebuild
+        r restart re rebuild ip
 .DEFAULT_GOAL := start
 
 
