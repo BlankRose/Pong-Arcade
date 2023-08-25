@@ -5,19 +5,22 @@
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Wednesday, August 23, 2023 10:11 AM      #
+#       //\   /         Last Updated: Friday, August 25, 2023 11:44 AM         #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
 TIMEOUT := 5
 
 s: start
-start:
+start: .env
 	-@docker-compose up --build
 
 sd: start_detached
-start_detached:
+start_detached: .env
 	-@docker-compose up --build -d
+
+.env:
+	@sh envgen.sh
 
 e: stop
 stop:
@@ -25,21 +28,14 @@ stop:
 
 c: clean
 clean: stop
-	-@docker-compose down -t $(TIMEOUT) --rmi all
+	-@docker-compose down -vt $(TIMEOUT) --rmi all
 
 fc: fclean
 fclean: stop
-	-@docker system prune -af
-
-clean2: stop
-	@docker rm -f $(shell docker ps -aq) $(IDC)
-	@docker rmi -f $(shell docker images -aq) $(IDC)
-	@docker volume rm $(shell docker volume ls -q) $(IDC)
-
-clean3:
-	docker-compose down --remove-orphans
-	docker system prune -a
-	docker system prune -a -f --volumes
+	-@docker rm -f $(shell docker ps -aq)
+	-@docker rmi -f $(shell docker images -aq)
+	-@docker volume rm $(shell docker volume ls -q)
+	-@docker system prune -af --volumes
 
 r: restart
 restart: stop start

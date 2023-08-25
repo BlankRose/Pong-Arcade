@@ -19,10 +19,5 @@ WORKDIR ${APP_DIR}
 COPY ./package.json .
 RUN npm install
 
-# STEP 3: Retrieve source code
-# COPY ./public ./public
-# COPY ./src ./src
-
-# STEP 4: Start the application
-EXPOSE 3000
+# STEP 3: Start the application
 ENTRYPOINT ["npm", "start"]
