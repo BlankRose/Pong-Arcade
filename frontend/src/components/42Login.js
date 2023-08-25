@@ -8,7 +8,8 @@ const apiUID = process.env.REACT_APP_API_UID;
 function LoginPage({ onLoginSuccess }) {
 	const [ authenticated, setAuthenticated ] = useState(false);
 	const [ newbie, setNewbie ] = useState(false);
-	const [ OAuthCode, setOAuthCode ] = useState(null);
+	const [ errorMessage, setErrorMessage ] = useState(null);
+	const [ OAuthToken, setOAuthToken ] = useState(null);
 	const [ OAuthPopup, setOAuthPopup ] = useState(null);
 	const webOrigin = `${window.location.protocol}//${window.location.host}/login`;
 
@@ -46,15 +47,24 @@ function LoginPage({ onLoginSuccess }) {
 				const authCode = new URL(url).searchParams.get('code');
 				if (authCode) {
 					console.log(`User's Code: ${authCode}`);
-					apiHandle.post('/auth/login', { code: authCode })
+					apiHandle.get('/auth/token42?code=' + authCode)
 						.then((response) => {
-							onLoginSuccess();
+							setOAuthToken(response.data.token);
+							setAuthenticated(true);
+							apiHandle.post('/auth/login42', { code: response.data.token })
+								.then((response) => {
+									onLoginSuccess();
+								})
+								.catch((error) => {
+									setNewbie(true);
+								});
 						})
 						.catch((error) => {
-							setOAuthCode(authCode);
-							setNewbie(true);
+							const errorResponse =
+								error.response && error.response.data ?
+								error.response.data.message : error.message;
+							setErrorMessage(`Erreur: ${errorResponse}`);
 						});
-					setAuthenticated(true);
 					OAuthPopup.close();
 				}
 			} catch (error) {
@@ -80,14 +90,15 @@ function LoginPage({ onLoginSuccess }) {
 	// with the username he entered in the form
 	const handleRegister = () => {
 		const username = document.getElementById('username').value;
-		apiHandle.post('/auth/register', { code: OAuthCode, username: username })
+		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(() => {
 				setNewbie(false);
-				setOAuthCode(null);
+				setOAuthToken(null);
 				onLoginSuccess();
 			})
 			.catch((error) => {
-				console.log(error);
+				const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;
+				setErrorMessage(`Erreur: ${errorResponse}`);
 			});
 	}
 
@@ -102,6 +113,7 @@ function LoginPage({ onLoginSuccess }) {
 					<div className="login__newbie">
 						<h1>Welcome!</h1>
 						<p>Please select your username before going forward.</p>
+						{errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 						<input type="text" placeholder="Username" id="username" />
 						<button onClick={handleRegister}>Submit</button>
 					</div>
@@ -112,6 +124,8 @@ function LoginPage({ onLoginSuccess }) {
 					</div>
 			) : (
 				<div className="login__container">
+					<h1>42 Login</h1>
+					{errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
 					<button onClick={handleLogin}>Login with 42 Account</button>
 				</div>
 			)}

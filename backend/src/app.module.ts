@@ -20,11 +20,11 @@ import databaseConfig from './config/database.config';
 		TypeOrmModule.forRootAsync({
 			useFactory: (configService: ConfigService) => ({
 				type: 'postgres',
-				host: 'database', // Use the service name
+				host: 'database',
 				port: 5432,
-				username: configService.get('database.user'), // Use the retrieved configuration
-				password: configService.get('database.password'), // Use the retrieved configuration
-				database: configService.get('database.database'), // Use the retrieved configuration
+				username: configService.get('database.user'),
+				password: configService.get('database.password'),
+				database: configService.get('database.database'),
 				entities: [__dirname + '/**/*.entity{.ts,.js}'],
 				synchronize: true,
 			}),

@@ -1,5 +1,3 @@
-// src/auth/auth.service.ts
-
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -7,10 +5,13 @@ import { JwtPayload } from './jwt/jwt-payload.interface';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
 import * as bcrypt from 'bcrypt';
+import { Login42Dto } from './dto/login42.dto';
+import { Api42Service } from '../API42/api42.service';
 
 @Injectable()
 export class AuthService {
 	constructor(
+		private api42Service: Api42Service,
 		private usersService: UsersService,
 		private jwtService: JwtService,
 	) {}
@@ -31,6 +32,11 @@ export class AuthService {
 		};
 	}
 
+	async login42(login42Dto: Login42Dto) {
+		// TO-DO: Implement this method
+		throw new UnauthorizedException();
+	}
+
 	async register(registerDto: RegisterDto): Promise<any> {
 		const user = await this.usersService.createUser({
 			username: registerDto.username,
@@ -41,11 +47,18 @@ export class AuthService {
 	}
 
 	async register42(registerDto: Register42Dto): Promise<any> {
+		const token = await this.api42Service.getUserToken(registerDto.code);
+		const data = await this.api42Service.getUserData(token);
+
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
-			code: registerDto.code,
+			code: data.id
 		});
 		return user;
+	}
+
+	async token42(code: string): Promise<any> {
+		return await this.api42Service.getUserToken(code);
 	}
 
 	async validateUser(username: string, password: string): Promise<any> {

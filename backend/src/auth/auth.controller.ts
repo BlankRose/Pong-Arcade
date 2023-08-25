@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
+import { Controller, Post, Get, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 
@@ -17,6 +17,11 @@ export class AuthController {
 		return this.authService.login(req.user);
 	}
 
+	@Post('/login42')
+	async login42(@Body() login42Dto: Login42Dto) {
+		return this.authService.login42(login42Dto);
+	}
+
 	@Post('/register')
 	async register(@Body() registerDto: RegisterDto) {
 		try {
@@ -27,5 +32,22 @@ export class AuthController {
 			}
 			throw error;
 		}
+	}
+
+	@Post('/register42')
+	async register42(@Body() register42Dto: Register42Dto) {
+		try {
+			return await this.authService.register42(register42Dto);
+		} catch (error) {
+			if (error instanceof ConflictException) {
+				throw new ConflictException('Le nom d\'utilisateur existe déjà.');
+			}
+			throw error;
+		}
+	}
+
+	@Get('/token42')
+	async token42(@Request() req) {
+		return this.authService.token42(req.query.code);
 	}
 }
