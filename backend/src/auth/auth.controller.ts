@@ -1,10 +1,11 @@
-// src/auth/auth.controller.ts
-
 import { Controller, Post, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto'; // Importez le nouveau DTO
+import { Login42Dto } from './dto/login42.dto';
+import { RegisterDto } from './dto/register.dto';
+import { Register42Dto } from './dto/register42.dto';
 
 @Controller('auth')
 export class AuthController {

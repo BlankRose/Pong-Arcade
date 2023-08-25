@@ -34,7 +34,7 @@ function App() {
 			) : (
 				<>
 					<Login onLoginSuccess={onLoginSuccess} />
-					<Login42 />
+					<Login42 onLoginSuccess={onLoginSuccess} />
 				</>
 			)}
 		</div>

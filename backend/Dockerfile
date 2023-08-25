@@ -16,13 +16,13 @@ ARG APP_DIR=/app
 # STEP 2: Install dependencies
 RUN mkdir -p ${APP_DIR}
 WORKDIR ${APP_DIR}
-COPY ./app/package.json .
+COPY ./package.json .
 RUN npm install
 
 # STEP 3: Retrieve source code and configurations
-# COPY ./app/src ./src
-COPY ./app/.eslintrc.js .
-COPY ./app/*.json ./
+# COPY src ./src
+COPY ./.eslintrc.js .
+COPY ./*.json ./
 
 # STEP 4: Start the application
 EXPOSE 3000

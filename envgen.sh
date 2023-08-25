@@ -31,16 +31,18 @@ if [ -f .env ]; then
 	echo ""
 fi
 
-echo "42 API Identifier (required):"
+printf "\033[31;4mRequired fields:\033[0m\n"
+echo -n "42 API Identifier: "
 while [ -z "$api_id" ]; do
 	read -r api_id
 done
 
-echo "42 API Secret (required):"
+echo -n "42 API Secret: "
 while [ -z "$api_secret" ]; do
 	read -r api_secret
 done
 
+printf "\n\033[33;4mOptional fields:\033[0m\n"
 echo -n "PostgreSQL Username (default: root): "
 read -r postgres_user
 if [ -z "$postgres_user" ]; then
@@ -71,8 +73,6 @@ if [ -z "$api_port" ]; then
 	api_port="5501"
 fi
 
-echo ""
-echo "Generating .env file..."
 echo "\
 # This file contains the environment variables for the docker containers.
 # It is primarily used by the docker-compose.yml file.
@@ -90,4 +90,4 @@ POSTGRES_DB=$postgres_db
 # 42 API Credentials
 API_UID=$api_id
 API_SECRET=$api_secret" > .env
-echo "Done."
+printf "\n\033[32;1mEnvironement file generated!\033[0m\n"
