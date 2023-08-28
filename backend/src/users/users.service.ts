@@ -13,7 +13,11 @@ export class UsersService {
 	) {}
 
 	async findOne(username: string): Promise<User | undefined> {
-		return this.usersRepository.findOne({ where: { username } });
+		return this.usersRepository.findOne({ where: { username: username } });
+	}
+
+	async findOne42(id42: number): Promise<User | undefined> {
+		return this.usersRepository.findOne({ where: { id42: id42 } });
 	}
 
 	async createUser(data: any): Promise<User> {
@@ -53,7 +57,7 @@ export class UsersService {
 	}
 
 	async validateUserPassword(username: string, rawPassword: string): Promise<boolean> {
-		const user = await this.usersRepository.findOne({ where: { username } });
+		const user = await this.usersRepository.findOne({ where: { username: username } });
 		if (!user) {
 				return false; // Utilisateur non trouvé
 		}

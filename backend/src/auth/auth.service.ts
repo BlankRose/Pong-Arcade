@@ -7,6 +7,7 @@ import { Register42Dto } from './dto/register42.dto';
 import * as bcrypt from 'bcrypt';
 import { Login42Dto } from './dto/login42.dto';
 import { Api42Service } from '../API42/api42.service';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -25,15 +26,23 @@ export class AuthService {
 		return null;
 	}
 
-	async login(user: any) {
-		const payload = { username: user.username, sub: user.userId };
+	async login(user: User) {
+		const payload = { username: user.username, sub: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
 	}
 
 	async login42(login42Dto: Login42Dto) {
-		// TO-DO: Implement this method
+  		const data = await this.api42Service.getUserData(login42Dto.code);
+		const user = await this.usersService.findOne42(data.id);
+
+		if (user) {
+			const payload = { username: user.username, sub: user.id };
+			return {
+				access_token: this.jwtService.sign(payload),
+			};
+		}
 		throw new UnauthorizedException();
 	}
 
@@ -47,8 +56,7 @@ export class AuthService {
 	}
 
 	async register42(registerDto: Register42Dto): Promise<any> {
-		const token = await this.api42Service.getUserToken(registerDto.code);
-		const data = await this.api42Service.getUserData(token);
+		const data = await this.api42Service.getUserData(registerDto.code);
 
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,

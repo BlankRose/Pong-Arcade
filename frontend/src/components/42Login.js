@@ -7,11 +7,12 @@ const apiUID = process.env.REACT_APP_API_UID;
 
 function LoginPage({ onLoginSuccess }) {
 	const [ authenticated, setAuthenticated ] = useState(false);
-	const [ newbie, setNewbie ] = useState(false);
-	const [ errorMessage, setErrorMessage ] = useState(null);
+	const [ errorMessage, setErrorMessage ] = useState(null); 
+	
+	// 42 OAuth Login
+	const [ newbie, setNewbie ] = useState(false); // Determines if the user is new or not
 	const [ OAuthToken, setOAuthToken ] = useState(null);
 	const [ OAuthPopup, setOAuthPopup ] = useState(null);
-	const webOrigin = `${window.location.protocol}//${window.location.host}/login`;
 
 	// Attach an event listener to the window to listen on the
 	// OAuth login popups events (checks every 500ms)
@@ -38,7 +39,11 @@ function LoginPage({ onLoginSuccess }) {
 				// Retrieves any errors and close the popup
 				const error = new URL(url).searchParams.get('error');
 				if (error) {
-					console.log(`Error: ${error}`);
+					const desc = new URL(url).searchParams.get('error_description');
+					if (desc)
+						setErrorMessage(`Erreur: ${desc}`);
+					else
+						setErrorMessage(`Erreur: ${error}`);
 					OAuthPopup.close();
 					return;
 				}
@@ -46,12 +51,12 @@ function LoginPage({ onLoginSuccess }) {
 				// Retrieves the auth code from the redirect URL triggered by the 42 API
 				const authCode = new URL(url).searchParams.get('code');
 				if (authCode) {
-					console.log(`User's Code: ${authCode}`);
-					apiHandle.get('/auth/token42?code=' + authCode)
+					apiHandle.get(`/auth/token42?code=${authCode}`)
 						.then((response) => {
-							setOAuthToken(response.data.token);
+							setOAuthToken(response.data);
 							setAuthenticated(true);
-							apiHandle.post('/auth/login42', { code: response.data.token })
+							setErrorMessage(null);
+							apiHandle.post('/auth/login42', { code: response.data })
 								.then((response) => {
 									onLoginSuccess();
 								})
@@ -81,6 +86,7 @@ function LoginPage({ onLoginSuccess }) {
 			OAuthPopup.close();
 
 		// Open and attach the popup to the state
+		const webOrigin = `${window.location.protocol}//${window.location.host}/login`;
 		const url = `https://api.intra.42.fr/oauth/authorize?client_id=${apiUID}&redirect_uri=${encodeURIComponent(webOrigin)}&response_type=code`;
 		const popup = window.open(url, '_blank', 'width=600,height=800');
 		setOAuthPopup(popup);

@@ -49,7 +49,7 @@ export class Api42Service {
 		})
 			.catch((error) => {
 				console.warn("WARNING: getUserData failed!")
-				console.warn("Reason:", error.response.data.error_description);
+				console.warn("Reason:", error.response.data.error);
 				throw new ServiceUnavailableException();
 			});
 		return response.data;
