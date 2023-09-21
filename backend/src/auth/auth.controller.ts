@@ -48,6 +48,6 @@ export class AuthController {
 
 	@Get('/token42')
 	async token42(@Request() req) {
-		return this.authService.token42(req.query.code);
+		return this.authService.token42(req.query.code, req.query.uri);
 	}
 }

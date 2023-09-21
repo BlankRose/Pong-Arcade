@@ -11,6 +11,7 @@ function LoginPage({ onLoginSuccess }) {
 	
 	// 42 OAuth Login
 	const [ newbie, setNewbie ] = useState(false); // Determines if the user is new or not
+	const [ OAuthURI, setOAuthURI ] = useState(null);
 	const [ OAuthToken, setOAuthToken ] = useState(null);
 	const [ OAuthPopup, setOAuthPopup ] = useState(null);
 
@@ -51,7 +52,7 @@ function LoginPage({ onLoginSuccess }) {
 				// Retrieves the auth code from the redirect URL triggered by the 42 API
 				const authCode = new URL(url).searchParams.get('code');
 				if (authCode) {
-					apiHandle.get(`/auth/token42?code=${authCode}`)
+					apiHandle.get(`/auth/token42?code=${authCode}&uri=${OAuthURI}`)
 						.then((response) => {
 							setOAuthToken(response.data);
 							setAuthenticated(true);
@@ -76,7 +77,7 @@ function LoginPage({ onLoginSuccess }) {
 				return;
 			}
 		}, 500)
-	}, [OAuthPopup])
+	}, [OAuthPopup, onLoginSuccess, OAuthURI])
 
 	// Triggers the OAuth login popup by opening a new window
 	// and attach it to the OAuthPopup state
@@ -86,9 +87,12 @@ function LoginPage({ onLoginSuccess }) {
 			OAuthPopup.close();
 
 		// Open and attach the popup to the state
-		const webOrigin = `${window.location.protocol}//${window.location.host}/login`;
-		const url = `https://api.intra.42.fr/oauth/authorize?client_id=${apiUID}&redirect_uri=${encodeURIComponent(webOrigin)}&response_type=code`;
+		const origin = encodeURIComponent(`${window.location.protocol}//${window.location.host}/login`)
+		const url = `https://api.intra.42.fr/oauth/authorize?client_id=${apiUID}&redirect_uri=${origin}&response_type=code`;
 		const popup = window.open(url, '_blank', 'width=600,height=800');
+
+		// Define the states for popup events
+		setOAuthURI(origin)
 		setOAuthPopup(popup);
 	}
 

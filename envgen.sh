@@ -61,6 +61,15 @@ if [ -z "$postgres_db" ]; then
 	postgres_db="pongarcade"
 fi
 
+echo -n "JWT Secret Key (default: random): "
+read -r jwt_secret
+if [ -z "$jwt_secret" ]; then
+	charset='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+	for i in {1..64}; do
+		jwt_secret="$jwt_secret${charset:RANDOM%${#charset}:1}"
+	done
+fi
+
 echo -n "Web Access Port (default: 5500): "
 read -r web_port
 if [ -z "$web_port" ]; then
@@ -89,5 +98,8 @@ POSTGRES_DB=$postgres_db
 
 # 42 API Credentials
 API_UID=$api_id
-API_SECRET=$api_secret" > .env
+API_SECRET=$api_secret
+
+# Critical Informations
+JWT_SECRET=$jwt_secret" > .env
 printf "\n\033[32;1mEnvironement file generated!\033[0m\n"

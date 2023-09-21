@@ -65,8 +65,8 @@ export class AuthService {
 		return user;
 	}
 
-	async token42(code: string): Promise<any> {
-		return await this.api42Service.getUserToken(code);
+	async token42(code: string, uri: string): Promise<any> {
+		return await this.api42Service.getUserToken(code, uri);
 	}
 
 	async validateUser(username: string, password: string): Promise<any> {

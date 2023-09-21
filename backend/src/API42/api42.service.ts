@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { ServiceUnavailableException } from '@nestjs/common';
 
+const errorMessage = 'An error occured with 42 API';
+
 @Injectable()
 export class Api42Service {
 	constructor(
@@ -17,13 +19,19 @@ export class Api42Service {
 			+ `?grant_type=client_credentials`
 			+ `&client_id=${api42_uuid}`
 			+ `&client_secret=${api42_secret}`;
-		const response = await axios.post(url);
+
+		const response = await axios.post(url)
+			.catch((error) => {
+				console.warn("WARNING: getClientToken failed!")
+				console.warn("Reason:", error.response.data.error_description);
+				throw new ServiceUnavailableException(errorMessage);
+			});
 		const token = response.data.access_token;
 
 		return token;
 	}
 
-	async getUserToken(code: string): Promise<string> {
+	async getUserToken(code: string, uri: string): Promise<string> {
 		const api42_uuid = this.configService.get('api42.clientId');
 		const api42_secret = this.configService.get('api42.clientSecret');
 
@@ -31,12 +39,13 @@ export class Api42Service {
 			+ `?grant_type=authorization_code`
 			+ `&client_id=${api42_uuid}`
 			+ `&client_secret=${api42_secret}`
-			+ `&code=${code}&redirect_uri=http://127.0.0.1:5500/login`;
+			+ `&code=${code}&redirect_uri=${uri}`;
+
 		const response = await axios.post(url)
 			.catch((error) => {
 				console.warn("WARNING: getUserToken failed!")
 				console.warn("Reason:", error.response.data.error_description);
-				throw new ServiceUnavailableException();
+				throw new ServiceUnavailableException(errorMessage);
 			});
 		return response.data.access_token;
 	}
@@ -50,7 +59,7 @@ export class Api42Service {
 			.catch((error) => {
 				console.warn("WARNING: getUserData failed!")
 				console.warn("Reason:", error.response.data.error);
-				throw new ServiceUnavailableException();
+				throw new ServiceUnavailableException(errorMessage);
 			});
 		return response.data;
 	}
