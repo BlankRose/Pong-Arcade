@@ -36,4 +36,13 @@ export class Channel {
   @ManyToMany(() => User, user => user.channels)
   users: User[]
 
+  // Dans votre entité Channel
+  @ManyToMany(() => User)
+  @JoinTable()
+  bannedUsers: User[];
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  mutedUsers: User[];
+
 }

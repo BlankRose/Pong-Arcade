@@ -68,5 +68,95 @@ export class ChannelsService {
     return this.channelsRepository.save(newChannel);
   }
 
+  async addAdminToChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['admins'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.admins.push(user);
+    return this.channelsRepository.save(channel);
+  }
+
+  // Dans ChannelsService
+  async banUserFromChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['bannedUsers'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.bannedUsers.push(user);
+    return this.channelsRepository.save(channel);
+  }
+
+  async removeAdminFromChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['admins'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.admins = channel.admins.filter(admin => admin.id !== userId);
+    return this.channelsRepository.save(channel);
+  }
+
+  async unbanUserFromChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['bannedUsers'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.bannedUsers = channel.bannedUsers.filter(bannedUser => bannedUser.id !== userId);
+    return this.channelsRepository.save(channel);
+  }
+
+  async muteUserInChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['mutedUsers'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.mutedUsers.push(user);
+    return this.channelsRepository.save(channel);
+  }
+
+  async unmuteUserInChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['mutedUsers'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.mutedUsers = channel.mutedUsers.filter(mutedUser => mutedUser.id !== userId);
+    return this.channelsRepository.save(channel);
+  }
+
+  async joinChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['users'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.users.push(user);
+    return this.channelsRepository.save(channel);
+  }
+
+  async leaveChannel(channelId: number, userId: number): Promise<Channel> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId }, relations: ['users'] });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    channel.users = channel.users.filter(u => u.id !== userId);
+    return this.channelsRepository.save(channel);
+  }
+
+  async sendMessageToChannel(channelId: number, userId: number, content: string): Promise<Message> {
+    const channel = await this.channelsRepository.findOne({ where: { id: channelId } });
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!channel || !user) {
+      throw new Error('Channel or User not found');
+    }
+    const message = this.messagesRepository.create({ content, user, channel });
+    return this.messagesRepository.save(message);
+  }
   // Ajoutez ici vos autres méthodes pour gérer les channels
 }
