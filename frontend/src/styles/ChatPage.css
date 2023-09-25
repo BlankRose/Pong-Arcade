@@ -1,0 +1,56 @@
+.chatPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chatContainer {
+    display: flex;
+    width: 80%;
+}
+
+.channelList {
+    width: 20%;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.channelList div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.channelList div:hover {
+    background-color: #e0e0e0;
+}
+
+.channelList .selected {
+    background-color: #d0d0d0;
+}
+
+.messageContainer {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.messageList {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.sendMessageForm {
+    display: flex;
+    margin: 10px;
+}
+
+.sendMessageForm input {
+    flex-grow: 1;
+    padding: 10px;
+}
+
+.sendMessageForm button {
+    padding: 10px;
+}
