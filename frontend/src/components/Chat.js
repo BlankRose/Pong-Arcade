@@ -1,28 +1,77 @@
 import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
 function ChatPage({ onLogout }) {
-    const [channels, setChannels] = useState([{ id: 1, name: "Channel 1" }, { id: 2, name: "Channel 2" }]);
+    const [channels, setChannels] = useState([]);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [newChannelName, setNewChannelName] = useState('');
+    const [socket, setSocket] = useState(null);
 
-    // Charger les messages lorsqu'un canal est sélectionné
     useEffect(() => {
-        if (selectedChannel) {
-            // Remplacez par une requête fetch appropriée pour obtenir les messages du channel sélectionné
-            setMessages([
-                { id: 1, senderName: "User1", content: "Bonjour!" },
-                { id: 2, senderName: "User2", content: "Salut!" },
-            ]);
-        }
+        const socketIo = io('http://localhost:3001');
+        setSocket(socketIo);
+
+        socketIo.on('newMessage', (message) => {
+            if (message.channelId === selectedChannel) {
+                setMessages((prevMessages) => [...prevMessages, message]);
+            }
+        });
+
+        socketIo.on('newChannel', (channel) => {
+            setChannels((prevChannels) => [...prevChannels, channel]);
+        });
+
+        return () => {
+            socketIo.disconnect();
+        };
     }, [selectedChannel]);
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        fetch('http://localhost:3001/channels')
+            .then(response => response.json())
+            .then(setChannels)
+            .catch(console.error);
+    }, []);
+
+    const handleCreateChannel = (e) => {
         e.preventDefault();
-        if (newMessage.trim()) {
-            // Remplacez par une requête fetch appropriée pour envoyer un nouveau message
-            setMessages([...messages, { id: messages.length + 1, senderName: "Moi", content: newMessage }]);
+        fetch('http://localhost:3001/channels', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: newChannelName }),
+        })
+        .then(response => response.json())
+        .then(newChannel => {
+            setChannels([...channels, newChannel]);
+            setNewChannelName('');
+        })
+        .catch(console.error);
+    };
+
+    const handleJoinChannel = (channelId) => {
+        setSelectedChannel(channelId);
+        fetch(`http://localhost:3001/channels/${channelId}/messages`)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setMessages(data);
+                } else {
+                    console.error('Data from server is not an array:', data);
+                    setMessages([]); // set messages as an empty array if the data is not an array
+                }
+            })
+            .catch(console.error);
+    };
+
+    const handleSubmitMessage = (e) => {
+        e.preventDefault();
+        if (newMessage.trim() && socket) {
+            socket.emit('sendMessage', { content: newMessage, channelId: selectedChannel });
             setNewMessage('');
         }
     };
@@ -37,22 +86,31 @@ function ChatPage({ onLogout }) {
                     {channels.map(channel => (
                         <div
                             key={channel.id}
-                            onClick={() => setSelectedChannel(channel.id)}
+                            onClick={() => handleJoinChannel(channel.id)}
                             className={channel.id === selectedChannel ? 'selected' : ''}
                         >
                             {channel.name}
                         </div>
                     ))}
+                    <form onSubmit={handleCreateChannel}>
+                        <input 
+                            type="text"
+                            placeholder="Nom du nouveau salon"
+                            value={newChannelName}
+                            onChange={(e) => setNewChannelName(e.target.value)}
+                        />
+                        <button type="submit">Créer</button>
+                    </form>
                 </div>
                 <div className="messageContainer">
                     <div className="messageList">
-                        {messages.map(message => (
-                            <div key={message.id}>
+                        {messages.map((message, index) => (
+                            <div key={index}>
                                 <strong>{message.senderName}:</strong> {message.content}
                             </div>
                         ))}
                     </div>
-                    <form className="sendMessageForm" onSubmit={handleSubmit}>
+                    <form className="sendMessageForm" onSubmit={handleSubmitMessage}>
                         <input
                             type="text"
                             placeholder="Tapez votre message..."

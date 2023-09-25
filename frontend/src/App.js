@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Login from './components/Login';
 import Login42 from './components/42Login';
 import ChatPage from './components/Chat';
-import MessagingPage from './components/MessagingPage';
+
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion

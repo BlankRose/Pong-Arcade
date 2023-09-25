@@ -158,5 +158,9 @@ export class ChannelsService {
     const message = this.messagesRepository.create({ content, user, channel });
     return this.messagesRepository.save(message);
   }
+
+  async findAllChannels(): Promise<Channel[]> {
+    return this.channelsRepository.find();
+  }
   // Ajoutez ici vos autres méthodes pour gérer les channels
 }

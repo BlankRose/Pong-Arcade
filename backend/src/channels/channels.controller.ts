@@ -8,6 +8,8 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { Param } from '@nestjs/common';
 import { CreateDirectMessageDto } from './dto/create-direct-message.dto';
 import { CreateMessageDto } from '../messages/dto/create-message.dto';
+import { Get } from '@nestjs/common';
+
 
 @Controller('channels')
 export class ChannelsController {
@@ -67,6 +69,13 @@ export class ChannelsController {
   @Post(':channelId/messages')
   sendMessageToChannel(@Param('channelId') channelId: number, @Body() createMessageDto: CreateMessageDto) {
     return this.channelsService.sendMessageToChannel(channelId, createMessageDto.userId, createMessageDto.content);
+  }
+
+  @Get()
+  findAll() {
+    // Retourner la liste des channels ici
+    // Vous pouvez appeler une méthode appropriée de channelsService pour récupérer la liste des channels
+    return this.channelsService.findAllChannels();
   }
 
 }

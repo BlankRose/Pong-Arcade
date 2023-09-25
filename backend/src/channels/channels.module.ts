@@ -8,6 +8,7 @@ import { User } from '../users/user.entity'; // Assurez-vous que le chemin d'imp
 import { Message } from '../messages/messages.entity'; // Assurez-vous que le chemin d'importation est correct
 import { UsersModule } from '../users/users.module'; // Assurez-vous que le chemin d'importation est correct
 import { MessagesModule } from '../messages/messages.module'; // Assurez-vous que le chemin d'importation est correct
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { MessagesModule } from '../messages/messages.module'; // Assurez-vous qu
     MessagesModule, // Importez MessagesModule si MessageRepository est défini dans ce module
   ],
   controllers: [ChannelsController],
-  providers: [ChannelsService],
+  providers: [ChannelsService, ChatGateway],
 })
 export class ChannelsModule {}
