@@ -29,7 +29,7 @@ function LoginPage({ onLoginSuccess }) {
             }
 
         } catch (error) {
-            const errorResponse = error.response && error.response.data ? JSON.stringify(error.response.data) : error.message;
+            const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;
             setErrorMessage(`Erreur: ${errorResponse}`);
         }
     };

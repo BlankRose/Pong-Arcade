@@ -1,0 +1,72 @@
+// channels.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Channel } from './channels.entity';
+import { User } from '../users/user.entity';
+import { Message } from '../messages/messages.entity';
+import { CreateDirectMessageDto } from './dto/create-direct-message.dto';
+
+@Injectable()
+export class ChannelsService {
+  constructor(
+    @InjectRepository(Channel)
+    private channelsRepository: Repository<Channel>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    @InjectRepository(Message)
+    private messagesRepository: Repository<Message>,
+  ) {}
+
+  async createChannel(name: string, ownerId: number): Promise<Channel> {
+    const owner = await this.usersRepository.findOne({ where: { id: ownerId } });
+    if (!owner) {
+      throw new Error('User not found');
+    }
+    const newChannel = this.channelsRepository.create({ name, owner });
+    return this.channelsRepository.save(newChannel);
+  }
+
+  async createDirectMessage(dto: CreateDirectMessageDto): Promise<Message> {
+    let channel = await this.findPrivateChannelBetweenUsers(dto.senderId, dto.recipientId);
+    if (!channel) {
+      const sender = await this.usersRepository.findOne({ where: { id: dto.senderId } });
+      const recipient = await this.usersRepository.findOne({ where: { id: dto.recipientId } });
+      if (!sender || !recipient) {
+        throw new Error('User not found');
+      }
+      channel = await this.createPrivateChannel(sender, recipient);
+    }
+    const message = this.messagesRepository.create({
+        content: dto.content,
+        user: { id: dto.senderId } as User,
+        channel: { id: channel.id } as Channel,
+      });
+    return this.messagesRepository.save(message);
+  }
+
+  private async findPrivateChannelBetweenUsers(senderId: number, recipientId: number): Promise<Channel | undefined> {
+    const channels = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .leftJoinAndSelect('channel.users', 'user')
+      .where('channel.isPrivate = true')
+      .andWhere('user.id IN (:senderId, :recipientId)', { senderId, recipientId })
+      .getMany();
+    
+    return channels.find(channel => 
+      channel.users.length === 2 && 
+      channel.users.some(user => user.id === senderId) && 
+      channel.users.some(user => user.id === recipientId)
+    );
+  }
+
+  private async createPrivateChannel(sender: User, recipient: User): Promise<Channel> {
+    const newChannel = this.channelsRepository.create({
+      isPrivate: true,
+      users: [sender, recipient]
+    });
+    return this.channelsRepository.save(newChannel);
+  }
+
+  // Ajoutez ici vos autres méthodes pour gérer les channels
+}

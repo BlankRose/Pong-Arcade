@@ -19,9 +19,9 @@ WORKDIR ${APP_DIR}
 COPY ./package.json .
 RUN npm install
 
-# STEP 3: Copy source code
-COPY ./app/ .
+# STEP 3: Retrieve configurations
+COPY ./.eslintrc.js .
+COPY ./*.json ./
 
 # STEP 4: Start the application
-EXPOSE 3000
-CMD ["npm", "run", "start:debug"]
+CMD ["npm", "run", "start:dev"]

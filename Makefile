@@ -1,23 +1,26 @@
-# ############################################################################ #
-#          .-.                                                                 #
-#    __   /   \   __                                                           #
-#   (  `'.\   /.'`  )   Pong-Arcade - Makefile                                 #
-#    '-._.(;;;)._.-'                                                           #
-#    .-'  ,`"`,  '-.                                                           #
-#   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Wednesday, August 16, 2023 6:26 PM       #
-#      ||  '-'                                                                 #
-# ############################################################################ #
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: chajjar <chajjar@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: Invalid date        by  Friday, Au       #+#    #+#              #
+#    Updated: 2023/09/13 22:29:30 by chajjar          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-TIMEOUT := 5
 
 s: start
-start:
+start: .env
 	-@docker-compose up --build
 
 sd: start_detached
-start_detached:
+start_detached: .env
 	-@docker-compose up --build -d
+
+.env:
+	@sh envgen.sh
 
 e: stop
 stop:
@@ -25,21 +28,14 @@ stop:
 
 c: clean
 clean: stop
-	-@docker-compose down -t $(TIMEOUT) --rmi all
+	-@docker-compose down -vt $(TIMEOUT) --rmi all
 
 fc: fclean
 fclean: stop
-	-@docker system prune -af
-
-clean2: stop
-	@docker rm -f $(shell docker ps -aq) $(IDC)
-	@docker rmi -f $(shell docker images -aq) $(IDC)
-	@docker volume rm $(shell docker volume ls -q) $(IDC)
-
-clean3:
-	docker-compose down --remove-orphans
-	docker system prune -a
-	docker system prune -a -f --volumes
+	-@docker rm -f $(shell docker ps -aq)
+	-@docker rmi -f $(shell docker images -aq)
+	-@docker volume rm $(shell docker volume ls -q)
+	-@docker system prune -af --volumes
 
 r: restart
 restart: stop start
@@ -47,9 +43,12 @@ restart: stop start
 re: rebuild
 rebuild: clean start
 
+ip:
+	@ifconfig | grep "inet "
+
 .PHONY: s start sd start_detached \
         e stop c clean fc fclean \
-        r restart re rebuild
+        r restart re rebuild ip
 .DEFAULT_GOAL := start
 
 
@@ -87,6 +86,29 @@ check_status:
 drop_db:
 	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP DATABASE IF EXISTS user1;"
 	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP USER IF EXISTS charles;"
+	
+reinstall_pg:
+	@echo "Réinstallation de PostgreSQL..."
+	-@brew services stop postgresql@14
+	@brew uninstall postgresql@14
+	@brew install postgresql@14
+	@echo "PostgreSQL a été réinstallé."
+
+check_status:
+	@brew services list | grep postgresql@14
+
+drop_db:
+	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP DATABASE IF EXISTS user1;"
+	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP USER IF EXISTS charles;"
+
+start_front:
+	cd frontend; set -a; source .env; set +a; npm start
+
+start_back: init_db
+	cd backend; set -a; source ../.env; set +a; npm run start:debug
+
+start_backm: init_db
+	cd backend_irc/src; set -a; source ../../.env; set +a; npm run start --inspect=9230
 
 .PHONY: drop_db
 
