@@ -25,8 +25,9 @@ services:
       - REACT_APP_API_PORT=${API_ACCESS_PORT}
       - REACT_APP_API_UID=${API_UID}
     volumes:
-      - ${PWD}/frontend/src:/app/src
-      - ${PWD}/frontend/public:/app/public
+      - ${PWD}/frontend/src:/app/src:ro
+      - ${PWD}/frontend/public:/app/public:ro
+    restart: always
 
   # Backend written in NestJS
   backend:
@@ -34,7 +35,7 @@ services:
     image: pong-back:latest
     build: ./backend
     ports:
-      - ${API_ACCESS_PORT}:3000
+      - "${API_ACCESS_PORT}:3001"
     environment:
       - API_UID=${API_UID}
       - API_SECRET=${API_SECRET}
@@ -46,6 +47,7 @@ services:
       - ${PWD}/backend/src:/app/src
     networks:
       - pong-data
+    restart: always
 
   # Database using PostgreSQL
   database:
@@ -59,6 +61,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - pong-data
+    restart: always
 
 networks:
 

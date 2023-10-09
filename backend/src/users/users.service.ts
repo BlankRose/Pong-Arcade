@@ -1,6 +1,6 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,18 +27,15 @@ export class UsersService {
 			throw new ConflictException('Username already exists');
 		}
 
-		// Créez une nouvelle instance de l'entité User
 		const user = new User();
 		user.username = data.username;
 		user.password = await bcrypt.hash(data.password, 10);
 
-		// Sauvegardez l'instance dans la base de données
 		const savedUser = await this.usersRepository.save(user);
 		return savedUser;
 	}
 
 	async createUserFrom42(data: any): Promise<User> {
-		// Vérifiez si l'utilisateur existe déjà
 		const existingUser = await this.usersRepository.findOne({ where: { username: data.username } });
 		if (existingUser) {
 			throw new ConflictException('Username already exists');
@@ -65,5 +62,28 @@ export class UsersService {
 		return isMatch; // Renvoie true si le mot de passe est valide, false sinon
 	}
 
-
+	async blockUser(userId: number, blockedUserId: number): Promise<void> {
+		const user = await this.usersRepository.findOne({ where: { id: userId } });
+		const blockedUser = await this.usersRepository.findOne({ where: { id: blockedUserId } });
+		
+		if (!user || !blockedUser) {
+			throw new NotFoundException('User not found');
+		}
+	
+		// Charger la relation blockedUsers si elle n'est pas déjà chargée
+		if (!user.blockedUsers) {
+			user.blockedUsers = await this.usersRepository.createQueryBuilder('user')
+				.relation(User, 'blockedUsers')
+				.of(user)
+				.loadMany();
+		}
+	
+		// Vérifie si l'utilisateur est déjà bloqué
+		if (user.blockedUsers.some(u => u.id === blockedUserId)) {
+			return; // L'utilisateur est déjà bloqué, donc rien à faire
+		}
+	
+		user.blockedUsers.push(blockedUser);
+		await this.usersRepository.save(user);
+	}
 }

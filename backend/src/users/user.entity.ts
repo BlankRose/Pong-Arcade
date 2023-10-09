@@ -1,4 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn, ManyToOne } from 'typeorm';
+// src/users/user.entity.ts
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	OneToMany,
+	ManyToMany,
+	JoinTable,
+	ManyToOne,
+	JoinColumn,
+  } from 'typeorm';
+  import { Message } from '../messages/messages.entity';
+  import { Channel } from '../channels/channels.entity';
 
 @Entity()
 export class User {
@@ -57,4 +69,17 @@ export class User {
 	@Column({ default: 0 })
 	rank: number;
 
+	@OneToMany(() => Message, (message) => message.user)
+  	messages: Message[];
+
+  	@OneToMany(() => Channel, (channel) => channel.owner)
+  	ownedChannels: Channel[];
+
+  	@ManyToMany(() => Channel)
+  	@JoinTable()
+  	channels: Channel[];
+
+  	@ManyToMany(() => User)
+  	@JoinTable()
+  	blockedUsers: User[];
 }

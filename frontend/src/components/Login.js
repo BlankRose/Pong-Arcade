@@ -19,7 +19,7 @@ function LoginPage({ onLoginSuccess }) {
             // Si c'est une connexion :
             if (isLogin) {
                 localStorage.setItem('token', response.data.access_token);
-                
+
                 // Appel de la méthode onLoginSuccess pour signaler la réussite de la connexion
                 onLoginSuccess();
             } else {

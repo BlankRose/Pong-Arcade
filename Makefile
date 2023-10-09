@@ -1,15 +1,15 @@
-# ############################################################################ #
-#          .-.                                                                 #
-#    __   /   \   __                                                           #
-#   (  `'.\   /.'`  )   Pong-Arcade - Makefile                                 #
-#    '-._.(;;;)._.-'                                                           #
-#    .-'  ,`"`,  '-.                                                           #
-#   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Friday, August 25, 2023 11:44 AM         #
-#      ||  '-'                                                                 #
-# ############################################################################ #
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: chajjar <chajjar@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: Invalid date        by  Friday, Au       #+#    #+#              #
+#    Updated: 2023/09/13 22:29:30 by chajjar          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-TIMEOUT := 5
 
 s: start
 start: .env
@@ -86,6 +86,29 @@ check_status:
 drop_db:
 	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP DATABASE IF EXISTS user1;"
 	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP USER IF EXISTS charles;"
+	
+reinstall_pg:
+	@echo "Réinstallation de PostgreSQL..."
+	-@brew services stop postgresql@14
+	@brew uninstall postgresql@14
+	@brew install postgresql@14
+	@echo "PostgreSQL a été réinstallé."
+
+check_status:
+	@brew services list | grep postgresql@14
+
+drop_db:
+	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP DATABASE IF EXISTS user1;"
+	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP USER IF EXISTS charles;"
+
+start_front:
+	cd frontend; set -a; source .env; set +a; npm start
+
+start_back: init_db
+	cd backend; set -a; source ../.env; set +a; npm run start:debug
+
+start_backm: init_db
+	cd backend_irc/src; set -a; source ../../.env; set +a; npm run start --inspect=9230
 
 .PHONY: drop_db
 
