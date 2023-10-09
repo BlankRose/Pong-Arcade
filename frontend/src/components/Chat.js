@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
+//import API_Access from './API_Access';
+import { apiBaseURL } from './API_Access';
+
 function ChatPage({ onLogout }) {
     const [channels, setChannels] = useState([]);
     const [selectedChannel, setSelectedChannel] = useState(null);
@@ -11,7 +14,7 @@ function ChatPage({ onLogout }) {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const socketIo = io('http://localhost:3001');
+        const socketIo = io(apiBaseURL);
         setSocket(socketIo);
 
         socketIo.on('newMessage', (message) => {
@@ -30,7 +33,7 @@ function ChatPage({ onLogout }) {
     }, [selectedChannel]);
 
     useEffect(() => {
-        fetch('http://localhost:3001/channels')
+        fetch(`${apiBaseURL}/channels`)
             .then(response => response.json())
             .then(setChannels)
             .catch(console.error);
@@ -38,7 +41,7 @@ function ChatPage({ onLogout }) {
 
     const handleCreateChannel = (e) => {
         e.preventDefault();
-        fetch('http://localhost:3001/channels', {
+        fetch(`${apiBaseURL}/channels`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,7 +58,7 @@ function ChatPage({ onLogout }) {
 
     const handleJoinChannel = (channelId) => {
         setSelectedChannel(channelId);
-        fetch(`http://localhost:3001/channels/${channelId}/messages`)
+        fetch(`${apiBaseURL}/channels/${channelId}/messages`)
             .then(response => response.json())
             .then(data => {
                 if (Array.isArray(data)) {

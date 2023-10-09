@@ -22,7 +22,7 @@ import databaseConfig from './config/database.config';
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: 'localhost',
+        host: 'database',
         port: 5432,
         username: configService.get('database.user'),
         password: configService.get('database.password'),

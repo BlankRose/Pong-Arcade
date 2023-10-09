@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'; // Assurez-vous d'installer axios avec npm install axios si vous ne l'avez pas déjà fait.
 
+import APIHandle from './API_Access';
+
 function MessagingPage() {
   const [channels, setChannels] = useState([]);
   const [selectedChannel, setSelectedChannel] = useState(null);
@@ -10,7 +12,7 @@ function MessagingPage() {
 
   useEffect(() => {
     // Chargez les channels lors de la première renderisation
-    axios.get('/api/channels') // Remplacez par l'URL de votre API
+    APIHandle.get('/api/channels') // Remplacez par l'URL de votre API
       .then(response => {
         setChannels(response.data);
       })
@@ -22,7 +24,7 @@ function MessagingPage() {
   useEffect(() => {
     if (selectedChannel) {
       // Chargez les messages pour le channel sélectionné
-      axios.get(`/api/channels/${selectedChannel.id}/messages`)
+      APIHandle.get(`/api/channels/${selectedChannel.id}/messages`)
         .then(response => {
           setMessages(response.data);
         })
@@ -35,7 +37,7 @@ function MessagingPage() {
   const sendMessage = () => {
     if (newMessage.trim() !== '' && selectedChannel) {
       // Envoyez le nouveau message à l'API
-      axios.post(`/api/channels/${selectedChannel.id}/messages`, { content: newMessage })
+      APIHandle.post(`/api/channels/${selectedChannel.id}/messages`, { content: newMessage })
         .then(response => {
           setMessages([...messages, response.data]);
           setNewMessage('');
