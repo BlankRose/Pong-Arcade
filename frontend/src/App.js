@@ -30,12 +30,11 @@ function App() {
 					<Route path="/" element={<Nav />}>
 						<Route index element={<p>tempo</p>} />
 						<Route path="game" element={<p>tempo</p>} />
-						<Route path= "chat" element={<ChatPage />} />
+						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
 						<Route path="*" element={<p>tempo</p>} />
 					</Route>
 
 					</Routes>
-					
 					</BrowserRouter>
 				</>
 			) : (
