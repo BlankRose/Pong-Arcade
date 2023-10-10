@@ -13,25 +13,25 @@ function LoginPage({ onLoginSuccess }) {
 
         const endpoint = isLogin ? '/auth/login' : '/auth/register';
 
-        try {
-            const response = await apiHandle.post(endpoint, { username, password });
+        apiHandle.post(endpoint, { username, password })
+            .then( res => {
+                // Si c'est une connexion :
+                if (isLogin) {
+                    localStorage.setItem('token', res.data.access_token);
 
-            // Si c'est une connexion :
-            if (isLogin) {
-                localStorage.setItem('token', response.data.access_token);
-
-                // Appel de la méthode onLoginSuccess pour signaler la réussite de la connexion
-                onLoginSuccess();
-            } else {
-                // L'utilisateur a été enregistré. Switch to login mode.
-                setIsLogin(true);
-                setErrorMessage('Inscription réussie! Vous pouvez maintenant vous connecter.');
-            }
-
-        } catch (error) {
-            const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;
-            setErrorMessage(`Erreur: ${errorResponse}`);
-        }
+                    // Appel de la méthode onLoginSuccess pour signaler la réussite de la connexion
+                    onLoginSuccess();
+                } else {
+                    // L'utilisateur a été enregistré. Switch to login mode.
+                    setIsLogin(true);
+                    setErrorMessage('Inscription réussie! Vous pouvez maintenant vous connecter.');
+                }
+            })
+            .catch(err => {
+                const errorResponse = err.response && err.response.data ? err.response.data.message : err.message;
+                console.error(`Login Request Failed: ${endpoint} | ${err}`)
+                setErrorMessage(`Erreur: ${errorResponse}`);
+            })
     };
 
     return (

@@ -6,7 +6,7 @@
 #    By: chajjar <chajjar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by  Friday, Au       #+#    #+#              #
-#    Updated: 2023/09/13 22:29:30 by chajjar          ###   ########.fr        #
+#    Updated: 2023/10/10 14:01:07 by chajjar          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,6 +60,8 @@ ip:
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 
+include .env
+
 init_db:
 	@echo "Démarrage du service PostgreSQL..."
 	-@brew services start postgresql@14 2>/dev/null || brew services restart postgresql@14
@@ -102,7 +104,7 @@ drop_db:
 	PGPASSWORD=hajjar psql -U postgres -h localhost -c "DROP USER IF EXISTS charles;"
 
 start_front:
-	cd frontend; set -a; source .env; set +a; npm start
+	cd frontend; set -a; source ../.env; set +a; REACT_APP_API_PORT=$(API_ACCESS_PORT) REACT_APP_API_UID=$(API_UID) npm start
 
 start_back: init_db
 	cd backend; set -a; source ../.env; set +a; npm run start:debug
