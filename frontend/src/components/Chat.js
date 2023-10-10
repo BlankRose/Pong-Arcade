@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
-//import API_Access from './API_Access';
+import API_Access from './API_Access';
 import { apiBaseURL } from './API_Access';
 
 function ChatPage({ onLogout }) {
@@ -33,11 +33,15 @@ function ChatPage({ onLogout }) {
     }, [selectedChannel]);
 
     useEffect(() => {
-        fetch(`${apiBaseURL}/channels`)
-            .then(response => response.json())
-            .then(setChannels)
-            .catch(console.error);
-    }, []);
+        API_Access.get('/channels')
+            .then(res => {
+                console.log(`Return: ${res}`)
+            })
+            .catch(err => {
+                console.error(`Error: ${err}`)
+                setChannels([])
+            })
+        }, []);
 
     const handleCreateChannel = (e) => {
         e.preventDefault();
@@ -79,6 +83,8 @@ function ChatPage({ onLogout }) {
         }
     };
 
+    console.log(typeof console)
+
     return (
         <div className="chatPage">
             <h2>Messagerie</h2>
@@ -86,7 +92,7 @@ function ChatPage({ onLogout }) {
 
             <div className="chatContainer">
                 <div className="channelList">
-                    {channels.map(channel => (
+                    {channels ? channels.map(channel => (
                         <div
                             key={channel.id}
                             onClick={() => handleJoinChannel(channel.id)}
@@ -94,7 +100,7 @@ function ChatPage({ onLogout }) {
                         >
                             {channel.name}
                         </div>
-                    ))}
+                    )) : undefined}
                     <form onSubmit={handleCreateChannel}>
                         <input 
                             type="text"
