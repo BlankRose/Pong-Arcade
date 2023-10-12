@@ -1,0 +1,36 @@
+header{
+    display: flex;
+    justify-content: start;
+    background-color: black;
+}
+
+.title-header{
+    color: white;
+    font-size: 120px;
+}
+
+.navbar{
+    display: flex;
+    justify-content: start;
+    list-style: none;
+    margin-left: 400px;
+    
+}
+
+.link-nav{
+    font-size: 40px;
+    margin-right: 200px;
+}
+
+.text-nav{
+    color: white;
+    text-decoration: none;
+    font-size: 80px;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.text-nav:hover{
+    font-weight: bolder;
+    color: lightgray;
+    font-size: 95px;
+}
