@@ -1,6 +1,6 @@
 // users.controller.ts
 
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { BlockUserDto } from './dto/block-user.dto';
 
@@ -12,4 +12,11 @@ export class UsersController {
   blockUser(@Body() blockUserDto: BlockUserDto) {
     return this.usersService.blockUser(blockUserDto.userId, blockUserDto.blockedUserId);
   }
+
+  @Get(':username')
+  findOne(@Param('username') username: string) {
+    return this.usersService.findOne(username)
+  }
+
+  
 }

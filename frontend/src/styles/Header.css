@@ -2,6 +2,8 @@ header{
     display: flex;
     justify-content: start;
     background-color: black;
+    width: auto;
+    height: auto;
 }
 
 .title-header{
@@ -13,19 +15,19 @@ header{
     display: flex;
     justify-content: start;
     list-style: none;
-    margin-left: 400px;
+    margin-left: 100px;
     
 }
 
 .link-nav{
     font-size: 40px;
-    margin-right: 200px;
+    margin-right: 40px;
 }
 
 .text-nav{
     color: white;
     text-decoration: none;
-    font-size: 80px;
+    font-size: 60px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
