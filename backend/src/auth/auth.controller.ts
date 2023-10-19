@@ -6,15 +6,15 @@ import { LoginDto } from './dto/login.dto';
 import { Login42Dto } from './dto/login42.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
+import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
-	@UseGuards(AuthGuard('local'))
 	@Post('/login')
 	async login(@Request() req, @Body() loginDto: LoginDto) {
-		return this.authService.login(req.user);
+		return this.authService.login(loginDto);
 	}
 
 	@Post('/login42')
