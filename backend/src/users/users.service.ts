@@ -48,7 +48,6 @@ export class UsersService {
 		// TO-DO: Call 42 API to convert code into actual auth token
 		//        and retrieve user information thru the new token
 		user.id42 = data.code;
-
 		const savedUser = await this.usersRepository.save(user);
 		return savedUser;
 	}
@@ -85,5 +84,9 @@ export class UsersService {
 	
 		user.blockedUsers.push(blockedUser);
 		await this.usersRepository.save(user);
-	}
+	}	
 }
+
+
+
+

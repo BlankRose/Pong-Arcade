@@ -17,6 +17,4 @@ export class UsersController {
   findOne(@Param('username') username: string) {
     return this.usersService.findOne(username)
   }
-
-  
 }

@@ -18,7 +18,7 @@ const Header = () => {
                         <Link to ="/chat" className="text-nav">Chat</Link>
                     </li>
                     <li className="link-nav">
-                        <Link to = "/profil" className="text-nav">Profil</Link>
+                        <Link to = "/profil/:username" className="text-nav">Profil</Link>
                     </li>
                 </ul>
             </nav>

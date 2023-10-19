@@ -8,20 +8,20 @@ header{
 
 .title-header{
     color: white;
-    font-size: 120px;
+    font-size: 80px;
 }
 
 .navbar{
     display: flex;
     justify-content: start;
     list-style: none;
-    margin-left: 100px;
+    margin-left: 20%;
     
 }
 
 .link-nav{
     font-size: 40px;
-    margin-right: 40px;
+    margin-right: 10%;
 }
 
 .text-nav{

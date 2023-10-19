@@ -1,37 +1,12 @@
-import React, {useEffect,useState} from "react";
-import axios from 'axios'
-import API_Access from './API_Access';
-import { apiBaseURL } from './API_Access';
+import {Component} from 'react'
 
-const Profil = () => {
-    const fetchUser = async () => {
-        try {
-            const reponse = await axios.get(`http://localhost:5001/users`)
-            const user = reponse.data;
-        } catch (error) {
-            console.log('error');
-        }
-
-    };
-
-    const [user, setUser] = useState([]);
-
-    useEffect(() => {
-        fetchUser().then((user) => {
-            setUser(user)
-        })
-    }, [])
-
-    return (
+function Profil()
+{
+    return(
         <div>
-            <ul>
-                {user.map((item) => (
-                    <li key={user.id}>Pseudo: {user.username}</li>
-                ))
-                }
-            </ul>
+            <h1>En construction !</h1>
         </div>
-    );
-};
+    )
+}
 
 export default Profil
