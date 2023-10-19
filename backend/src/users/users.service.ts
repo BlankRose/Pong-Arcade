@@ -62,6 +62,7 @@ export class UsersService {
 		return isMatch; // Renvoie true si le mot de passe est valide, false sinon
 	}
 
+	/*
 	async blockUser(userId: number, blockedUserId: number): Promise<void> {
 		const user = await this.usersRepository.findOne({ where: { id: userId } });
 		const blockedUser = await this.usersRepository.findOne({ where: { id: blockedUserId } });
@@ -86,4 +87,5 @@ export class UsersService {
 		user.blockedUsers.push(blockedUser);
 		await this.usersRepository.save(user);
 	}
+	*/
 }

@@ -8,9 +8,7 @@ import {
 	JoinTable,
 	ManyToOne,
 	JoinColumn,
-  } from 'typeorm';
-  import { Message } from '../messages/messages.entity';
-  import { Channel } from '../channels/channels.entity';
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -69,6 +67,7 @@ export class User {
 	@Column({ default: 0 })
 	rank: number;
 
+	/*
 	@OneToMany(() => Message, (message) => message.user)
   	messages: Message[];
 
@@ -82,4 +81,5 @@ export class User {
   	@ManyToMany(() => User)
   	@JoinTable()
   	blockedUsers: User[];
+	*/
 }

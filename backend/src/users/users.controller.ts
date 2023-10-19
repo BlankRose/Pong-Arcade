@@ -7,10 +7,12 @@ import { AuthGuard } from 'src/auth/jwt/jwt.strategy';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
+	/*
 	@Post('block')
 	blockUser(@Body() blockUserDto: BlockUserDto) {
 		return this.usersService.blockUser(blockUserDto.userId, blockUserDto.blockedUserId);
 	}
+	*/
 
 	@UseGuards(AuthGuard)
 	@Get('me')
