@@ -9,5 +9,13 @@ const apiHandle = axios.create({
 	timeout: 1000
 });
 
+const withAuth = () => {
+	return {
+		headers: {
+			Authorization: `Bearer ${localStorage.getItem('token')}`  
+		}
+	}
+}
+
 export default apiHandle;
-export { hostname, apiPort, apiBaseURL };
+export { hostname, apiPort, apiBaseURL, withAuth };

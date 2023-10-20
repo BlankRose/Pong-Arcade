@@ -25,7 +25,7 @@ import databaseConfig from './config/database.config';
 				username: configService.get('database.user'),
 				password: configService.get('database.password'),
 				database: configService.get('database.database'),
-				entities: [__dirname + '/**/*.entity{.ts,.js}'],
+				entities: ['dist/**/*.entity{.ts,.js}'],
 				synchronize: true,
 			}),
 			inject: [ConfigService],
