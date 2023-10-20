@@ -1,5 +1,6 @@
 // src/users/user.entity.ts
 import Channel from 'src/chat/entities/channel.entity';
+import ChannelMember from 'src/chat/entities/channel_member.entity';
 import Message from 'src/chat/entities/message.entity';
 import {
 	Entity,
@@ -7,7 +8,6 @@ import {
 	Column,
 	OneToMany,
 	ManyToMany,
-	JoinTable,
 	ManyToOne,
 	JoinColumn,
 } from 'typeorm';
@@ -37,6 +37,9 @@ export class User {
 	/* ********************** */
 	/*   Account Information  */
 	/* ********************** */
+
+	@Column({ default: null })
+	lastActivity: Date;
 
 	@Column({ default: null })
 	avatar: string;
@@ -76,9 +79,8 @@ export class User {
 	@OneToMany(() => Channel, channel => channel.owner)
 	ownedChannels: Channel[];
 
-	@ManyToMany(() => Channel, channel => channel.admins)
-	@JoinTable()
-	adminChannels: Channel[];
+	@OneToMany(() => ChannelMember, member => member.user)
+	channels: ChannelMember[];
 
 	@OneToMany(() => Message, message => message.sender)
 	messages: Message[];
