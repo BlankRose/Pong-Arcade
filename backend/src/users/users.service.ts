@@ -16,6 +16,18 @@ export class UsersService {
 		return this.usersRepository.findOne({ where: { username: username } });
 	}
 
+	async getUser(username: string): Promise<User | undefined> {
+		const user = this.findOne(username);
+		if (!user)
+			return undefined;
+
+		(await user).password = null;
+		(await user).id42 = null;
+		(await user).token2FA = null;
+
+		return user;
+	}
+
 	async findOne42(id42: number): Promise<User | undefined> {
 		return this.usersRepository.findOne({ where: { id42: id42 } });
 	}
