@@ -20,7 +20,7 @@ import JwtConfig from '../config/jwt.config';
 		ConfigModule.forFeature(JwtConfig),
 		JwtModule.register({
 			secret: process.env.JWT_SECRET,
-			signOptions: { expiresIn: '60m' },
+			signOptions: { expiresIn: '60d' },
 		}),
 	],
 	providers: [AuthService],
