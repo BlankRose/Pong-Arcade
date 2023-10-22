@@ -1,6 +1,6 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -73,6 +73,7 @@ export class UsersService {
 		return isMatch; // Renvoie true si le mot de passe est valide, false sinon
 	}
 
+	/*
 	async blockUser(userId: number, blockedUserId: number): Promise<void> {
 		const user = await this.usersRepository.findOne({ where: { id: userId } });
 		const blockedUser = await this.usersRepository.findOne({ where: { id: blockedUserId } });
@@ -96,7 +97,8 @@ export class UsersService {
 	
 		user.blockedUsers.push(blockedUser);
 		await this.usersRepository.save(user);
-	}	
+	}
+	*/
 }
 
 

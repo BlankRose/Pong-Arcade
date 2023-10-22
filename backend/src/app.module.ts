@@ -10,6 +10,10 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 
 import databaseConfig from './config/database.config';
+import { ChatModule } from './chat/chat.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/jwt/jwt.strategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -32,9 +36,14 @@ import databaseConfig from './config/database.config';
 		}),
 		AuthModule,
 		UsersModule,
+		ChatModule,
+		JwtModule
 	],
 	controllers: [AppController],
-	providers: [AppService]
+	providers: [AppService, {
+		provide: APP_GUARD,
+		useClass: AuthGuard
+	}]
 })
 
 export class AppModule {}
