@@ -38,7 +38,7 @@ export class User {
 	/*   Account Information  */
 	/* ********************** */
 
-	@Column({ default: "../../../frontend/src/assets/avatar.jpeg" })
+	@Column({ default: null})
 	avatar: string;
 
 	@ManyToMany(() => User)
@@ -66,7 +66,7 @@ export class User {
 	@Column({ default: 0 })
 	streak: number;
 
-	@Column({ default: 0 })
+	@Column({ default: 1 })
 	rank: number;
 
 	/* ********************** */
