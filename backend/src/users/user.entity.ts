@@ -38,7 +38,7 @@ export class User {
 	/*   Account Information  */
 	/* ********************** */
 
-	@Column({ default: null})
+	@Column({ default: null })
 	avatar: string;
 
 	@ManyToMany(() => User)

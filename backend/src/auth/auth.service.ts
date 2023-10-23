@@ -52,22 +52,18 @@ export class AuthService {
 	}
 
 	async register(registerDto: RegisterDto): Promise<any> {
-		const user = await this.usersService.createUser({
+		await this.usersService.createUser({
 			username: registerDto.username,
 			password: registerDto.password,
 		});
-
-		return user;
 	}
 
 	async register42(registerDto: Register42Dto): Promise<any> {
 		const data = await this.api42Service.getUserData(registerDto.code);
-		const user = await this.usersService.createUserFrom42({
+		await this.usersService.createUserFrom42({
 			username: registerDto.username,
 			code: data.id
 		});
-
-		return user;
 	}
 
 	async token42(code: string, uri: string): Promise<any> {
