@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import Message from "./message.entity";
 import { User } from "src/users/user.entity";
 import ChannelMember from "./channel_member.entity";
@@ -6,7 +6,7 @@ import ChannelMember from "./channel_member.entity";
 @Entity()
 class Channel {
 
-	@PrimaryColumn()
+	@PrimaryGeneratedColumn()
 	id: number;
 
 	@ManyToOne(() => User, user => user.ownedChannels)

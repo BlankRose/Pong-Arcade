@@ -1,12 +1,10 @@
-import { Controller, Post, Get, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Post, Get, Request, Body, ConflictException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { LoginDto } from './dto/login.dto';
 import { Login42Dto } from './dto/login42.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
-import { log } from 'console';
 
 @Controller('auth')
 export class AuthController {

@@ -1,11 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import Channel from "./channel.entity";
 import { User } from "src/users/user.entity";
 
 @Entity()
 class ChannelMember {
 
-	@PrimaryColumn()
+	@PrimaryGeneratedColumn()
 	id: number;
 
 	@ManyToOne(() => Channel, channel => channel.members)
