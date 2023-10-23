@@ -1,11 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import Channel from "./channel.entity";
 import { User } from "src/users/user.entity";
 
 @Entity()
 class Message {
-	
-	@PrimaryColumn()
+
+	@PrimaryGeneratedColumn()
 	id: number;
 
 	@ManyToOne(() => User, user => user.messages)
