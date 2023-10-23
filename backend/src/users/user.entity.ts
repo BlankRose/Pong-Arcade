@@ -38,7 +38,7 @@ export class User {
 	/*   Account Information  */
 	/* ********************** */
 
-	@Column({ default: "../../../frontend/src/assets/avatar.jpeg" })
+	@Column({ default: null })
 	avatar: string;
 
 	@ManyToMany(() => User)
