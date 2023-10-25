@@ -12,6 +12,14 @@ import {
   import { Message } from '../messages/messages.entity';
   import { Channel } from '../channels/channels.entity';
 
+
+
+export enum UserStatus {
+    Online = 'online',
+    Offline = 'offline',
+    Playing = 'playing',
+}
+
 @Entity()
 export class User {
 
@@ -31,8 +39,18 @@ export class User {
 	@Column({ default: -1 })
 	id42: number;
 
+	@Column({
+        type: 'enum',
+        enum: UserStatus,
+        default: UserStatus.Online,
+    })
+    status: UserStatus
+
+	@Column ({default: false})
+	_2FAEnabled: boolean;
+
 	@Column({ default: null })
-	token2FA: string;
+	_2FAToken: string;
 
 	/* ********************** */
 	/*   Account Information  */
