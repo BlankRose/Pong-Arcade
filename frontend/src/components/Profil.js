@@ -6,6 +6,7 @@ import '../styles/Profil.css'
 function Profil() {
 	const [user, setUser] = useState(null);
 	const [avatar, setAvatar] = useState(Avatar);
+	const [pseudo, setPseudo] = useState('')
 
 	//Recuperation de l'utilisateur connecté via le token d'authentification. 
 
@@ -29,15 +30,13 @@ function Profil() {
 				<div className='row_1'>
 					<img className='Profil-avatar' alt='profil' src= {avatar}/>
 					<h2 className="Profil-username">{user ? user.username : undefined }</h2>
+					<input className='Change-Pseudo' type="text" id="username" name="username" size={30} placeholder='change ton pseudo ici' value={pseudo}/>
 				</div>
 				<div className = 'row_2'>
-					<p>Rank: {user ? user.rank : undefined}</p>
-					<p>Victoire: {user ? user.win : undefined} </p>
-					<p>Defaite: {user ? user.lose : undefined} </p>
-					<p>Ratio: {user ? user.streak : undefined}</p>
-										
-										
-
+					<p className='Profil-stat'>Rank: {user ? user.rank : undefined}</p>
+					<p className='Profil-stat'>Victoire: {user ? user.win : undefined} </p>
+					<p className='Profil-stat'>Defaite: {user ? user.lose : undefined} </p>
+					<p className='Profil-stat'>Ratio: {user ? user.streak : undefined}</p>
 				</div>				
 				
 		</div>

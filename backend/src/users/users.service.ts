@@ -1,7 +1,7 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
 import { Injectable, ConflictException } from '@nestjs/common';
-import { User } from './user.entity';
+import { User} from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -99,6 +99,19 @@ export class UsersService {
 		await this.usersRepository.save(user);
 	}
 	*/
+
+	//fonction remplacant le nouveau username par l'ancien;
+
+	async replaceUsername(newUserName : string, currentUsername : string): Promise<User>
+	{
+		const existingUser = await this.usersRepository.findOne({where : {username: newUserName}});
+		if (existingUser)
+			throw new ConflictException('Username already exists');
+		const user = await this.usersRepository.findOne({where : {username: currentUsername}});
+		user.username = newUserName;
+		const savedUser = await this.usersRepository.save(user);
+		return savedUser;
+	}
 }
 
 

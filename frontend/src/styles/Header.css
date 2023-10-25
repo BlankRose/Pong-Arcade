@@ -8,7 +8,9 @@ header{
 
 .title-header{
     color: white;
-    font-size: 80px;
+    font-size: 3rem;
+    margin-top: 1%;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .navbar{
@@ -27,12 +29,12 @@ header{
 .text-nav{
     color: white;
     text-decoration: none;
-    font-size: 60px;
+    font-size: 2rem;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .text-nav:hover{
     font-weight: bolder;
     color: lightgray;
-    font-size: 95px;
+    font-size: 2.5rem;
 }
