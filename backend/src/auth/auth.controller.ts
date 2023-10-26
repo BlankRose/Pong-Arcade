@@ -50,4 +50,26 @@ export class AuthController {
 	async token42(@Request() req) {
 		return this.authService.token42(req.query.code, req.query.uri);
 	}
+
+    @Post('2fa/turn-on')
+    async turnOn2FA(@Request() req: any, @Body() body) {
+        return await this.authService.turnOn2fa(req, body)
+    }
+
+
+    @Post('2fa/turn-off')
+    async turnOff2FA(@Request() req: any) {
+        return await this.authService.turnOff2fa(req)
+    }
+
+    @Get('2fa/generateQr')
+    async generateQR(@Request() req: any) {
+        return await this.authService.generateQrCode(req)
+    }
+
+
+    @Post('2fa/authenticate')
+    async codeVerification(@Request() req: any, @Body() body) {
+        return await this.authService.codeVerification(req, body)
+    }
 }

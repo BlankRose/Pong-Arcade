@@ -86,4 +86,46 @@ export class UsersService {
 		user.blockedUsers.push(blockedUser);
 		await this.usersRepository.save(user);
 	}
+
+// ************************2FA Part************************
+	async turnOn2FA(userID: number) {
+        try {
+            const user = await this.usersRepository.findOne({where: { id: userID },})
+            if (user) {
+                user._2FAEnabled = true
+                return this.usersRepository.save(user)
+            }
+            console.log(`User with id ${userID} does not exist`)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+	async turnOff2FA(userID: number) {
+        try {
+            const user = await this.usersRepository.findOne({where: { id: userID },})
+            if (user) {
+                user._2FAEnabled = false
+                return this.usersRepository.save(user)
+            }
+            console.log(`User with id ${userID} does not exist`)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+	async set2FASecret (secret: string, userID: number) {
+		try {
+			const user = await this.usersRepository.findOne({where: {id: userID}})
+			if (user) {
+				user._2FAToken = secret
+				return this.usersRepository.save(user)
+			}
+			console.warn(`User with  id=${userID} does not exist`)
+		} catch (error) {
+			console.warn (error)
+		}
+	}
+
+// ************************2FA Part************************
 }

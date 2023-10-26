@@ -11,7 +11,8 @@
 		"socket.io-client": "^4.7.2"
 	},
 	"devDependencies": {
-		"@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+		"@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+		"@types/react": "^18.2.33"
 	},
 	"scripts": {
 		"start": "react-scripts start",

@@ -1,4 +1,5 @@
-import {useState, React} from 'react'
+import {useState} from 'react'
+import React from 'react'
 
 
 interface CodeValidationProps {
@@ -21,7 +22,7 @@ const CodeValidation = ({url, logOutButton}: CodeValidationProps) => {
         setProvidedCode(newCode)
     }
 
-    const handleSubmit = async (event: React.formEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         const code = ProvidedCode.join('')

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './jwt/jwt-payload.interface';
@@ -7,7 +7,13 @@ import { Register42Dto } from './dto/register42.dto';
 import * as bcrypt from 'bcrypt';
 import { Login42Dto } from './dto/login42.dto';
 import { Api42Service } from '../API42/api42.service';
-import { LoginDto } from './dto/login.dto';
+import { User } from 'src/users/user.entity';
+
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode'
+
+import * as QRCode from 'qrcode';
+import {Request, Body} from '@nestjs/common'
 
 @Injectable()
 export class AuthService {
@@ -26,12 +32,7 @@ export class AuthService {
 		return null;
 	}
 
-	async login(req: LoginDto) {
-		const user = await this.validateUser(req.username, req.password);
-		if (!user) {
-			throw new UnauthorizedException();
-		}
-
+	async login(user: User) {
 		const payload = { username: user.username, sub: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
@@ -62,11 +63,11 @@ export class AuthService {
 
 	async register42(registerDto: Register42Dto): Promise<any> {
 		const data = await this.api42Service.getUserData(registerDto.code);
+
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
 			code: data.id
 		});
-
 		return user;
 	}
 
@@ -85,4 +86,75 @@ export class AuthService {
 		}
 		return null;
 	}
+
+
+	// ****************************2FA Part****************************
+
+	async turnOn2fa(@Request() req, @Body() body) {
+		const user = await this.usersService.findOne(req.user.username)
+
+		if(!user){
+			throw new NotFoundException('User does not exist!')
+		}
+
+		const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
+		if (!isCodeValid) {
+			throw new UnauthorizedException('Wrong Code')
+		}
+		this.usersService.turnOn2FA(user.id)
+		return true
+
+	}
+
+	async turnOff2fa(@Request() req) {
+		const user = await this.usersService.findOne(req.user.username)
+
+		if(!user){
+			throw new NotFoundException('User does not exist!')
+		}
+		this.usersService.turnOff2FA(user.id)
+		return true
+
+	}
+
+
+	async generate2FASecret(user: User){
+		const secret: string = authenticator.generateSecret()
+		const otpauthurl: string = authenticator.keyuri(user.username, 'Pong_Arcade', secret)
+		await this.usersService.set2FASecret(secret, user.id)
+		return{secret,otpauthurl}
+	}
+
+	async turnUrlToQrCode (otpauthurl: string){
+		return toDataURL(otpauthurl)
+	}
+
+	async generateQrCode (@Request() req) {
+		const user = await this.usersService.findOne(req.user.username) 
+		if (!user) {
+			throw new NotFoundException('User does not exist!')
+		}
+		const secretUrl = await this.generate2FASecret(user)
+		const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
+		return qrCode
+	}
+
+
+	is2FASecretValid (ProvidedCode: string, user: User):boolean {
+		return authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
+	}
+
+
+	async codeVerification (@Request() req, @Body() body ) {
+		const user = await this.usersService.findOne(req.user.username)
+		if(!user) {
+			throw new NotFoundException('User does not exist')
+		}
+		const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
+		if (!isCodeValid){
+			throw new UnauthorizedException('Wrong Code!')
+		}
+        return true
+	}
+	// ****************************2Fa Part****************************
 }

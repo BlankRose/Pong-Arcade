@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import apiHandle from './API_Access';
 import '../styles/Login.css';
 
+
+
 function LoginPage({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -13,7 +15,7 @@ function LoginPage({ onLoginSuccess }) {
 
         const endpoint = isLogin ? '/auth/login' : '/auth/register';
 
-        apiHandle.post(endpoint, { username, password })
+        apiHandle.post(endpoint, { username: username, password: password })
             .then( res => {
                 // Si c'est une connexion :
                 if (isLogin) {
