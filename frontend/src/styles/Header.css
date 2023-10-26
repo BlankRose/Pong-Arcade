@@ -6,24 +6,17 @@ header{
     height: auto;
 }
 
+.Avatar{
+    position: absolute;
+    left: 90%;
+    top: 5%;
+}
+
 .title-header{
     color: white;
     font-size: 3rem;
     margin-top: 1%;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-}
-
-.navbar{
-    display: flex;
-    justify-content: start;
-    list-style: none;
-    margin-left: 20%;
-    
-}
-
-.link-nav{
-    font-size: 40px;
-    margin-right: 10%;
 }
 
 .text-nav{
@@ -37,4 +30,31 @@ header{
     font-weight: bolder;
     color: lightgray;
     font-size: 2.5rem;
+}
+
+.Avatar-profil{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.Avatar-profil:hover{
+    opacity: 0.5;
+}
+
+span{
+    display: none;
+    font-size: 1rem;
+    opacity: 0.5;
+    color: whitesmoke;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.Avatar:hover span{
+    display: block;
+}
+
+.invisible-button{
+    border-radius: 50%;
+    border: black solid 1px;
 }

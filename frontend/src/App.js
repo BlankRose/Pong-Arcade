@@ -1,5 +1,6 @@
 import './styles/App.css';
 
+
 import { useState } from 'react';
 import ReactDom from "react-dom/client";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
@@ -28,7 +29,7 @@ function App() {
 			{isLoggedIn ? (
 				<>
 					<BrowserRouter>
-					<Header />
+					<Header  onLogout={onLogout}/>
 					<Routes>
 						<Route index element={<p>tempo</p>} />
 						<Route path="game" element={<Game />} />

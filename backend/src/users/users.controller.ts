@@ -25,7 +25,7 @@ export class UsersController {
 		return this.usersService.getUser('username')
 	}
 
-	@Put(':username')
+	@Put(':me')
 	changeName(@Request() req, @Body() body)
 	{
 		return this.usersService.replaceUsername(body.username, req.user['username']);
