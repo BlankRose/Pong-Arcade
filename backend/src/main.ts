@@ -9,7 +9,7 @@ async function bootstrap() {
 		origin: '*',
 		credentials: true,
 	}); // Activez CORS pour toutes les origines
-	const port = 5501;
+	const port = 3001;
 	await app.listen(port);
 	Logger.log(`Server running on http://localhost:${port}`, 'Bootstrap');
 }

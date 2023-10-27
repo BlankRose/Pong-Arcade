@@ -12,7 +12,7 @@ export class UsersController {
 		return this.usersService.blockUser(blockUserDto.userId, blockUserDto.blockedUserId);
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get('me')
 	getProfile(@Request() req) {
 		return req.user;

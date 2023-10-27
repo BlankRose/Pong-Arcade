@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from './jwt/jwt.strategy';
 import { AuthService } from './auth.service';
 
 import { LoginDto } from './dto/login.dto';
@@ -18,8 +18,8 @@ export class AuthController {
 	}
 
 	@Post('/login42')
-	async login42(@Body() login42Dto: Login42Dto) {
-		return this.authService.login42(login42Dto);
+	async login42(@Request() req , @Body() login42Dto: Login42Dto) {
+		return this.authService.login42(req, login42Dto);
 	}
 
 	@Post('/register')
@@ -57,13 +57,16 @@ export class AuthController {
     }
 
 
+
     @Post('2fa/turn-off')
     async turnOff2FA(@Request() req: any) {
         return await this.authService.turnOff2fa(req)
     }
 
+	@UseGuards(AuthGuard)
     @Get('2fa/generateQr')
     async generateQR(@Request() req: any) {
+		console.log("***",req)
         return await this.authService.generateQrCode(req)
     }
 

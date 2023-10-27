@@ -14,6 +14,8 @@ import { toDataURL } from 'qrcode'
 
 import * as QRCode from 'qrcode';
 import {Request, Body} from '@nestjs/common'
+import { LoginDto } from './dto/login.dto';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -32,17 +34,23 @@ export class AuthService {
 		return null;
 	}
 
-	async login(user: User) {
+	async login(req: LoginDto) {
+		const user = await this.validateUser(req.username, req.password);
+		if (!user) {
+			throw new UnauthorizedException();
+		}
+
 		const payload = { username: user.username, sub: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
 	}
 
-	async login42(login42Dto: Login42Dto) {
+	async login42(@Request() req, login42Dto: Login42Dto) {
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 
+		req['user'] = {username: data.login, avatarUrl: data.image.versions.small, _42Id: data.id}
 		if (user) {
 			const payload = { username: user.username, sub: user.id };
 			return {
@@ -130,13 +138,14 @@ export class AuthService {
 	}
 
 	async generateQrCode (@Request() req) {
-		const user = await this.usersService.findOne(req.user.username) 
-		if (!user) {
-			throw new NotFoundException('User does not exist!')
-		}
-		const secretUrl = await this.generate2FASecret(user)
-		const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
-		return qrCode
+		console.log("tytytyt", req.user)
+		// const user = await this.usersService.findOne(req.user['username']) 
+		// if (!user) {
+		// 	throw new NotFoundException('User does not exist!')
+		// }
+		// const secretUrl = await this.generate2FASecret(user)
+		// const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
+		return 'fhfgh'
 	}
 
 
