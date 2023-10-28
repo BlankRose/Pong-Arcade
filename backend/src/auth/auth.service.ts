@@ -99,13 +99,11 @@ export class AuthService {
 	// ****************************2FA Part****************************
 
 	async turnOn2fa(@Request() req, @Body() body) {
-		const user = await this.usersService.findOne(req.user.username)
-
+		const user = await this.usersService.findOne(req.user['username'])
 		if(!user){
 			throw new NotFoundException('User does not exist!')
 		}
-
-		const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
+		const isCodeValid = this.is2FASecretValid(body.twoFactorAuthenticationCode, user)
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong Code')
 		}
@@ -115,7 +113,7 @@ export class AuthService {
 	}
 
 	async turnOff2fa(@Request() req) {
-		const user = await this.usersService.findOne(req.user.username)
+		const user = await this.usersService.findOne(req.user['username'])
 
 		if(!user){
 			throw new NotFoundException('User does not exist!')
@@ -138,24 +136,25 @@ export class AuthService {
 	}
 
 	async generateQrCode (@Request() req) {
-		console.log("tytytyt", req.user)
-		// const user = await this.usersService.findOne(req.user['username']) 
-		// if (!user) {
-		// 	throw new NotFoundException('User does not exist!')
-		// }
-		// const secretUrl = await this.generate2FASecret(user)
-		// const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
-		return 'fhfgh'
+		const user = await this.usersService.findOne(req.user['username']) 
+		if (!user) {
+			throw new NotFoundException('User does not exist!')
+		}
+		const secretUrl = await this.generate2FASecret(user)
+		const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
+		return qrCode
 	}
 
 
 	is2FASecretValid (ProvidedCode: string, user: User):boolean {
-		return authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
+		
+		const L = authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
+		return (L)
 	}
 
 
 	async codeVerification (@Request() req, @Body() body ) {
-		const user = await this.usersService.findOne(req.user.username)
+		const user = await this.usersService.findOne(req.user['username'])
 		if(!user) {
 			throw new NotFoundException('User does not exist')
 		}

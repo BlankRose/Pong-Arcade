@@ -1,8 +1,8 @@
 import CodeValidation from "../components/2FA/CodeVerification";
 import React from 'react'
 
-const _2FACodeVerification = () => {
-    const url = ''
+const TFACodeVerification = () => {
+    const url = 'http://localhost:${}/auth/2fa/authenticate'
 
     return (
         <div>
@@ -10,3 +10,5 @@ const _2FACodeVerification = () => {
         </div>
     )
 }
+
+export default TFACodeVerification

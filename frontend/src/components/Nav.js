@@ -1,4 +1,5 @@
 import {Outlet, Link} from "react-router-dom";
+import React from "react";
 
 const Nav = () => {
     return (
@@ -13,6 +14,9 @@ const Nav = () => {
                 </li>
                 <li>
                     <Link to ="/chat">Chat</Link>
+                </li>
+                <li>
+                    <Link to ="/2fa">2fa</Link>
                 </li>
             </ul>
         </nav>
