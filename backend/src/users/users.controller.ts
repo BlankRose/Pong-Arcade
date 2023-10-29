@@ -13,7 +13,6 @@ export class UsersController {
 		return this.usersService.blockUser(blockUserDto.userId, blockUserDto.blockedUserId);
 	}
 	*/
-
 	@Get('me')
 	getProfile(@Request() req) {
 		return this.usersService.getUser(req.user['username']);

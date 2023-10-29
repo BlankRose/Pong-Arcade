@@ -11,6 +11,7 @@ import ChatPage from './components/Chat';
 import Header from './components/Header';
 import Profil from './components/Profil';
 import Game from './components/Game';
+import UpdateProfil from './components/UpdateProfil';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
@@ -35,6 +36,7 @@ function App() {
 						<Route path="game" element={<Game />} />
 						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
 						<Route path= "profil" element={<Profil />}/>
+						<Route path= "updateProfil" element={<UpdateProfil />} />
 						<Route path="*" element={<p>tempo</p>} />
 					</Routes>
 					</BrowserRouter>
