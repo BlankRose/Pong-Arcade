@@ -4,6 +4,7 @@ import { Injectable, ConflictException, BadRequestException } from '@nestjs/comm
 import { User} from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
 
 @Injectable()
 export class UsersService {
@@ -70,40 +71,11 @@ export class UsersService {
 	async validateUserPassword(username: string, rawPassword: string): Promise<boolean> {
 		const user = await this.usersRepository.findOne({ where: { username: username } });
 		if (!user) {
-				return false; // Utilisateur non trouvé
+				return false;
 		}
 		const isMatch = await bcrypt.compare(rawPassword, user.password);
-		return isMatch; // Renvoie true si le mot de passe est valide, false sinon
+		return isMatch;
 	}
-
-	/*
-	async blockUser(userId: number, blockedUserId: number): Promise<void> {
-		const user = await this.usersRepository.findOne({ where: { id: userId } });
-		const blockedUser = await this.usersRepository.findOne({ where: { id: blockedUserId } });
-		
-		if (!user || !blockedUser) {
-			throw new NotFoundException('User not found');
-		}
-	
-		// Charger la relation blockedUsers si elle n'est pas déjà chargée
-		if (!user.blockedUsers) {
-			user.blockedUsers = await this.usersRepository.createQueryBuilder('user')
-				.relation(User, 'blockedUsers')
-				.of(user)
-				.loadMany();
-		}
-	
-		// Vérifie si l'utilisateur est déjà bloqué
-		if (user.blockedUsers.some(u => u.id === blockedUserId)) {
-			return; // L'utilisateur est déjà bloqué, donc rien à faire
-		}
-	
-		user.blockedUsers.push(blockedUser);
-		await this.usersRepository.save(user);
-	}
-	*/
-
-	//fonction remplacant le nouveau username par l'ancien;
 
 	async replaceUsername(target: number, newUserName: string): Promise<User>
 	{
@@ -117,5 +89,30 @@ export class UsersService {
 		const updateUser = await this.findOneByID(target);
 
 		return this.purgeData(updateUser);
+	}
+
+	async replaceAvatar(target: number, newAvatar: UploadAvatarDto): Promise<User>
+	{
+		if (!newAvatar || !newAvatar.data)
+			throw new BadRequestException('Missing the avatar');
+
+		if (newAvatar.isUrl)
+		{
+			if (!newAvatar.data.startsWith('http'))
+				throw new BadRequestException('Invalid URL');
+			await this.usersRepository.update(target, { avatar: newAvatar.data });
+			return this.purgeData(await this.findOneByID(target));
+		}
+		else
+		{
+			// TO-DO: Upload img server to server
+			return this.purgeData(await this.findOneByID(target));
+		}
+	}
+
+	async removeAvatar(target: number): Promise<User>
+	{
+		await this.usersRepository.update(target, { avatar: null });
+		return this.purgeData(await this.findOneByID(target));
 	}
 }

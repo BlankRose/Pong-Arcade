@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import apiHandle, { withAuth } from './API_Access';
+import apiHandle, { apiBaseURL, withAuth } from './API_Access';
 import Avatar from '../assets/avatar.jpeg';
 import '../styles/Profil.css'
 import {Link} from 'react-router-dom';
@@ -7,24 +7,34 @@ import {Link} from 'react-router-dom';
 function Profil() {
 	const [user, setUser] = useState(null);
 	const [avatar, setAvatar] = useState(Avatar);
-	const [pseudo, setPseudo] = useState('')
-
-	//Recuperation de l'utilisateur connecté via le token d'authentification. 
 
 	useEffect(() => {
 		apiHandle.get('/users/me', withAuth() )
 			.then(response => {
-				setUser(response.data)
+				setUser(response.data);
 			})
-			.catch(err => {
-				console.error(err);
+			.catch(_ => {
+				console.error('Failed to fetch user data')
 			});
-		
-		if (user && user.avatar) {
-			// Requete de l avatar sur le back
-		}
 	}, []);
 
+	useEffect(() => {
+		if (user && user.avatar) {
+			if (user.avatar.startsWith('http')) {
+				setAvatar(user.avatar);
+			}
+			else {
+				const path = apiBaseURL + '/avatar/' + user.id + '.' + user.avatar;
+				apiHandle.get(`/avatar/${user.id}.${user.avatar}`)
+					.then(_ => {
+						setAvatar(path);
+					})
+					.catch(_ => {
+						console.error('Failed to fetch avatar');
+					});
+			}
+		}
+	}, [user]);
 
 	return (
 		<div className= "Container">
@@ -47,8 +57,8 @@ function Profil() {
 					</div>
 			</div>				
 			<div className='Friend-list'>
-				en construction ....
-			</div>			
+				Comming Soon (TM)
+			</div>
 		</div>
 	)
 }

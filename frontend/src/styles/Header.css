@@ -1,85 +1,79 @@
 @media screen and (min-width: 800px) {
-    header{
-        display: flex;
-        justify-content: start;
-        background-color: black;
-        width: auto;
-        height: auto;
-    }
-    
-    .Avatar{
-        position: absolute;
-        left: 90%;
-        top: 3%;
-    }
+	header{
+		display: flex;
+		justify-content: flex-start;
+		background-color: black;
+		width: auto;
+		height: auto;
+	}
+	    
+	.Avatar{
+		position: absolute;
+		left: 90%;
+		top: 3%;
+	}
 }
 
 @media  screen and (max-width: 800px) {
-    header{
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
-        background-color: black;
-        width: auto;
-        height: auto;
-    }
+	header{
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		background-color: black;
+		width: auto;
+		height: auto;
+	}
 
-    .Avatar{
-        position: absolute;
-        left: 83%;
-        top: 3%;
-    }
+	.Avatar{
+		position: absolute;
+		left: 83%;
+		top: 3%;
+	}
 }
 
-
-
-
-
-
-
 .title-header{
-    color: white;
-    font-size: 3rem;
-    margin-top: 1%;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	color: white;
+	font-size: 3rem;
+	margin-top: 1%;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .text-nav{
-    color: white;
-    text-decoration: none;
-    font-size: 2rem;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	color: white;
+	text-decoration: none;
+	font-size: 2rem;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .text-nav:hover{
-    font-weight: bolder;
-    color: lightgray;
-    font-size: 2.5rem;
+	font-weight: bolder;
+	color: lightgray;
+	font-size: 2.5rem;
 }
 
 .Avatar-profil{
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
 }
 
 .Avatar-profil:hover{
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 span{
-    display: none;
-    font-size: 1rem;
-    opacity: 0.5;
-    color: whitesmoke;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	display: none;
+	font-size: 1rem;
+	opacity: 0.5;
+	color: whitesmoke;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 .Avatar:hover span{
-    display: block;
+	display: block;
 }
 
 .invisible-button{
-    border-radius: 50%;
-    border: black solid 1px;
+	border-radius: 50%;
+	border: black solid 1px;
 }

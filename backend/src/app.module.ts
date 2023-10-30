@@ -39,10 +39,8 @@ import { JwtModule } from '@nestjs/jwt';
 		}),
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', 'assets'),
+			serveStaticOptions: { index: undefined },
 			serveRoot: "/avatar",
-			serveStaticOptions: {
-				index: false
-			}
 		}),
 		AuthModule,
 		UsersModule,
