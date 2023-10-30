@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Body, UseGuards, Request, Put, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request, Put, Param, Patch, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { BlockUserDto } from './dto/block-user.dto';
 import { User } from './user.entity';
+import { NotFoundError } from 'rxjs';
 
 @Controller('users')
 export class UsersController {
@@ -14,19 +15,25 @@ export class UsersController {
 	}
 	*/
 	@Get('me')
-	getProfile(@Request() req) {
-		return this.usersService.getUser(req.user['username']);
+	async getProfile(@Request() req) {
+		return this.usersService.purgeData(
+			await this.usersService.findOneByID(req.user['id'])
+		);
 	}
 
 	@Get(':username')
-	findOne(@Param() params: any): Promise<User> {
-		console.log(params.username);
-		return this.usersService.getUser('username')
+	async findOne(@Param() params): Promise<User> {
+		const user = await this.usersService.findOne(params.username);
+
+		if (!user)
+			throw new NotFoundException;
+		return this.usersService.purgeData(user);
 	}
 
-	@Put(':me')
-	changeName(@Request() req, @Body() body)
+	@Patch('me')
+	changeName(@Body() body, @Request() req)
 	{
-		return this.usersService.replaceUsername(body.username, req.user['username']);
+		console.log(req.user);
+		return this.usersService.replaceUsername(req.user['id'], body.username);
 	}
 }

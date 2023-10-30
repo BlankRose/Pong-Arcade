@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt/jwt-payload.interface';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
 import * as bcrypt from 'bcrypt';
@@ -17,22 +16,13 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
-	async validateUserByPayload(payload: JwtPayload): Promise<any> {
-		const user = await this.usersService.findOne(payload.username);
-		if (user) {
-			const { password, ...result } = user;
-			return result;
-		}
-		return null;
-	}
-
 	async login(req: LoginDto) {
 		const user = await this.validateUser(req.username, req.password);
 		if (!user) {
 			throw new UnauthorizedException();
 		}
 
-		const payload = { username: user.username, sub: user.id };
+		const payload = { username: user.username, id: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
@@ -43,7 +33,7 @@ export class AuthService {
 		const user = await this.usersService.findOne42(data.id);
 
 		if (user) {
-			const payload = { username: user.username, sub: user.id };
+			const payload = { username: user.username, id: user.id };
 			return {
 				access_token: this.jwtService.sign(payload),
 			};

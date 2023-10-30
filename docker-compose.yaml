@@ -45,6 +45,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ${PWD}/backend/src:/app/src
+      - ${PWD}/backend/assets:/app/assets
     networks:
       - pong-data
     restart: always

@@ -1,6 +1,6 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { User} from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,14 +16,19 @@ export class UsersService {
 		return this.usersRepository.findOne({ where: { username: username } });
 	}
 
-	async getUser(username: string): Promise<User | undefined> {
-		const user = this.findOne(username);
+	async findOneByID(id: number): Promise<User | undefined> {
+		return this.usersRepository.findOne({where: {id: id}});
+	}
+
+	// Removes critical information of the User data
+	// /!\ USE BEFORE SENDING USER AS REPLY
+	purgeData(user: User): User {
 		if (!user)
 			return undefined;
 
-		(await user).password = null;
-		(await user).id42 = null;
-		(await user).token2FA = null;
+		delete user.password;
+		delete user.id42;
+		delete user.token2FA;
 
 		return user;
 	}
@@ -102,18 +107,19 @@ export class UsersService {
 
 	//fonction remplacant le nouveau username par l'ancien;
 
-	async replaceUsername(newUserName : string, currentUsername : string): Promise<User>
+	async replaceUsername(target: number, newUserName: string): Promise<User>
 	{
-		const existingUser = await this.usersRepository.findOne({where : {username: newUserName}});
+		if (!newUserName)
+			throw new BadRequestException('Missing \'username\' parameter');
+		const existingUser = await this.findOne(newUserName);
 		if (existingUser)
 			throw new ConflictException('Username already exists');
-		const user = await this.usersRepository.findOne({where : {username: currentUsername}});
-		user.username = newUserName;
-		const savedUser = await this.usersRepository.save(user);
-		return savedUser;
+
+		console.log('New:', newUserName, 'for', target);
+		await this.usersRepository.update(target, { username: newUserName });
+		const updateUser = await this.findOneByID(target);
+		console.log('Next:', updateUser.username);
+
+		return this.purgeData(updateUser);
 	}
 }
-
-
-
-

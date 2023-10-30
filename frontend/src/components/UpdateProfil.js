@@ -17,11 +17,13 @@ function UpdateProfil() {
 			});
         }, [])
 
+        //update de username avec Patch
+
         const handleSubmit = (e) => {
             e.preventDefault();
-            apiHandle.put('/users/me', withAuth(), user)
+            apiHandle.patch('/users/me',user, withAuth())
             .then(res => {
-                console.log({...user, username: res.data.username})
+                console.log(user.username);
             })
             .catch(err => console.log(err))
         }
@@ -35,8 +37,9 @@ function UpdateProfil() {
                 <br></br>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor='Pseudo'> Pseudo</label>
+                        <label htmlFor='username'> Pseudo</label>
                         <input type="text"
+                        id='username'
                         className='form-control'
                         placeholder='modifier votre pseudo'
                         value={user ? user.username : undefined}
@@ -47,8 +50,7 @@ function UpdateProfil() {
                         <button className="btn-info">Valider</button>
                 </form>
             </div>                           
-        </div>
-        
+        </div>       
     )
 }
 

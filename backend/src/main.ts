@@ -8,7 +8,7 @@ async function bootstrap() {
 		allowedHeaders: '*',
 		origin: '*',
 		credentials: true,
-	}); // Activez CORS pour toutes les origines
+	});
 	const port = 3001;
 	await app.listen(port);
 	Logger.log(`Server running on http://localhost:${port}`, 'Bootstrap');
