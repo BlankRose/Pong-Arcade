@@ -10,10 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-
 s: start
 start: .env
-	-@docker-compose up --build
+	-@docker-compose up --build -t 3
 
 sd: start_detached
 start_detached: .env
@@ -24,11 +23,11 @@ start_detached: .env
 
 e: stop
 stop:
-	-@docker-compose down -t $(TIMEOUT)
+	-@docker-compose down -t 3
 
 c: clean
 clean: stop
-	-@docker-compose down -vt $(TIMEOUT) --rmi all
+	-@docker-compose down -vt 3 --rmi all
 
 fc: fclean
 fclean: stop

@@ -1,8 +1,7 @@
-import { Controller, Post, Get, Body, UseGuards, Request, Put, Param, Patch, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Request, Param, Patch, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { BlockUserDto } from './dto/block-user.dto';
 import { User } from './user.entity';
-import { NotFoundError } from 'rxjs';
 
 @Controller('users')
 export class UsersController {
@@ -33,7 +32,6 @@ export class UsersController {
 	@Patch('me')
 	changeName(@Body() body, @Request() req)
 	{
-		console.log(req.user);
 		return this.usersService.replaceUsername(req.user['id'], body.username);
 	}
 }

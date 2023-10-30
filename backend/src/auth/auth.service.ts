@@ -22,7 +22,7 @@ export class AuthService {
 			throw new UnauthorizedException();
 		}
 
-		const payload = { username: user.username, id: user.id };
+		const payload = { id: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
@@ -33,7 +33,7 @@ export class AuthService {
 		const user = await this.usersService.findOne42(data.id);
 
 		if (user) {
-			const payload = { username: user.username, id: user.id };
+			const payload = { id: user.id };
 			return {
 				access_token: this.jwtService.sign(payload),
 			};

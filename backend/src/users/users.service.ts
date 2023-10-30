@@ -62,8 +62,6 @@ export class UsersService {
 		user.username = data.username;
 		user.password = await bcrypt.hash('', 10);
 
-		// TO-DO: Call 42 API to convert code into actual auth token
-		//        and retrieve user information thru the new token
 		user.id42 = data.code;
 		const savedUser = await this.usersRepository.save(user);
 		return savedUser;
@@ -115,10 +113,8 @@ export class UsersService {
 		if (existingUser)
 			throw new ConflictException('Username already exists');
 
-		console.log('New:', newUserName, 'for', target);
 		await this.usersRepository.update(target, { username: newUserName });
 		const updateUser = await this.findOneByID(target);
-		console.log('Next:', updateUser.username);
 
 		return this.purgeData(updateUser);
 	}

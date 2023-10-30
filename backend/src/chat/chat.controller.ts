@@ -13,16 +13,16 @@ export class ChatController
 
 	@Get('channels')
 	getChannels(@Request() req) {
-		return this.chatService.getChannels(req.user['username']);
+		return this.chatService.getChannels(req.user['id']);
 	}
 
 	@Post('channel')
 	createChannel(@Request() req, @Body() body: NewChannelDto) {
-		return this.chatService.createChannel(req.user['username'], body);
+		return this.chatService.createChannel(req.user['id'], body);
 	}
 
 	@Get('messages')
 	getMessages(@Request() req, @Body() body: GetMessageDto) {
-		return this.chatService.getMessages(req.user['username'], body);
+		return this.chatService.getMessages(req.user['id'], body);
 	}
 }

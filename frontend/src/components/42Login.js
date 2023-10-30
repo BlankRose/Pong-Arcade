@@ -58,7 +58,8 @@ function LoginPage({ onLoginSuccess }) {
 							setAuthenticated(true);
 							setErrorMessage(null);
 							apiHandle.post('/auth/login42', { code: response.data })
-								.then((response) => {
+								.then((res) => {
+									localStorage.setItem('token', res.data.access_token);
 									onLoginSuccess();
 								})
 								.catch((error) => {

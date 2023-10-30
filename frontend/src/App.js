@@ -1,8 +1,6 @@
 import './styles/App.css';
 
-
-import { useState } from 'react';
-import ReactDom from "react-dom/client";
+import { useEffect, useState } from 'react';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 import Login from './components/Login';
@@ -12,9 +10,24 @@ import Header from './components/Header';
 import Profil from './components/Profil';
 import Game from './components/Game';
 import UpdateProfil from './components/UpdateProfil';
+import apiHandle, { withAuth } from './components/API_Access';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
+
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			apiHandle.get('/auth/verify', withAuth())
+				.then((_) => {
+					setIsLoggedIn(true);
+				})
+				.catch((_) => {
+					console.error("Warning: Token is invalid or has expired!")
+					localStorage.removeItem('token');
+					setIsLoggedIn(false);
+				})
+		}
+	})
 
 	const onLoginSuccess = () => {
 		setIsLoggedIn(true);

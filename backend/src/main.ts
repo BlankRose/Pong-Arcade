@@ -9,6 +9,7 @@ async function bootstrap() {
 		origin: '*',
 		credentials: true,
 	});
+
 	const port = 3001;
 	await app.listen(port);
 	Logger.log(`Server running on http://localhost:${port}`, 'Bootstrap');

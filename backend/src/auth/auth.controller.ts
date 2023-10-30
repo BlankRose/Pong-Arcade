@@ -44,6 +44,12 @@ export class AuthController {
 		}
 	}
 
+	@Get('/verify')
+	async verify() {
+		// Would automatly get verified by AuthGuard
+		return { status: 'ok' };
+	}
+
 	@Get('/token42')
 	async token42(@Request() req) {
 		return this.authService.token42(req.query.code, req.query.uri);
