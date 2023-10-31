@@ -28,14 +28,15 @@ function Profil({ username }) {
 					<div className='profil'>
 						<img className='Profil-avatar' alt='profil' src= {avatar}/>
 						<h2 className="Profil-username">{user ? user.username : undefined }</h2>
-						{ !username && <Link to='/updateProfil' className= "updateProfile" >Modifier Profil</Link> }
+						{ (!username && <Link to='/updateProfil' className= "updateProfile" >Modifier Profil</Link>)
+							|| <Link to='/' className= "updateProfile" >Retour</Link> }
 					</div>
 					<div className = 'stats'>
 						<ul className='list-stat'>
 							<li className='Profil-stat'>Rank: {user ? user.rank : undefined} </li>
-							<li className='Profil-stat'> Victoire: {user ? user.win : undefined}</li>
-							<li className='Profil-stat'> Defaite: {user ? user.lose : undefined}</li>
-							<li className='Profil-stat'> Ratio: {user ? user.streak : undefined}</li>
+							<li className='Profil-stat'>Wins: {user ? user.win : undefined}</li>
+							<li className='Profil-stat'>Lose: {user ? user.lose : undefined}</li>
+							<li className='Profil-stat'>Ratio: {user ? user.streak : undefined}</li>
 						</ul>
 					</div>
 					<div className = 'historique'>

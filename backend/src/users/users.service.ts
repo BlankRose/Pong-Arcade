@@ -97,6 +97,15 @@ export class UsersService {
 		if (!newAvatar || !newAvatar.data)
 			throw new BadRequestException('Missing the avatar');
 
+		if (!newAvatar.data.startsWith('http'))
+		{
+			const type = newAvatar.data.split(';')[0].split('/')[1];
+			if (type !== 'png' && type !== 'jpg' && type !== 'jpeg'
+				&& type !== 'gif' && type !== 'bmp' && type !== 'svg'
+				&& type !== 'webp' && type !== 'ico')
+				throw new BadRequestException('Unsupported image type');
+		}
+
 		await this.usersRepository.update(target, { avatar: newAvatar.data });
 		return this.purgeData(await this.findOneByID(target));
 	}

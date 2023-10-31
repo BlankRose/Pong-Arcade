@@ -37,7 +37,10 @@ function UpdateProfil() {
 					setErrorAvatar(null);
 				})
 				.catch(err => {
-					setErrorAvatar(err.response.data.message);
+					if (413 === err.response.status)
+						setErrorAvatar('Provided image is too large');
+					else
+						setErrorAvatar(err.response.data.message);
 				});
 		} else {
 			apiHandle.delete('/users/me/avatar', withAuth())
@@ -55,7 +58,6 @@ function UpdateProfil() {
 			return;
 		const reader = new FileReader();
 		reader.onload = () => {
-			console.log(reader.result);
 			setAvatar(reader.result);
 			setErrorAvatar(null);
 		}
@@ -69,20 +71,20 @@ function UpdateProfil() {
 	return (
 		<div className="d-block w-100 vh-100 m-4">
 			<div className='border bg-gray w-50 p-5 mx-auto'>
-				<h2>Modifier votre profil</h2>
+				<h2>Modify your profile</h2>
 				<br></br>
 				<form onSubmit={handleSubmit}>
 					<div>
 						<label htmlFor='username'>
-							Pseudo
-						{ errorName
+							Username
+							{ errorName
 								? <span className='inline text-danger'> X</span>
 								: <span className='inline text-success'> V</span> }
 						</label>
 						<input type="text"
 							id='username'
 							className='form-control'
-							placeholder='modifier votre pseudo'
+							placeholder='Modify your username'
 							value={user ? user.username : undefined}
 							onChange={e =>setUser({...user, username: e.target.value})}
 						/>
@@ -95,14 +97,13 @@ function UpdateProfil() {
 						<input type="text"
 							id='avatarUrl'
 							className='form-control'
-							placeholder='modifier votre avatar'
+							placeholder='Modify avatar, via URL or upload a file'
 							value={user && user.avatar && user.avatar.startsWith('http') ? user.avatar : undefined}
 							onChange={e =>setUser({...user, avatar: e.target.value})}
 						/>
 						<input type="file"
 							id='avatarFile'
 							className='form-control'
-							placeholder='choisir une image d avatar'
 							onChange={e => handleUpload(e.target.files[0])}
 							onClick={e => {e.target.value = null && setAvatar(null)}}
 						/>

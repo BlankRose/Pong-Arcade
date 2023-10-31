@@ -45,9 +45,9 @@ export class User {
 	@JoinColumn()
 	friends: User[];
 
-	@ManyToOne(() => User)
+	@ManyToMany(() => User)
 	@JoinColumn()
-	friendRequest: User;
+	friendRequest: User[];
 
 	@ManyToMany(() => User)
 	@JoinColumn()
