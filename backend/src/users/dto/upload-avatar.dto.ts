@@ -1,4 +1,3 @@
 export class UploadAvatarDto {
-	readonly isUrl: boolean;
-	readonly data: any;
+	readonly data: string;
 }

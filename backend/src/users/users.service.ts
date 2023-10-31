@@ -82,12 +82,13 @@ export class UsersService {
 		if (!newUserName)
 			throw new BadRequestException('Missing \'username\' parameter');
 		const existingUser = await this.findOne(newUserName);
-		if (existingUser)
+
+		if (!existingUser)
+			await this.usersRepository.update(target, { username: newUserName });
+		else if (existingUser.id !== target)
 			throw new ConflictException('Username already exists');
 
-		await this.usersRepository.update(target, { username: newUserName });
 		const updateUser = await this.findOneByID(target);
-
 		return this.purgeData(updateUser);
 	}
 
@@ -96,18 +97,8 @@ export class UsersService {
 		if (!newAvatar || !newAvatar.data)
 			throw new BadRequestException('Missing the avatar');
 
-		if (newAvatar.isUrl)
-		{
-			if (!newAvatar.data.startsWith('http'))
-				throw new BadRequestException('Invalid URL');
-			await this.usersRepository.update(target, { avatar: newAvatar.data });
-			return this.purgeData(await this.findOneByID(target));
-		}
-		else
-		{
-			// TO-DO: Upload img server to server
-			return this.purgeData(await this.findOneByID(target));
-		}
+		await this.usersRepository.update(target, { avatar: newAvatar.data });
+		return this.purgeData(await this.findOneByID(target));
 	}
 
 	async removeAvatar(target: number): Promise<User>

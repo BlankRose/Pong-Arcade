@@ -11,6 +11,7 @@ import Profil from './components/Profil';
 import Game from './components/Game';
 import UpdateProfil from './components/UpdateProfil';
 import apiHandle, { withAuth } from './components/API_Access';
+import ProfilContainer from './components/ProfilContainer';
 
 function App() {
 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
@@ -49,6 +50,7 @@ function App() {
 						<Route path="game" element={<Game />} />
 						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
 						<Route path= "profil" element={<Profil />}/>
+						<Route path="profil/:username" element={<ProfilContainer />} />
 						<Route path= "updateProfil" element={<UpdateProfil />} />
 						<Route path="*" element={<p>tempo</p>} />
 					</Routes>

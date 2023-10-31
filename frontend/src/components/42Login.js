@@ -102,9 +102,10 @@ function LoginPage({ onLoginSuccess }) {
 	const handleRegister = () => {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
-			.then(() => {
+			.then(res => {
 				setNewbie(false);
 				setOAuthToken(null);
+				localStorage.setItem('token', res.data.access_token);
 				onLoginSuccess();
 			})
 			.catch((error) => {

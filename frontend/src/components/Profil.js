@@ -1,48 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import apiHandle, { apiBaseURL, withAuth } from './API_Access';
+import apiHandle, { withAuth } from './API_Access';
 import Avatar from '../assets/avatar.jpeg';
-import '../styles/Profil.css'
 import {Link} from 'react-router-dom';
 
-function Profil() {
+import '../styles/Profil.css';
+
+function Profil({ username }) {
 	const [user, setUser] = useState(null);
 	const [avatar, setAvatar] = useState(Avatar);
 
 	useEffect(() => {
-		apiHandle.get('/users/me', withAuth() )
+		apiHandle.get(`/users/${username || 'me'}`, withAuth() )
 			.then(response => {
 				setUser(response.data);
+				if (response.data && response.data.avatar)
+					setAvatar(response.data.avatar);
 			})
 			.catch(_ => {
 				console.error('Failed to fetch user data')
 			});
-	}, []);
-
-	useEffect(() => {
-		if (user && user.avatar) {
-			if (user.avatar.startsWith('http')) {
-				setAvatar(user.avatar);
-			}
-			else {
-				const path = apiBaseURL + '/avatar/' + user.id + '.' + user.avatar;
-				apiHandle.get(`/avatar/${user.id}.${user.avatar}`)
-					.then(_ => {
-						setAvatar(path);
-					})
-					.catch(_ => {
-						console.error('Failed to fetch avatar');
-					});
-			}
-		}
-	}, [user]);
+	}, [username]);
 
 	return (
-		<div className= "Container">
-			<div className='CardProfil'>
-				<div className='profil'>
+		user
+			? <div className= "Container">
+				<div className='CardProfil'>
+					<div className='profil'>
 						<img className='Profil-avatar' alt='profil' src= {avatar}/>
 						<h2 className="Profil-username">{user ? user.username : undefined }</h2>
-						<Link to='/updateProfil' className= "updateProfile" >Modifier Profil</Link>
+						{ !username && <Link to='/updateProfil' className= "updateProfile" >Modifier Profil</Link> }
 					</div>
 					<div className = 'stats'>
 						<ul className='list-stat'>
@@ -55,11 +41,12 @@ function Profil() {
 					<div className = 'historique'>
 						<button className='button-h'>Historique des match</button>
 					</div>
-			</div>				
-			<div className='Friend-list'>
-				Comming Soon (TM)
+				</div>
+				<div className='Friend-list'>
+					Comming Soon (TM)
+				</div>
 			</div>
-		</div>
+			: <p className='Profil-load alert alert-warning'>Loading... Are you sure the user exists?</p>
 	)
 }
 

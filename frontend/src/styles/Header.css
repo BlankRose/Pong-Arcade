@@ -10,7 +10,7 @@
 	.Avatar{
 		position: absolute;
 		left: 90%;
-		top: 3%;
+		top: 1%;
 	}
 }
 
@@ -52,21 +52,24 @@
 }
 
 .Avatar-profil{
-	height: 50px;
-	width: 50px;
+	height: 70px;
+	width: 70px;
 	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
 }
 
 .Avatar-profil:hover{
 	opacity: 0.5;
 }
 
-span{
+.Avatar span{
 	display: none;
 	font-size: 1rem;
 	opacity: 0.5;
 	color: whitesmoke;
 	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	font-weight: bold;
 }
 
 .Avatar:hover span{

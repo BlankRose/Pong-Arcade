@@ -46,10 +46,12 @@
 
 
 .Profil-avatar{
-    height: 60px;
-    width:60px;
+    height: 150px;
+    width:150px;
     border-radius: 50%;
     border: solid black 1px;
+	background-size: cover;
+	background-position: center;
     margin-top: 5%;
     margin-left: 5%;
 }
@@ -88,4 +90,10 @@
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     text-align: justify;
     line-height: 10px;
+}
+
+.Profil-load {
+	width: 80%;
+	margin: auto;
+	margin-top: 50px;
 }

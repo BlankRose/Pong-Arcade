@@ -26,14 +26,14 @@ export class ChatService
 	) {}
 
 	async createChannel(username: string, request: NewChannelDto) {
-		// To-Do		
+		// To-Do
 	}
 
 	async getChannels(username: string) {
 		const user = this.userRepo.findOne({
 			where: { username: username },
 			relations: ['channels']
-		})
+		});
 
 		return (await user).channels;
 	}
@@ -42,12 +42,12 @@ export class ChatService
 		const user: User = await this.userRepo.findOne({
 			where: { username: username },
 			relations: ['channels']
-		})
+		});
 
 		const channel: Channel = await this.channelRepo.findOne({
 			where: { id: request.channel },
 			relations: ['messages', 'members']
-		})
+		});
 
 		if (!channel)
 			throw new UnauthorizedException();
@@ -57,7 +57,7 @@ export class ChatService
 				if (channel.members[i].user.id == user.id)
 					return true;
 			}
-			return false
+			return false;
 		})();
 
 		if (!is_member)

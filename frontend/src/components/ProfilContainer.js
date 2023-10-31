@@ -1,9 +1,9 @@
 import {useParams} from 'react-router-dom'
 import Profil from './Profil'
 
-function profilContainer() {
+function ProfilContainer() {
     const { username } = useParams()
     return <Profil username={username}/>
 }
 
-export default profilContainer
+export default ProfilContainer;
