@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Request, Body, UseGuards, ConflictException } from '@nestjs/common';
+import { Controller, Post, Get, Request, Body, UseGuards, ConflictException, Header, Req } from '@nestjs/common';
 import { AuthGuard } from './jwt/jwt.strategy';
 import { AuthService } from './auth.service';
 
@@ -7,10 +7,13 @@ import { Login42Dto } from './dto/login42.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
 import { log } from 'console';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(
+		private authService: AuthService,
+		private readonly usersService: UsersService) {}
 
 	@Post('/login')
 	async login(@Request() req, @Body() loginDto: LoginDto) {
@@ -50,6 +53,12 @@ export class AuthController {
 	async token42(@Request() req) {
 		return this.authService.token42(req.query.code, req.query.uri);
 	}
+
+    @Get('loginStatus')
+    @Header('Access-Control-Allow-Origin', 'http://localhost:5173')
+    getStatus(@Req() req) {
+        return this.usersService.sessionStatus(req)
+    }
 
 	@UseGuards(AuthGuard)
     @Post('2fa/turn-on')

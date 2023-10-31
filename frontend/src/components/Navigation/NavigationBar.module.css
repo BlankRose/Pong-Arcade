@@ -1,13 +1,13 @@
-/* NavigationBar.module.css */
 
-@import url('https://fonts.googleapis.com/css?family=Roboto');
 
-/* Common styles */
+
+
+/* Common styles
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
-}
+} */
 
 /* Navbar styles */
 .nav {
@@ -48,13 +48,3 @@ body {
   color: #fff;
   background-color: #3842a2; /* Adjust active background */
 }
-
-.leftContainer a:not(:only-child)::after {
-  content: "\f105";
-  margin-left: 10px; /* Adjust icon spacing */
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-}
-
-/* Hori-selector - If necessary for underlining active link */
-/* ... Your existing hori-selector styles ... */

@@ -50,7 +50,6 @@ export class AuthService {
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 
-		req['user'] = {username: data.login, avatarUrl: data.image.versions.small, _42Id: data.id}
 		if (user) {
 			const payload = { username: user.username, sub: user.id };
 			return {
@@ -74,7 +73,8 @@ export class AuthService {
 
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
-			code: data.id
+			code: data.id,
+			status: 'online'
 		});
 		return user;
 	}

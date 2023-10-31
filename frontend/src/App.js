@@ -14,6 +14,8 @@ import React from 'react';
 import Navbar from './components/Navigation/NavigationBar';
 import Template from './components/Template/template';
 
+import { statusLoader } from './Loader'
+
 
 const onLoginSuccess = () => {
 
@@ -27,7 +29,7 @@ const router = createBrowserRouter ([
 		path: "/",
 		element: <Template/>,
 		// errorElement: <ErrorPage/>,
-		// loader: RootLoader,
+		loader: statusLoader,
 		children:[
 			{
 				index: true,

@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request, NotFoundException, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { BlockUserDto } from './dto/block-user.dto';
 import { AuthGuard } from 'src/auth/jwt/jwt.strategy';
+import { use } from 'passport';
 
 @Controller('users')
 export class UsersController {
@@ -13,8 +14,17 @@ export class UsersController {
 	}
 
 	// @UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get('me')
-	getProfile(@Request() req) {
-		return req.user;
+	async getUserInfo (@Request() req) {
+		try {
+			await this.usersService.getUserInfo(req.user['username'])
+		} catch (error) {
+			throw new NotFoundException
+		}
 	}
+
+
 }
+
+   

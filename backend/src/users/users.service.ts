@@ -1,9 +1,11 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { User } from './user.entity';
+import { Injectable, ConflictException, NotFoundException, Req} from '@nestjs/common';
+import { User, UserStatus } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import Request from '@nestjs/common'
+
 
 @Injectable()
 export class UsersService {
@@ -35,6 +37,24 @@ export class UsersService {
 		return savedUser;
 	}
 
+	async updateUserData(username: string, )
+	sessionStatus(@Req() req) {
+        if (req.user) {
+            return { status: 'online' }
+        } else {
+            return { status: 'offline'}
+        }
+    }
+
+	async turnOnline (username: string) {
+		try {
+			const user = await this.findOne(username)
+
+			if (user && user.status != UserStatus.Online) {
+				this.update(username, {username: username, status: UserStatus.Online})
+			}
+		}
+	}
 	async createUserFrom42(data: any): Promise<User> {
 		const existingUser = await this.usersRepository.findOne({ where: { username: data.username } });
 		if (existingUser) {
@@ -44,6 +64,7 @@ export class UsersService {
 		const user = new User();
 		user.username = data.username;
 		user.password = await bcrypt.hash('', 10);
+		user.status = UserStatus.Online 
 
 		// TO-DO: Call 42 API to convert code into actual auth token
 		//        and retrieve user information thru the new token
@@ -85,6 +106,18 @@ export class UsersService {
 	
 		user.blockedUsers.push(blockedUser);
 		await this.usersRepository.save(user);
+	}
+
+	async getUserInfo(username: string) {
+		const user = await this.findOne(username)
+		if(!user) {
+			throw new NotFoundException('User does not exist')
+		}
+		console.log("**************", user)
+		const {_2FAToken, id42, password, ...rest} = user
+		console.log("**************", rest)
+
+		return rest
 	}
 
 // ************************2FA Part************************
