@@ -1,0 +1,99 @@
+.Container{
+    padding-top: 2%;
+    margin-top: 2%;
+    margin-left: 5%;
+    height: auto;
+    width: auto;
+    display: grid;
+    grid-template-areas:
+    "profil friendlist "
+    "stats  friendlist"
+    "historique friendlist";
+    grid-template-columns: 1fr 30%;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+.CardProfil{
+    border: 1px solid black;
+}
+
+.profil{
+    grid-area: profil;
+    display: flex;
+    flex-direction: row;
+}
+
+.stats{
+    grid-area: stats;   
+}
+
+.historique{
+    grid-area: historique;
+}
+
+.historique{
+    height: 15%;
+    border-radius: 5%;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.Friend-list{
+    grid-area: friendlist;
+    border: 1px solid black;
+    background-color: aqua;
+}
+
+
+.Profil-avatar{
+    height: 150px;
+    width:150px;
+    border-radius: 50%;
+    border: solid black 1px;
+	background-size: cover;
+	background-position: center;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.Profil-username{
+    margin-left: 5%;
+    margin-top: 8%;
+    font-size: 2rem;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.updateProfile{
+    margin-top: 8%;
+    margin-left: 5%;
+    text-decoration: none;
+    background-color: rgb(127, 127, 137);
+    color: white;
+    border-radius: 10%;
+    box-shadow: 10px 5px 5px black;
+}
+
+.updateProfile:hover{
+    background-color: rgb(73, 71, 71);
+}
+
+.list-stat{
+    list-style: none;
+
+
+}
+
+.Profil-stat{
+    margin:3%;
+    margin-left: 5%;
+    font-size: 1.5rem;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    text-align: justify;
+    line-height: 10px;
+}
+
+.Profil-load {
+	width: 80%;
+	margin: auto;
+	margin-top: 50px;
+}

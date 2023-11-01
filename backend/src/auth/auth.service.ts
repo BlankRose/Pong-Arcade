@@ -1,7 +1,6 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt/jwt-payload.interface';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
 import * as bcrypt from 'bcrypt';
@@ -12,10 +11,8 @@ import { User } from 'src/users/user.entity';
 import { authenticator } from 'otplib';
 import { toDataURL } from 'qrcode'
 
-import * as QRCode from 'qrcode';
 import {Request, Body} from '@nestjs/common'
 import { LoginDto } from './dto/login.dto';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -25,22 +22,13 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
-	async validateUserByPayload(payload: JwtPayload): Promise<any> {
-		const user = await this.usersService.findOne(payload.username);
-		if (user) {
-			const { password, ...result } = user;
-			return result;
-		}
-		return null;
-	}
-
 	async login(req: LoginDto) {
 		const user = await this.validateUser(req.username, req.password);
 		if (!user) {
 			throw new UnauthorizedException();
 		}
 
-		const payload = { username: user.username, sub: user.id };
+		const payload = { id: user.id };
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
@@ -51,7 +39,7 @@ export class AuthService {
 		const user = await this.usersService.findOne42(data.id);
 
 		if (user) {
-			const payload = { username: user.username, sub: user.id };
+			const payload = { id: user.id };
 			return {
 				access_token: this.jwtService.sign(payload),
 			};
@@ -60,12 +48,10 @@ export class AuthService {
 	}
 
 	async register(registerDto: RegisterDto): Promise<any> {
-		const user = await this.usersService.createUser({
+		await this.usersService.createUser({
 			username: registerDto.username,
 			password: registerDto.password,
 		});
-
-		return user;
 	}
 
 	async register42(registerDto: Register42Dto): Promise<any> {
@@ -99,7 +85,7 @@ export class AuthService {
 	// ****************************2FA Part****************************
 
 	async turnOn2fa(@Request() req, @Body() body) {
-		const user = await this.usersService.findOne(req.user['username'])
+		const user = await this.usersService.findOneByID(req.user['id'])
 		if(!user){
 			throw new NotFoundException('User does not exist!')
 		}
@@ -109,11 +95,10 @@ export class AuthService {
 		}
 		this.usersService.turnOn2FA(user.id)
 		return true
-
 	}
 
 	async turnOff2fa(@Request() req) {
-		const user = await this.usersService.findOne(req.user['username'])
+		const user = await this.usersService.findOneByID(req.user['id'])
 
 		if(!user){
 			throw new NotFoundException('User does not exist!')
@@ -136,7 +121,7 @@ export class AuthService {
 	}
 
 	async generateQrCode (@Request() req) {
-		const user = await this.usersService.findOne(req.user['username']) 
+		const user = await this.usersService.findOneByID(req.user['id']) 
 		if (!user) {
 			throw new NotFoundException('User does not exist!')
 		}
@@ -147,14 +132,12 @@ export class AuthService {
 
 
 	is2FASecretValid (ProvidedCode: string, user: User):boolean {
-		
 		const L = authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
 		return (L)
 	}
 
-
 	async codeVerification (@Request() req, @Body() body ) {
-		const user = await this.usersService.findOne(req.user['username'])
+		const user = await this.usersService.findOneByID(req.user['id'])
 		if(!user) {
 			throw new NotFoundException('User does not exist')
 		}

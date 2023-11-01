@@ -1,14 +1,13 @@
-import { Outlet } from "react-router-dom"
-// import Nav from "../Nav.js"
-import Navbar from "../Navigation/NavigationBar.js"
+import { Outlet } from "react-router-dom";
+import Navbar from "../Navigation/NavigationBar.js";
 
 const Template = () => {
   return (
     <>
       <Navbar></Navbar>
-      <main>
-        <Outlet></Outlet>
-      </main>
+		<main>
+        	<Outlet></Outlet>
+      	</main>,
     </>
   )
 }

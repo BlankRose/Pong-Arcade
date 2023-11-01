@@ -118,7 +118,7 @@ const CodeValidation = ({ url, logOutButton }) => {
       <p>{errorMessage}</p>
       <div>
         <button type="submit">Submit</button>
-        <a href="#" onClick={handleClear}>
+        <a href="#top" onClick={handleClear}>
           Clear
         </a>
       </div>

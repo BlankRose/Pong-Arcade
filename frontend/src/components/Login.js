@@ -58,9 +58,9 @@ function LoginPage({ onLoginSuccess }) {
             {isLogin ? (
                 <p>
                     Pas encore de compte?{' '}
-                    <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => setIsLogin(false)}>
+                    <button  onClick={() => setIsLogin(false)}>
                         S'inscrire
-                    </span>
+                    </button>
                 </p>
             ) : (
                 <p>

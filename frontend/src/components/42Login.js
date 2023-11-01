@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {useSelector, useDispatch} from 'react-redux'
 import "../styles/Login.css";
-import store from '../store/index'
 
 import apiHandle from "./API_Access";
 
@@ -9,9 +7,8 @@ const apiUID = process.env.REACT_APP_API_UID;
 
 function LoginPage({ onLoginSuccess }) {
 	const [ authenticated, setAuthenticated ] = useState(false);
-	const [ errorMessage, setErrorMessage ] = useState(null); 
-	const isLoggedIn = useSelector(state=> state.user.status)
-	console.log("************", isLoggedIn)
+	const [ errorMessage, setErrorMessage ] = useState(null);
+
 	// 42 OAuth Login
 	const [ newbie, setNewbie ] = useState(false); // Determines if the user is new or not
 	const [ OAuthURI, setOAuthURI ] = useState(null);
@@ -61,9 +58,8 @@ function LoginPage({ onLoginSuccess }) {
 							setAuthenticated(true);
 							setErrorMessage(null);
 							apiHandle.post('/auth/login42', { code: response.data })
-								.then((response) => {
-									localStorage.setItem('token', response.data.access_token);
-									console.log(localStorage.getItem('token'))
+								.then((res) => {
+									localStorage.setItem('token', res.data.access_token);
 									onLoginSuccess();
 								})
 								.catch((error) => {
@@ -106,9 +102,10 @@ function LoginPage({ onLoginSuccess }) {
 	const handleRegister = () => {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
-			.then(() => {
+			.then(res => {
 				setNewbie(false);
 				setOAuthToken(null);
+				localStorage.setItem('token', res.data.access_token);
 				onLoginSuccess();
 			})
 			.catch((error) => {
@@ -123,7 +120,7 @@ function LoginPage({ onLoginSuccess }) {
 	//  - Not logged: A button to trigger the OAuth login
 	return (
 		<div className="login">
-			{isLoggedIn === 'online' ?
+			{authenticated ?
 				newbie ? (
 					<div className="login__newbie">
 						<h1>Welcome!</h1>

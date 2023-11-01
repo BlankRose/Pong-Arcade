@@ -2,11 +2,6 @@ import GenerateQRCode from '../components/2FA/GenerateQRCode'
 import CodeValidation  from '../components/2FA/CodeVerification'
 import React from 'react'
 
-
-
-const api_port = process.env.PI_ACCESS_PORT
-
-
 const TFATurnOn = () => {
     const url = `http://localhost:5501/auth/2fa/turn-on`
 

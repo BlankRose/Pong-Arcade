@@ -12,7 +12,11 @@ export class AuthGuard implements CanActivate {
 	constructor(private jwtService: JwtService) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
-		const request = context.switchToHttp().getRequest();
+		const request = context.switchToHttp().getRequest<Request>();
+		if (request.url.startsWith('/auth') && !(request.url === '/auth/loginStatus'
+			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa')))
+			return true;
+
 		const token = this.extractTokenFromHeader(request);
 		if (!token) {
 			throw new UnauthorizedException();

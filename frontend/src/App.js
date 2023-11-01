@@ -1,120 +1,170 @@
 import './styles/App.css';
 
-import { useState } from 'react';
-// import ReactDom from "react-dom/client";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { useEffect, useState } from 'react';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React from 'react';
+
+import apiHandle, { withAuth } from './components/API_Access';
 import Login from './components/Login';
 import Login42 from './components/42Login';
+
+import Template from './components/Template/template';
+import Profil from './components/Profil';
+import UpdateProfil from './components/UpdateProfil';
 import ChatPage from './components/Chat';
-import Nav from './components/Nav';
+
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
-import React from 'react';
-import Navbar from './components/Navigation/NavigationBar';
-import Template from './components/Template/template';
 
-import { statusLoader } from './Loader'
+// import { statusLoader } from './Loader'
 
-
-const onLoginSuccess = () => {
-
-};
-const onLogout = () => {
-	localStorage.removeItem('token');
-};
-
-const router = createBrowserRouter ([
-	{
-		path: "/",
-		element: <Template/>,
-		// errorElement: <ErrorPage/>,
-		loader: statusLoader,
-		children:[
-			{
-				index: true,
-				element: (
-					<>
-					    <Login onLoginSuccess={onLoginSuccess} />
-					    <Login42 onLoginSuccess={onLoginSuccess} />
-				    </>
-				)
-			},
-			{
-				path: "profile",
-				// loader: userLoader, 
-				element: (
-					<p>tempo</p>
-				)
-			},
-			{
-				path: "game",
-				// loader: userLoader, 
-				element: (
-					<p>tempo</p>
-				)
-			},
-			{
-				path: "chat",
-				// loader: userLoader, 
-				element: (
-					<ChatPage  onLogout={onLogout}/>
-				)
-			},
-			{
-				path: "2fa",
-				element: <TFATurnOn/>
-			}
-		]
-	},
-	{
-		path: 'TFAVerify',
-        element: <TFACodeVerification />,
-	}
-])
-
-
-// function App() {
-// 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
-
-// 	const onLoginSuccess = () => {
-// 		setIsLoggedIn(true);
-// 	};
-
-// 	const onLogout = () => {
-// 		localStorage.removeItem('token');
-// 		setIsLoggedIn(false);
-// 	};
-
-// 	return (
-// 		<div className="App">
-// 			{isLoggedIn ? (
-// 				<>
-// 					<BrowserRouter>
-// 					<Routes>
-// 					<Route path="/" element={<Template/>}>
-// 						<Route index element={<p>tempo</p>} />
-// 						<Route path="game" element={<p>tempo</p>} />
-// 						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
-// 						<Route path="*" element={<p>tempo</p>} />
-// 						<Route path="2fa" element = {<TwoFATurnOn/>}/>
-// 					</Route>
-
-// 					</Routes>
-// 					</BrowserRouter>
-// 				</>
-// 			) : (
-// 				<>
-// 					<Login onLoginSuccess={onLoginSuccess} />
-// 					<Login42 onLoginSuccess={onLoginSuccess} />
-// 				</>
-// 			)}
-// 		</div>
-// 	);
-// }
-
-function App() {
-    return <RouterProvider router={router} />
+const router = (onLogout) => {
+	return createBrowserRouter ([
+		{
+			path: "/",
+			element: <Template />,
+			// errorElement: <ErrorPage/>,
+			// loader: statusLoader,
+			children:[
+				{
+					index: true,
+					path: "profile",
+					// loader: userLoader, 
+					element: (
+						<Profil />
+					)
+				},
+				{
+					path: "updateProfile",
+					// loader: userLoader, 
+					element: (
+						<UpdateProfil />
+					)
+				},
+				{
+					path: "game",
+					// loader: userLoader, 
+					element: (
+						<p>tempo</p>
+					)
+				},
+				{
+					path: "chat",
+					// loader: userLoader, 
+					element: (
+						<ChatPage onLogout={onLogout}/>
+					)
+				},
+				{
+					path: "2fa",
+					element: <TFATurnOn/>
+				}
+			]
+		},
+		{
+			path: 'TFAVerify',
+			element: <TFACodeVerification />,
+		}
+	])
 }
 
-export default App
+function App() {
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+	const onLoginSuccess = () => {
+		setIsLoggedIn(true);
+	};
+
+	const onLogout = () => {
+		localStorage.removeItem('token');
+		setIsLoggedIn(false);
+	};
+
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			apiHandle.get('/auth/verify', withAuth())
+				.then((_) => {
+					setIsLoggedIn(true);
+				})
+				.catch((_) => {
+					console.error("Warning: Token is invalid or has expired!")
+					localStorage.removeItem('token');
+					setIsLoggedIn(false);
+				})
+		}
+	})
+
+	return (
+		isLoggedIn ? (
+			<RouterProvider router={router(onLogout)} />
+		) : (
+			<>
+				<Login onLoginSuccess={onLoginSuccess} />
+				<Login42 onLoginSuccess={onLoginSuccess} />
+			</>
+		)
+	)
+}
+
+export default App;
+
+/*
+import Header from './components/Header';
+import Game from './components/Game';
+import apiHandle, { withAuth } from './components/API_Access';
+import ProfilContainer from './components/ProfilContainer';
+
+function App() {
+	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
+
+	useEffect(() => {
+		if (localStorage.getItem('token')) {
+			apiHandle.get('/auth/verify', withAuth())
+				.then((_) => {
+					setIsLoggedIn(true);
+				})
+				.catch((_) => {
+					console.error("Warning: Token is invalid or has expired!")
+					localStorage.removeItem('token');
+					setIsLoggedIn(false);
+				})
+		}
+	})
+
+	const onLoginSuccess = () => {
+		setIsLoggedIn(true);
+	};
+
+	const onLogout = () => {
+		localStorage.removeItem('token');
+		setIsLoggedIn(false);
+	};
+
+	return (
+		<div className="App">
+			{isLoggedIn ? (
+				<>
+					<BrowserRouter>
+					<Header  onLogout={onLogout}/>
+					<Routes>
+						<Route index element={<p>tempo</p>} />
+						<Route path="game" element={<Game />} />
+						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
+						<Route path= "profil" element={<Profil />}/>
+						<Route path="profil/:username" element={<ProfilContainer />} />
+						<Route path= "updateProfil" element={<UpdateProfil />} />
+						<Route path="*" element={<p>tempo</p>} />
+					</Routes>
+					</BrowserRouter>
+				</>
+			) : (
+				<>
+					<Login onLoginSuccess={onLoginSuccess} />
+					<Login42 onLoginSuccess={onLoginSuccess} />
+				</>
+			)}
+		</div>
+	);
+}
+*/
+

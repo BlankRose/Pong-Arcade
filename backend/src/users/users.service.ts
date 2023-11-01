@@ -1,11 +1,10 @@
 // src/users/users.service.ts
 import * as bcrypt from 'bcrypt';
-import { Injectable, ConflictException, NotFoundException, Req} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { User, UserStatus } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import Request from '@nestjs/common'
-
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +15,23 @@ export class UsersService {
 
 	async findOne(username: string): Promise<User | undefined> {
 		return this.usersRepository.findOne({ where: { username: username } });
+	}
+
+	async findOneByID(id: number): Promise<User | undefined> {
+		return this.usersRepository.findOne({where: {id: id}});
+	}
+
+	// Removes critical information of the User data
+	// /!\ USE BEFORE SENDING USER AS REPLY
+	purgeData(user: User): User {
+		if (!user)
+			return undefined;
+
+		delete user.password;
+		delete user.id42;
+		delete user._2FAToken;
+
+		return user;
 	}
 
 	async findOne42(id42: number): Promise<User | undefined> {
@@ -37,13 +53,9 @@ export class UsersService {
 		return savedUser;
 	}
 
-	async updateUserData(username: string, )
-	sessionStatus(@Req() req) {
-        if (req.user) {
-            return { status: 'online' }
-        } else {
-            return { status: 'offline'}
-        }
+	async sessionStatus(id: number): Promise<UserStatus> {
+		const user = await this.findOneByID(id);
+		return user.status;
     }
 
 	async turnOnline (username: string) {
@@ -51,10 +63,14 @@ export class UsersService {
 			const user = await this.findOne(username)
 
 			if (user && user.status != UserStatus.Online) {
-				this.update(username, {username: username, status: UserStatus.Online})
+				this.usersRepository.update(username, {username: username, status: UserStatus.Online})
 			}
 		}
+		catch (error) {
+			console.error(error);
+		}
 	}
+
 	async createUserFrom42(data: any): Promise<User> {
 		const existingUser = await this.usersRepository.findOne({ where: { username: data.username } });
 		if (existingUser) {
@@ -66,10 +82,7 @@ export class UsersService {
 		user.password = await bcrypt.hash('', 10);
 		user.status = UserStatus.Online 
 
-		// TO-DO: Call 42 API to convert code into actual auth token
-		//        and retrieve user information thru the new token
 		user.id42 = data.code;
-
 		const savedUser = await this.usersRepository.save(user);
 		return savedUser;
 	}
@@ -77,35 +90,49 @@ export class UsersService {
 	async validateUserPassword(username: string, rawPassword: string): Promise<boolean> {
 		const user = await this.usersRepository.findOne({ where: { username: username } });
 		if (!user) {
-				return false; // Utilisateur non trouvé
+				return false;
 		}
 		const isMatch = await bcrypt.compare(rawPassword, user.password);
-		return isMatch; // Renvoie true si le mot de passe est valide, false sinon
+		return isMatch;
 	}
 
-	async blockUser(userId: number, blockedUserId: number): Promise<void> {
-		const user = await this.usersRepository.findOne({ where: { id: userId } });
-		const blockedUser = await this.usersRepository.findOne({ where: { id: blockedUserId } });
-		
-		if (!user || !blockedUser) {
-			throw new NotFoundException('User not found');
+	async replaceUsername(target: number, newUserName: string): Promise<User>
+	{
+		if (!newUserName)
+			throw new BadRequestException('Missing \'username\' parameter');
+		const existingUser = await this.findOne(newUserName);
+
+		if (!existingUser)
+			await this.usersRepository.update(target, { username: newUserName });
+		else if (existingUser.id !== target)
+			throw new ConflictException('Username already exists');
+
+		const updateUser = await this.findOneByID(target);
+		return this.purgeData(updateUser);
+	}
+
+	async replaceAvatar(target: number, newAvatar: UploadAvatarDto): Promise<User>
+	{
+		if (!newAvatar || !newAvatar.data)
+			throw new BadRequestException('Missing the avatar');
+
+		if (!newAvatar.data.startsWith('http'))
+		{
+			const type = newAvatar.data.split(';')[0].split('/')[1];
+			if (type !== 'png' && type !== 'jpg' && type !== 'jpeg'
+				&& type !== 'gif' && type !== 'bmp' && type !== 'svg'
+				&& type !== 'webp' && type !== 'ico')
+				throw new BadRequestException('Unsupported image type');
 		}
-	
-		// Charger la relation blockedUsers si elle n'est pas déjà chargée
-		if (!user.blockedUsers) {
-			user.blockedUsers = await this.usersRepository.createQueryBuilder('user')
-				.relation(User, 'blockedUsers')
-				.of(user)
-				.loadMany();
-		}
-	
-		// Vérifie si l'utilisateur est déjà bloqué
-		if (user.blockedUsers.some(u => u.id === blockedUserId)) {
-			return; // L'utilisateur est déjà bloqué, donc rien à faire
-		}
-	
-		user.blockedUsers.push(blockedUser);
-		await this.usersRepository.save(user);
+
+		await this.usersRepository.update(target, { avatar: newAvatar.data });
+		return this.purgeData(await this.findOneByID(target));
+	}
+
+	async removeAvatar(target: number): Promise<User>
+	{
+		await this.usersRepository.update(target, { avatar: null });
+		return this.purgeData(await this.findOneByID(target));
 	}
 
 	async getUserInfo(username: string) {

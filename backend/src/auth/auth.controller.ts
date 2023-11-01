@@ -1,12 +1,10 @@
-import { Controller, Post, Get, Request, Body, UseGuards, ConflictException, Header, Req } from '@nestjs/common';
-import { AuthGuard } from './jwt/jwt.strategy';
+import { Controller, Post, Get, Request, Body, ConflictException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { LoginDto } from './dto/login.dto';
 import { Login42Dto } from './dto/login42.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Register42Dto } from './dto/register42.dto';
-import { log } from 'console';
 import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
@@ -55,31 +53,33 @@ export class AuthController {
 	}
 
     @Get('loginStatus')
-    @Header('Access-Control-Allow-Origin', 'http://localhost:5173')
-    getStatus(@Req() req) {
-        return this.usersService.sessionStatus(req)
+    getStatus(@Request() req) {
+        return this.usersService.sessionStatus(req.user['id'])
     }
 
-	@UseGuards(AuthGuard)
+	/* -- AUTH GUARD ENFORCED BELOW -- */
+
+	@Get('/verify')
+	async verify() {
+		// Would automatly get verified by AuthGuard
+		return { status: 'ok' };
+	}
+
     @Post('2fa/turn-on')
     async turnOn2FA(@Request() req: any, @Body() body) {
         return await this.authService.turnOn2fa(req, body)
     }
 
-	@UseGuards(AuthGuard)
     @Post('2fa/turn-off')
     async turnOff2FA(@Request() req: any) {
         return await this.authService.turnOff2fa(req)
     }
 
-	@UseGuards(AuthGuard)
     @Get('/2fa/generateQr')
     async generateQR(@Request() req: any) {
         return await this.authService.generateQrCode(req)
     }
 
-
-	@UseGuards(AuthGuard)
     @Post('2fa/authenticate')
     async codeVerification(@Request() req: any, @Body() body) {
         return await this.authService.codeVerification(req, body)

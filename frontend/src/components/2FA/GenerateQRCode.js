@@ -5,8 +5,6 @@ const GenerateQRCode = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [qrCodeUrl, setQrCodeUrl] = useState("")
 
-  const api_port = process.env.PI_ACCESS_PORT
-
   useEffect(() => {
     const fetchQRCode = async () => {
       try {
