@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 const apiPort = process.env.REACT_APP_API_PORT;
 const hostname = window.location.hostname;
@@ -17,5 +18,18 @@ const withAuth = () => {
 	}
 }
 
+const newSocket = (target) => {
+	return io(apiBaseURL, {
+		path: `/${target}`,
+		upgrade: false,
+		transports: ['websocket'],
+		autoConnect: false,
+		reconnection: true,
+		reconnectionDelay: 1000,
+		reconnectionDelayMax: 5000,
+		reconnectionAttempts: 5,
+	})
+}
+
 export default apiHandle;
-export { hostname, apiPort, apiBaseURL, withAuth };
+export { hostname, apiPort, apiBaseURL, withAuth, newSocket };

@@ -85,7 +85,7 @@ function UpdateProfil() {
 							id='username'
 							className='form-control'
 							placeholder='Modify your username'
-							value={user ? user.username : undefined}
+							value={user ? user.username : ''}
 							onChange={e =>setUser({...user, username: e.target.value})}
 						/>
 						<label htmlFor='avatarUrl'>
@@ -98,7 +98,7 @@ function UpdateProfil() {
 							id='avatarUrl'
 							className='form-control'
 							placeholder='Modify avatar, via URL or upload a file'
-							value={user && user.avatar && user.avatar.startsWith('http') ? user.avatar : undefined}
+							value={user && user.avatar && user.avatar.startsWith('http') ? user.avatar : ''}
 							onChange={e =>setUser({...user, avatar: e.target.value})}
 						/>
 						<input type="file"

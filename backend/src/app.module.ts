@@ -14,6 +14,7 @@ import { ChatModule } from './chat/chat.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
+import { GameModule } from './game/game.module';
 
 @Module({
 	imports: [
@@ -37,6 +38,7 @@ import { JwtModule } from '@nestjs/jwt';
 		AuthModule,
 		UsersModule,
 		ChatModule,
+		GameModule,
 		JwtModule
 	],
 	controllers: [AppController],

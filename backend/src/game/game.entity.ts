@@ -2,7 +2,8 @@ import {User} from 'src/users/user.entity';
 import {
 	Entity,
 	PrimaryGeneratedColumn,
-	Column
+	Column,
+	ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -15,25 +16,15 @@ export class Game {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    playerOne: User[];
+    @ManyToOne(() => User)
+    playerOne: User;
 
-    @Column()
-    playerTwo: User[];
+    @ManyToOne(() => User)
+    playerTwo: User;
 
     @Column()
     scorePlayerOne: number;
 
     @Column()
     scorePlayerTwo: number;
-
-    @Column()
-    winner: string;
-    
-    @Column()
-    loser: string;
-
-    @Column()
-    nbPlayers: number;
 }
-
