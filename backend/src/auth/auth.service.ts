@@ -40,6 +40,7 @@ export class AuthService {
 
 		if (user) {
 			const payload = { id: user.id };
+			this.usersService.turnOnline(user.id)
 			return {
 				access_token: this.jwtService.sign(payload),
 			};

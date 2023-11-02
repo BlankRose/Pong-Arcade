@@ -8,7 +8,7 @@ export async function statusLoader() {
 		.then(res => {
 			if (res.data.status === 'online') {
 				store.dispatch(userSlice.actions.setOnline())
-			} else if (res.data.status === 'offline') {
+			} else {
 				store.dispatch(userSlice.actions.setOffline())
 			}
 		})

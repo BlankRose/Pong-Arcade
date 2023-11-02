@@ -22,12 +22,11 @@ const router = (onLogout) => {
 	return createBrowserRouter ([
 		{
 			path: "/",
-			element: <Template />,
+			element: <Template/>,
 			// errorElement: <ErrorPage/>,
 			// loader: statusLoader,
 			children:[
 				{
-					index: true,
 					path: "profile",
 					// loader: userLoader, 
 					element: (
@@ -78,6 +77,7 @@ function App() {
 	const onLogout = () => {
 		localStorage.removeItem('token');
 		setIsLoggedIn(false);
+		apiHandle.post('auth/logout', withAuth())
 	};
 
 	useEffect(() => {

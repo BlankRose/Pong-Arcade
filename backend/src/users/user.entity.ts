@@ -94,10 +94,20 @@ export class User {
 	@OneToMany(() => Channel, channel => channel.owner)
 	ownedChannels: Channel[];
 
-	@OneToMany(() => ChannelMember, member => member.user)
-	channels: ChannelMember[];
+	@OneToMany(() => Channel, channel => channel.admins)
+	channelAdmins: Channel[];
+
+	@OneToMany(() => Channel, (channel) => channel.members)
+	channels: Channel[];
+
+	@OneToMany(() => Channel, channel => channel.bannedUsers)
+	bannedChannels: Channel[];
+
+	@OneToMany(() => Channel, channel => channel.mutedUsers)
+	mutedChannels: Channel[];
 
 	@OneToMany(() => Message, message => message.sender)
 	messages: Message[];
+
 
 }

@@ -5,8 +5,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import ChannelMember from "./entities/channel_member.entity";
 import Message from "./entities/message.entity";
 import { User } from "src/users/user.entity";
-import { GetMessageDto } from "./dto/message.dto";
-import { NewChannelDto } from "./dto/channel.dto";
+import { NewMessageDto } from "./dto/create-message.dto";
+import { NewChannelDto } from "./dto/create-channel.dto";
 
 @Injectable()
 export class ChatService
@@ -25,6 +25,11 @@ export class ChatService
 		private userRepo: Repository<User>,
 	) {}
 
+	async createMessage(newMessage: NewMessageDto) {
+		const newMess = this.messageRepo.create(newMessage)
+		return await this.messageRepo.save(newMess)
+	}
+	
 	async createChannel(username: string, request: NewChannelDto) {
 		// To-Do
 	}

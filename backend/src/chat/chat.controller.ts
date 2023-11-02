@@ -2,7 +2,7 @@ import { Controller, Get, Post, Request, Body } from "@nestjs/common";
 import { ChatService } from "./chat.service";
 
 import { GetMessageDto } from "./dto/message.dto";
-import { NewChannelDto } from "./dto/channel.dto";
+import { NewChannelDto } from "./dto/create-channel.dto";
 
 @Controller('chat')
 export class ChatController

@@ -1,7 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToMany, JoinTable, } from "typeorm";
 import Message from "./message.entity";
 import { User } from "src/users/user.entity";
-import ChannelMember from "./channel_member.entity";
+
 
 @Entity()
 class Channel {
@@ -9,20 +9,58 @@ class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, user => user.ownedChannels)
-	owner: User;
+	@ManyToOne(() => User, (user) => user.ownedChannels)
+    @JoinColumn({ name: 'ownedChannels' })
+    owner: User
 
-	@Column()
+	@ManyToMany(() => User, user => user.channelAdmins, {
+		onDelete: 'CASCADE',
+	  })
+	  @JoinTable()
+	  admins: User[];
+
+
+	@ManyToMany(() => User, user => user.bannedChannels, {
+	onDelete: 'CASCADE',
+	 })
+	 @JoinTable()
+	 bannedUsers: User[];
+
+	@ManyToMany(() => User, user => user.mutedChannels, {
+	onDelete: 'CASCADE',
+	 })
+	 @JoinTable()
+	 mutedUsers: User[];
+
+	@Column({
+		type: 'text',
+		default: 'room',
+	  })
 	name: string;
 
-	@Column()
-	status: string;
+	@Column({
+		type: 'text',
+		default: 'public'
+	})
+	type: string;
 
-	@Column({ default: null })
+	@Column({
+		type: 'boolean',
+		default: false,
+	  })
+	  isProtected: boolean;
+
+	@Column({
+		type: 'text',
+		nullable: true,
+	  })
 	password: string;
 
-	@OneToMany(() => ChannelMember, member => member.channel)
-	members: ChannelMember[];
+	@CreateDateColumn()
+    creationDate: Date
+
+	@OneToMany(() => User, user => user.channels)
+	members: User[];
 
 	@OneToMany(() => Message, message => message.channel)
 	messages: Message[];

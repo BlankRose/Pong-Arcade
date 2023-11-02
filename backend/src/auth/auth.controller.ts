@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Request, Body, ConflictException } from '@nestjs/common';
+import { Controller, Post, Get, Request, Body, ConflictException, NotFoundException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { LoginDto } from './dto/login.dto';
@@ -56,6 +56,15 @@ export class AuthController {
     getStatus(@Request() req) {
         return this.usersService.sessionStatus(req.user['id'])
     }
+
+	@Post('logout')
+	async logout(@Request() req) {
+		try {
+			return await this.usersService.logout(req.user['id'])
+		} catch (err) {
+			throw new NotFoundException
+		}
+	}
 
 	/* -- AUTH GUARD ENFORCED BELOW -- */
 

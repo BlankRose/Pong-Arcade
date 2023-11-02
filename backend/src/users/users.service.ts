@@ -5,6 +5,7 @@ import { User, UserStatus } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { UpdateUser } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -53,21 +54,53 @@ export class UsersService {
 		return savedUser;
 	}
 
+	async updateUser(id: number, updatedinfo: UpdateUser) {
+		try {
+			const user = await this.findOneByID(id)
+			return this.usersRepository.save({...user, ...updatedinfo})
+		} catch (err) {
+			console.error(err)
+		}
+	}
+	async removeUser (id: number) {
+		try {
+			const user = await this.findOneByID(id)
+			return this.usersRepository.remove(user)
+		} catch (err) {
+			console.error(err)
+		}
+	}
+
 	async sessionStatus(id: number): Promise<UserStatus> {
 		const user = await this.findOneByID(id);
+		if (!user) {
+			return UserStatus.Offline
+		}
 		return user.status;
     }
 
-	async turnOnline (username: string) {
+	async turnOnline (userId: number) {
 		try {
-			const user = await this.findOne(username)
+			const user = await this.findOneByID(userId)
 
 			if (user && user.status != UserStatus.Online) {
-				this.usersRepository.update(username, {username: username, status: UserStatus.Online})
+				this.usersRepository.update(userId, {id: userId, status: UserStatus.Online})
 			}
 		}
 		catch (error) {
 			console.error(error);
+		}
+	}
+
+	async logout(userId: number) {
+		try {
+			const user= await this.findOneByID(userId)
+			if (!user) {
+				throw new NotFoundException()
+			}
+			this.updateUser(user.id, {id: userId, status: UserStatus.Offline})
+		} catch (err) {
+			console.log(err)
 		}
 	}
 
