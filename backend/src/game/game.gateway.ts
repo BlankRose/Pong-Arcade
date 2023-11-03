@@ -1,25 +1,30 @@
-import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import {WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody } from "@nestjs/websockets";
+import { OnModuleInit } from "@nestjs/common";
 import { Server, ServerOptions } from "socket.io";
 
-@WebSocketGateway(<ServerOptions>{
-	path: '/game',
-	connectTimeout: 10000,
+@WebSocketGateway({
+	cors: {
+		origin: 'localhost:3001'
+	}
 })
-class GameGateway
-	implements OnGatewayConnection, OnGatewayDisconnect {
+export class GameGateway {
 
 	@WebSocketServer()
 	server: Server;
 
-	clients: any[] = [];
-
-	handleConnection(client: any, ...args: any[]) {
-		console.log('New client connected');
+	onModuleInit() {
+		this.server.on('connection', (socket) => {
+			console.log(socket.id);
+			console.log("connected");
+		})
 	}
 
-	handleDisconnect(client: any) {
-		console.log('Client disconnected');
+	@SubscribeMessage('newmessage')
+	onNewmessage(@MessageBody() body: any)
+	{
+		console.log(body);
 	}
-};
+}
 
 export default GameGateway;
+
