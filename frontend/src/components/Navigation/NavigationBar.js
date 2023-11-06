@@ -1,18 +1,17 @@
 import styles from './NavigationBar.module.css';
 import { NavLink } from 'react-router-dom';
-// import { useAppSelector } from '../../store/types';
-// import LogoutButton from './LogOutButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useSelector } from 'react-redux';
+ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock, faComments, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import LogoutButton from '../Logout/LogoutButton'
 
 
 const Navbar = () => {
-    // const isLoggedIn = useAppSelector((state) => state.auth.logStatus);
-    const isLoggedIn = 'isLogged';
+    const isLoggedIn = useSelector((state) => state.user.status);
 
     const navLinks = [
         { to: '/profile', text: 'Profile', icon: faUser },
-        { to: '/2fa', text: '2FA', icon: faLock },
+        // { to: '/2fa', text: '2FA', icon: faLock },
         { to: '/chat', text: 'Chat', icon: faComments },
         { to: '/game', text: 'Game', icon: faGamepad }
     ];
@@ -22,7 +21,7 @@ const Navbar = () => {
             <nav className={styles.nav}>
                 <div className={styles.container}>
                     <div className={styles.leftContainer}>
-                        {isLoggedIn === 'isLogged' &&
+                        {isLoggedIn === 'online' &&
                             navLinks.map((link, index) => (
                                 <NavLink
                                     key={index}
@@ -34,11 +33,15 @@ const Navbar = () => {
                                     <FontAwesomeIcon icon={link.icon} />
                                     {link.text}
                                 </NavLink>
+                                
                             ))
                         }
                     </div>
                     <div className={styles.centerContainer}>
-                        {/* {isLoggedIn === 'isLogged' && <LogoutButton />} */}
+                        {isLoggedIn === 'online' && (
+                            <LogoutButton></LogoutButton>
+                        )}
+        
                     </div>
                 </div>
             </nav>

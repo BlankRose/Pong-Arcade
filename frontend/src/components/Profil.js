@@ -2,12 +2,31 @@ import React, { useEffect, useState } from 'react';
 import apiHandle, { withAuth } from './API_Access';
 import Avatar from '../assets/avatar.jpeg';
 import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
+
 
 import '../styles/Profil.css';
 
 function Profil({ username }) {
 	const [user, setUser] = useState(null);
 	const [avatar, setAvatar] = useState(Avatar);
+	const [is2FAEnabled, set2FAOption] = useState(useSelector(state => state.user._2FAEnabled))
+	const navigate = useNavigate();
+
+	const toogle2FA = async () => {
+		if (is2FAEnabled) {
+				apiHandle.post('/auth/2fa/turn-off', {}, withAuth())
+				.then(res => {
+					set2FAOption(false)
+				})
+				.catch (err => {
+					console.warn(err.response)});
+		}
+	    else {
+			navigate('/2fa')
+		}
+	}
 
 	useEffect(() => {
 		apiHandle.get(`/users/${username || 'me'}`, withAuth() )
@@ -15,6 +34,9 @@ function Profil({ username }) {
 				setUser(response.data);
 				if (response.data && response.data.avatar)
 					setAvatar(response.data.avatar);
+				set2FAOption(response.data._2FAEnabled)
+				
+
 			})
 			.catch(_ => {
 				console.error('Failed to fetch user data')
@@ -39,9 +61,15 @@ function Profil({ username }) {
 							<li className='Profil-stat'>Ratio: {user ? user.streak : undefined}</li>
 						</ul>
 					</div>
-					<div className = 'historique'>
+					<span className = 'historique'>
 						<button className='button-h'>Historique des match</button>
-					</div>
+					</span>
+					<span>
+                       <button className='button-h' onClick={toogle2FA}>
+                       {is2FAEnabled ? "Turn 2FA off" : "Turn 2FA On"}
+                       </button>
+                   </span>
+					
 				</div>
 				<div className='Friend-list'>
 					Comming Soon (TM)

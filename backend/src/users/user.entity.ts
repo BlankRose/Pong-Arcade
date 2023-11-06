@@ -1,6 +1,5 @@
 // src/users/user.entity.ts
-import Channel from 'src/chat/entities/channel.entity';
-import ChannelMember from 'src/chat/entities/channel_member.entity';
+import {Channel} from '../chat/entities/channel.entity';
 import Message from 'src/chat/entities/message.entity';
 import {
 	Entity,
@@ -52,6 +51,9 @@ export class User {
 	@Column({ default: null })
 	_2FAToken: string;
 
+	@Column({ default: true })
+	is2FANeeded: boolean;
+
 	/* ********************** */
 	/*   Account Information  */
 	/* ********************** */
@@ -59,17 +61,17 @@ export class User {
 	@Column({ default: null })
 	avatar: string;
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	friends: User[];
+	// @ManyToMany(() => User)
+	// @JoinColumn()
+	// friends: User[];
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	friendRequest: User[];
+	// @ManyToMany(() => User)
+	// @JoinColumn()
+	// friendRequest: User[];
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	blocked: User[];
+	// @ManyToMany(() => User)
+	// @JoinColumn()
+	// blocked: User[];
 
 	/* ********************** */
 	/*   Account Statistics   */

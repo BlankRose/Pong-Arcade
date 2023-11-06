@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Request, Body } from "@nestjs/common";
 import { ChatService } from "./chat.service";
-
-import { GetMessageDto } from "./dto/message.dto";
 import { NewChannelDto } from "./dto/create-channel.dto";
 
 @Controller('chat')
@@ -21,8 +19,8 @@ export class ChatController
 		return this.chatService.createChannel(req.user['id'], body);
 	}
 
-	@Get('messages')
-	getMessages(@Request() req, @Body() body: GetMessageDto) {
-		return this.chatService.getMessages(req.user['id'], body);
-	}
+	// @Get('messages')
+	// getMessages(@Request() req, @Body() body: GetMessageDto) {
+	// 	return this.chatService.getMessages(req.user['id'], body);
+	// }
 }

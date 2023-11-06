@@ -4,7 +4,7 @@ import { User } from "src/users/user.entity";
 
 
 @Entity()
-class Channel {
+export class Channel {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -67,4 +67,3 @@ class Channel {
 
 }
 
-export default Channel;

@@ -5,7 +5,7 @@ import '../styles/ChatPage.css';
 import API_Access from './API_Access';
 import { apiBaseURL } from './API_Access';
 
-function ChatPage({ onLogout }) {
+function ChatPage() {
 	const [channels, setChannels] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState(null);
 	const [messages, setMessages] = useState([]);
@@ -86,7 +86,6 @@ function ChatPage({ onLogout }) {
 	return (
 		<div className="chatPage">
 			<h2>Messagerie</h2>
-			<button onClick={onLogout}>Déconnexion</button>
 
 			<div className="chatContainer">
 				<div className="channelList">

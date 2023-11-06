@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
-import User from '../../users/user.entity';
+import {User} from '../../users/user.entity';
 import Message from '../entities/message.entity';
 
 

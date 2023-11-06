@@ -41,6 +41,7 @@ export class AuthService {
 		if (user) {
 			const payload = { id: user.id };
 			this.usersService.turnOnline(user.id)
+			this.usersService.setIsNeed2FA(user.id)
 			return {
 				access_token: this.jwtService.sign(payload),
 			};
@@ -61,7 +62,9 @@ export class AuthService {
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
 			code: data.id,
-			status: 'online'
+			status: 'online',
+			is2FANeeded: true
+
 		});
 		return user;
 	}
@@ -90,7 +93,8 @@ export class AuthService {
 		if(!user){
 			throw new NotFoundException('User does not exist!')
 		}
-		const isCodeValid = this.is2FASecretValid(body.twoFactorAuthenticationCode, user)
+		
+		const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong Code')
 		}
@@ -146,6 +150,7 @@ export class AuthService {
 		if (!isCodeValid){
 			throw new UnauthorizedException('Wrong Code!')
 		}
+		this.usersService.toogleIsNeed2FA(user.id);
         return true
 	}
 	// ****************************2Fa Part****************************

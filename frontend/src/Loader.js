@@ -1,12 +1,12 @@
-import userSlice from './store/user.js'
 import store from './store/index.js'
 import apiHandle, { withAuth } from './components/API_Access.js'
+import userSlice from './store/user.js';
 
 export async function statusLoader() {
 
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
-			if (res.data.status === 'online') {
+			if (res.data === 'online') {
 				store.dispatch(userSlice.actions.setOnline())
 			} else {
 				store.dispatch(userSlice.actions.setOffline())
@@ -14,8 +14,9 @@ export async function statusLoader() {
 		})
 		.catch(err => {
 			console.warn(err.response);
+        
 		});
-
+        
 	/*
     const response = await fetch('http://localhost:5501/auth/loginStatus', {
         credentials: 'include',
@@ -38,7 +39,7 @@ export async function statusLoader() {
     } else if (data.status === 'offline') {
         store.dispatch(userSlice.actions.setOffline())
     }
-
-	return data;
-	*/
+*/
+	return null;
+	
 }

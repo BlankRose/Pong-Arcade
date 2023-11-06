@@ -49,8 +49,10 @@ export class UsersService {
 		const user = new User();
 		user.username = data.username;
 		user.password = await bcrypt.hash(data.password, 10);
+		user._2FAEnabled = false
 
-		const savedUser = await this.usersRepository.save(user);
+		const createdUser = await this .usersRepository.create(user)
+		const savedUser = await this.usersRepository.save(createdUser);
 		return savedUser;
 	}
 
@@ -67,7 +69,7 @@ export class UsersService {
 			const user = await this.findOneByID(id)
 			return this.usersRepository.remove(user)
 		} catch (err) {
-			console.error(err)
+			console.error("error: ", err)
 		}
 	}
 
@@ -92,9 +94,36 @@ export class UsersService {
 		}
 	}
 
+	async setIsNeed2FA (userId: number) {
+		try {
+			const user = await this.findOneByID(userId)
+
+			if (user ) {
+				this.usersRepository.update(userId, {id: userId, is2FANeeded: user._2FAEnabled})
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+
+	async toogleIsNeed2FA (userId: number) {
+		try {
+			const user = await this.findOneByID(userId)
+
+			if (user ) {
+				this.usersRepository.update(userId, {id: userId, is2FANeeded: false})
+			}
+		}
+		catch (error) {
+			console.error(error);
+		}
+	}
+
 	async logout(userId: number) {
 		try {
 			const user= await this.findOneByID(userId)
+			console.log("USer", user)
 			if (!user) {
 				throw new NotFoundException()
 			}
@@ -173,9 +202,7 @@ export class UsersService {
 		if(!user) {
 			throw new NotFoundException('User does not exist')
 		}
-		console.log("**************", user)
 		const {_2FAToken, id42, password, ...rest} = user
-		console.log("**************", rest)
 
 		return rest
 	}

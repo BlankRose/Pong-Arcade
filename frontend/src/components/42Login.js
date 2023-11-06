@@ -2,12 +2,20 @@ import React, { useEffect, useState } from "react";
 import "../styles/Login.css";
 
 import apiHandle from "./API_Access";
+import { useSelector } from "react-redux";
+import { redirect } from "react-router-dom";
+import { Navigate } from 'react-router-dom'
+
+
 
 const apiUID = process.env.REACT_APP_API_UID;
 
-function LoginPage({ onLoginSuccess }) {
+function LoginPage() {
 	const [ authenticated, setAuthenticated ] = useState(false);
 	const [ errorMessage, setErrorMessage ] = useState(null);
+
+	const isLoggedIn = useSelector((state) => state.user.logStatus);
+
 
 	// 42 OAuth Login
 	const [ newbie, setNewbie ] = useState(false); // Determines if the user is new or not
@@ -19,6 +27,7 @@ function LoginPage({ onLoginSuccess }) {
 	// OAuth login popups events (checks every 500ms)
 	useEffect(() => {
 		if (!OAuthPopup) {
+			// window.location.reload();
 			return;
 		}
 
@@ -55,16 +64,19 @@ function LoginPage({ onLoginSuccess }) {
 					apiHandle.get(`/auth/token42?code=${authCode}&uri=${OAuthURI}`)
 						.then((response) => {
 							setOAuthToken(response.data);
-							setAuthenticated(true);
+							
 							setErrorMessage(null);
 							apiHandle.post('/auth/login42', { code: response.data })
 								.then((res) => {
 									localStorage.setItem('token', res.data.access_token);
-									onLoginSuccess();
+									setAuthenticated(true);
 								})
 								.catch((error) => {
+									setAuthenticated(true);
 									setNewbie(true);
+									
 								});
+								
 						})
 						.catch((error) => {
 							const errorResponse =
@@ -72,13 +84,14 @@ function LoginPage({ onLoginSuccess }) {
 								error.response.data.message : error.message;
 							setErrorMessage(`Erreur: ${errorResponse}`);
 						});
-					OAuthPopup.close();
+					OAuthPopup.close();					
 				}
 			} catch (error) {
 				return;
 			}
+			
 		}, 500)
-	}, [OAuthPopup, onLoginSuccess, OAuthURI])
+	}, [OAuthPopup, OAuthURI])
 
 	// Triggers the OAuth login popup by opening a new window
 	// and attach it to the OAuthPopup state
@@ -95,6 +108,7 @@ function LoginPage({ onLoginSuccess }) {
 		// Define the states for popup events
 		setOAuthURI(origin)
 		setOAuthPopup(popup);
+			
 	}
 
 	// Sends a request to the backend to register the user
@@ -103,15 +117,18 @@ function LoginPage({ onLoginSuccess }) {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(res => {
-				setNewbie(false);
+				
 				setOAuthToken(null);
 				localStorage.setItem('token', res.data.access_token);
-				onLoginSuccess();
+				setNewbie(false);
+				setAuthenticated(true)
 			})
 			.catch((error) => {
 				const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;
 				setErrorMessage(`Erreur: ${errorResponse}`);
 			});
+
+			console.log("oo", authenticated)
 	}
 
 	// Display either:
@@ -131,8 +148,9 @@ function LoginPage({ onLoginSuccess }) {
 					</div>
 				) : (
 					<div className="login__success">
-						<h1>Success!</h1>
-						<p>You are now logged in.</p>
+						< Navigate to="/profile" />
+						{/* <h1>Success!</h1>
+						<p>You are now logged in.</p> */}
 					</div>
 			) : (
 				<div className="login__container">

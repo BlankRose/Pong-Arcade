@@ -9,6 +9,7 @@ export class UsersController {
 
 	@Get('me')
 	async getProfile(@Request() req) {
+		console.log("req.session@ ",req.needs2FA)
 		return this.usersService.purgeData(
 			await this.usersService.findOneByID(req.user['id'])
 		);
@@ -33,6 +34,11 @@ export class UsersController {
 	changeAvatar(@Body() body: UploadAvatarDto, @Request() req)
 	{
 		return this.usersService.replaceAvatar(req.user['id'], body)
+	}
+
+	@Post('remove')
+	removeUSer(@Body() body) {
+		return this.usersService.removeUser(body.id);
 	}
 
 	@Delete('me/avatar')
