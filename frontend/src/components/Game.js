@@ -1,37 +1,32 @@
-import { useEffect, useRef } from 'react'
-import { newSocket } from './API_Access';
+//import { useEffect} from 'react'
+import { apiBaseURL} from './API_Access';
+import { io } from 'socket.io-client';
 
-function Game(props) {
+import '../styles/Game.css'
 
-	const connection = newSocket('game');
 
-	useEffect(() => {
-		connection.on('connect', () => {
-			console.log('Connected to game socket');
-		})
+
+function Game() {
+
+	const connection  = io(apiBaseURL);
+
+	connection.on('connect', () => {
+			console.log('user is connected');	
+	})
+
+	connection.on('disconnect', () => {
+		console.log('user is disconnected');
+	})
+
+
+
 	
-		connection.on('disconnect', () => {
-			console.log('Disconnected from game socket');
-		})
 
-		connection.connect();
-	}, [connection]);
-
-	function Canvas() {
-		const ref = useRef/*<HTMLCanvasElement>*/(null);
-
-		useEffect(() => {
-			if (ref.current) {
-			//	const canvas = ref.current.getContext('2d')
-			}
-		}, [ref]);
-		return <canvas ref={props.ref} className="canvas"/>
-	}
-
-	return(
-		<div>
-			<Canvas />
-		</div>
+	return (
+		<>
+			<canvas className='canvas'></canvas>
+		</>
+		
 	)
 }
 

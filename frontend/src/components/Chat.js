@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
-import API_Access from './API_Access';
+import API_Access, { withAuth } from './API_Access';
 import { apiBaseURL } from './API_Access';
 
 function ChatPage({ onLogout }) {
@@ -13,7 +13,7 @@ function ChatPage({ onLogout }) {
 	const [newChannelName, setNewChannelName] = useState('');
 	const [socket, setSocket] = useState(null);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		const socketIo = io(apiBaseURL);
 		setSocket(socketIo);
 
@@ -33,7 +33,7 @@ function ChatPage({ onLogout }) {
 	}, [selectedChannel]);
 
 	useEffect(() => {
-		API_Access.get('/channels')
+		API_Access.get('/channels', withAuth())
 			.then(res => {
 				console.log(`Return: ${res}`)
 			})
@@ -129,7 +129,14 @@ function ChatPage({ onLogout }) {
 				</div>
 			</div>
 		</div>
-	);
+	);*/
+
+	return(
+		<div>test</div>
+	)
+
 }
+
+		
 
 export default ChatPage;
