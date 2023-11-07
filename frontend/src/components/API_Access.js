@@ -28,6 +28,9 @@ const newSocket = (target) => {
 		reconnectionDelay: 1000,
 		reconnectionDelayMax: 5000,
 		reconnectionAttempts: 5,
+		auth: {
+			token: localStorage.getItem('token')
+		}
 	})
 }
 

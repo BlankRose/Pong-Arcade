@@ -6,9 +6,9 @@
     width: auto;
     display: grid;
     grid-template-areas:
-    "profil friendlist "
-    "stats  friendlist"
-    "historique friendlist";
+	    "profil friendlist"
+	    "stats  friendlist"
+	    "historique friendlist";
     grid-template-columns: 1fr 30%;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 1rem;
@@ -79,8 +79,6 @@
 
 .list-stat{
     list-style: none;
-
-
 }
 
 .Profil-stat{

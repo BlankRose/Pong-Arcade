@@ -16,7 +16,7 @@ start: .env
 
 sd: start_detached
 start_detached: .env
-	-@docker-compose up --build -d
+	-@docker-compose up --build -d -t 3
 
 .env:
 	@sh envgen.sh

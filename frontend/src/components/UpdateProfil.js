@@ -109,7 +109,7 @@ function UpdateProfil() {
 						/>
 						</div>
 						<br></br>
-						<button className="btn-info">Valider</button>
+						<button className="btn-info mx-auto">Valider</button>
 				</form>
 				{
 					(errorName || errorAvatar ) && 

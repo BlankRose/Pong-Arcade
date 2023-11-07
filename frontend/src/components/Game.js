@@ -1,21 +1,32 @@
 import { useEffect, useRef } from 'react'
 import { newSocket } from './API_Access';
 
+function registerEvent(connection, event, callback) {
+	connection.off(event)
+	.on(event, (data) => {
+		callback(data);
+	})
+}
+
 function Game(props) {
 
-	const connection = newSocket('game');
+	const conn = newSocket('game');
 
 	useEffect(() => {
-		connection.on('connect', () => {
+		registerEvent(conn, 'connect', () => {
 			console.log('Connected to game socket');
 		})
-	
-		connection.on('disconnect', () => {
+
+		registerEvent(conn, 'disconnect', () => {
 			console.log('Disconnected from game socket');
 		})
 
-		connection.connect();
-	}, [connection]);
+		registerEvent(conn, 'done', (data) => {
+			console.log(data);
+		})
+
+		conn.connect();
+	}, [conn]);
 
 	function Canvas() {
 		const ref = useRef/*<HTMLCanvasElement>*/(null);
@@ -30,6 +41,7 @@ function Game(props) {
 
 	return(
 		<div>
+			<button onClick={() => {conn.emit('joinQueue', 'random message')}}>Join Queue</button>
 			<Canvas />
 		</div>
 	)
