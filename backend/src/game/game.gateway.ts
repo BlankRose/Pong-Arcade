@@ -1,6 +1,5 @@
-import { UnauthorizedException } from "@nestjs/common";
 import {
-	OnGatewayConnection, OnGatewayDisconnect,
+	OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit,
 	SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse
 } from "@nestjs/websockets";
 import { UserSocket } from "./entities/gamestate.entity";
@@ -12,7 +11,7 @@ import { GameService } from "./game.service";
 	connectTimeout: 10000,
 })
 class GameGateway
-	implements OnGatewayConnection, OnGatewayDisconnect {
+	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
 	constructor(
 		private readonly gameService: GameService,
@@ -21,18 +20,18 @@ class GameGateway
 	@WebSocketServer()
 	server: Server;
 
+	gameThread: NodeJS.Timeout
+
+	afterInit(server: Server) {
+		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/10);
+	}
+
 	handleConnection(client: UserSocket, ...args: any[]) {
 		this.gameService.connect(client);
 	}
 
 	handleDisconnect(client: UserSocket) {
-		console.log('Client disconnected');
-	}
-
-	@SubscribeMessage('test')
-	test(client: UserSocket, data: string): WsResponse {
-		console.log("Test event triggered by client", client.data, "with data", data);
-		return { event: 'done', data: 'This is a test!~' };
+		this.gameService.disconnect(this.server, client);
 	}
 
 	@SubscribeMessage('joinQueue')

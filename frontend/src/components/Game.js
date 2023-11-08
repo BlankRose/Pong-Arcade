@@ -21,7 +21,11 @@ function Game(props) {
 			console.log('Disconnected from game socket');
 		})
 
-		registerEvent(conn, 'done', (data) => {
+		registerEvent(conn, 'gameStart', data => {
+			console.log(data);
+		})
+
+		registerEvent(conn, 'gameEnd', data => {
 			console.log(data);
 		})
 
