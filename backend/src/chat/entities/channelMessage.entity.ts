@@ -3,7 +3,7 @@ import {Channel} from "./channel.entity";
 import { User } from "src/users/user.entity";
 
 @Entity()
-class Message {
+class ChannelMessage {
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -14,7 +14,7 @@ class Message {
 	@CreateDateColumn()
     creationDate: Date
 
-	@ManyToOne(() => User, user => user.messages, {onDelete: 'CASCADE'})
+	@ManyToOne(() => User, user => user.channelMessages, {onDelete: 'CASCADE'})
 	sender: User;
 
 	@ManyToOne(() => Channel, channel => channel.messages, {onDelete: 'CASCADE'})  
@@ -22,4 +22,4 @@ class Message {
 
 }
 
-export default Message;
+export default ChannelMessage;

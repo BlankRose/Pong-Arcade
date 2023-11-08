@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { Repository, MoreThanOrEqual } from "typeorm";
 import {Channel} from "./entities/channel.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import Message from "./entities/message.entity";
+import ChannelMessage from "./entities/channelMessage.entity";
 import { User } from "src/users/user.entity";
 import { NewMessageDto } from "./dto/create-message.dto";
 import { NewChannelDto } from "./dto/create-channel.dto";
@@ -14,8 +14,8 @@ export class ChatService
 		@InjectRepository(Channel)
 		private channelRepo: Repository<Channel>,
 
-		@InjectRepository(Message)
-		private messageRepo: Repository<Message>,
+		@InjectRepository(ChannelMessage)
+		private messageRepo: Repository<ChannelMessage>,
 
 		@InjectRepository(User)
 		private userRepo: Repository<User>,
@@ -36,7 +36,7 @@ export class ChatService
 			relations: ['channels']
 		});
 
-		return (await user).channels;
+		return (await user).joinedChannels;
 	}
 
 	// async getMessages(username: string, request: GetMessageDto) {

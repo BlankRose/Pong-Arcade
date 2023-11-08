@@ -29,15 +29,20 @@ const Check2FAForSignIn = ({children}) => {
 	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
 	const is2FAEnabled = useSelector (state => state.user._2FAEnabled)
 
+	console.log("tuka", loggedIn)
 
-	if (loggedIn === 'online' && is2FAEnabled && is2FANeeded) {
+	if (loggedIn === 'offline') {
+		return children
+	}
+	else if (loggedIn === 'online' && is2FAEnabled && is2FANeeded) {
 		return <Navigate to="/TFAVerify"/>
 	}
 	else if (loggedIn === 'online' && is2FANeeded === false ) {
 		return <Navigate to="/profile"/>
 	}
 	else {
-	    return children
+	    // return children
+		return <Navigate to="/profile"/>
 	}
 }
 
@@ -62,21 +67,21 @@ const Check2FAForOtherRoutes  = ({children}) => {
 
 
 function App() {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-	useEffect(() => {
-		if (localStorage.getItem('token')) {
-			apiHandle.get('/auth/verify', withAuth())
-				.then((_) => {
-					setIsLoggedIn(true);
-				})
-				.catch((_) => {
-					console.error("Warning: Token is invalid or has expired!")
-					localStorage.removeItem('token');
-					setIsLoggedIn(false);
-				})
-		}
-	})
+	// useEffect(() => {
+	// 	if (localStorage.getItem('token')) {
+	// 		apiHandle.get('/auth/verify', withAuth())
+	// 			.then((_) => {
+	// 				setIsLoggedIn(true);
+	// 			})
+	// 			.catch((_) => {
+	// 				console.error("Warning: Token is invalid or has expired!")
+	// 				localStorage.removeItem('token');
+	// 				setIsLoggedIn(false);
+	// 			})
+	// 	}
+	// })
 
 	const router = createBrowserRouter([
         {
@@ -114,7 +119,7 @@ function App() {
 					element: 
 							<Check2FAForSignIn>
 							 <>
-							  <Login onLoginSuccess={() => setIsLoggedIn(true)} />,
+							  <Login  />,
 							  <Login42 />, 
 							 </> 
 							</Check2FAForSignIn>

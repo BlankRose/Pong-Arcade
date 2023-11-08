@@ -7,6 +7,7 @@ export async function statusLoader() {
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
 			if (res.data === 'online') {
+                console.log("aa")
 				store.dispatch(userSlice.actions.setOnline())
 			} else {
 				store.dispatch(userSlice.actions.setOffline())

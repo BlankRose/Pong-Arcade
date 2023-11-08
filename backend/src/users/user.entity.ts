@@ -1,6 +1,7 @@
 // src/users/user.entity.ts
 import {Channel} from '../chat/entities/channel.entity';
-import Message from 'src/chat/entities/message.entity';
+import ChannelMessage from 'src/chat/entities/channelMessage.entity';
+import Message from 'src/chat/entities/channelMessage.entity';
 import {
 	Entity,
 	PrimaryGeneratedColumn,
@@ -90,26 +91,33 @@ export class User {
 	rank: number;
 
 	/* ********************** */
-	/*        Chatting        */
+	/*    Channels Chatting   */
 	/* ********************** */
 
 	@OneToMany(() => Channel, channel => channel.owner)
 	ownedChannels: Channel[];
 
 	@OneToMany(() => Channel, channel => channel.admins)
-	channelAdmins: Channel[];
+	adminInChannels: Channel[];
 
 	@OneToMany(() => Channel, (channel) => channel.members)
-	channels: Channel[];
+	joinedChannels: Channel[];
 
 	@OneToMany(() => Channel, channel => channel.bannedUsers)
-	bannedChannels: Channel[];
+	bannedInChannels: Channel[];
 
 	@OneToMany(() => Channel, channel => channel.mutedUsers)
-	mutedChannels: Channel[];
+	mutedInChannels: Channel[];
 
 	@OneToMany(() => Message, message => message.sender)
-	messages: Message[];
+	channelMessages: ChannelMessage[];
+
+	/* ********************** */
+	/*    Direct Messages     */
+	/* ********************** */
+   
+
+	// do it later
 
 
 }

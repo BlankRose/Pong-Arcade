@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToMany, JoinTable, } from "typeorm";
-import Message from "./message.entity";
+import Message from "./channelMessage.entity";
 import { User } from "src/users/user.entity";
 
 
@@ -12,25 +12,6 @@ export class Channel {
 	@ManyToOne(() => User, (user) => user.ownedChannels)
     @JoinColumn({ name: 'ownedChannels' })
     owner: User
-
-	@ManyToMany(() => User, user => user.channelAdmins, {
-		onDelete: 'CASCADE',
-	  })
-	  @JoinTable()
-	  admins: User[];
-
-
-	@ManyToMany(() => User, user => user.bannedChannels, {
-	onDelete: 'CASCADE',
-	 })
-	 @JoinTable()
-	 bannedUsers: User[];
-
-	@ManyToMany(() => User, user => user.mutedChannels, {
-	onDelete: 'CASCADE',
-	 })
-	 @JoinTable()
-	 mutedUsers: User[];
 
 	@Column({
 		type: 'text',
@@ -58,11 +39,33 @@ export class Channel {
 
 	@CreateDateColumn()
     creationDate: Date
+	
 
-	@OneToMany(() => User, user => user.channels)
+	@ManyToMany(() => User, user => user.adminInChannels, {
+		onDelete: 'CASCADE',
+	  })
+	  @JoinTable()
+	  admins: User[];
+
+
+	@ManyToMany(() => User, user => user.bannedInChannels, {
+	onDelete: 'CASCADE',
+	 })
+	 @JoinTable()
+	 bannedUsers: User[];
+
+	@ManyToMany(() => User, user => user.mutedInChannels, {
+	onDelete: 'CASCADE',
+	 })
+	 @JoinTable()
+	 mutedUsers: User[];
+
+
+	@OneToMany(() => User, user => user.joinedChannels)
 	members: User[];
 
 	@OneToMany(() => Message, message => message.channel)
+	@JoinColumn({name: 'messages'})
 	messages: Message[];
 
 }

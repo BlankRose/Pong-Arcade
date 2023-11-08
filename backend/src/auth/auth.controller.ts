@@ -20,8 +20,8 @@ export class AuthController {
 
 	
 	@Post('/login42')
-	async login42(@Request() req , @Body() login42Dto: Login42Dto) {
-		return this.authService.login42(req, login42Dto);
+	async login42(@Body() login42Dto: Login42Dto) {
+		return this.authService.login42(login42Dto);
 	}
 
 	@Post('/register')

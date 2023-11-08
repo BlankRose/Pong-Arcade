@@ -34,7 +34,8 @@ export class AuthService {
 		};
 	}
 
-	async login42(@Request() req, login42Dto: Login42Dto) {
+	async login42(login42Dto: Login42Dto) {
+
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 
@@ -42,6 +43,7 @@ export class AuthService {
 			const payload = { id: user.id };
 			this.usersService.turnOnline(user.id)
 			this.usersService.setIsNeed2FA(user.id)
+
 			return {
 				access_token: this.jwtService.sign(payload),
 			};
@@ -59,13 +61,15 @@ export class AuthService {
 	async register42(registerDto: Register42Dto): Promise<any> {
 		const data = await this.api42Service.getUserData(registerDto.code);
 
+		
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
 			code: data.id,
 			status: 'online',
-			is2FANeeded: true
+			is2FANeeded: false,
 
 		});
+		console.log("user: ", user)
 		return user;
 	}
 

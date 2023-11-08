@@ -9,7 +9,6 @@ export class UsersController {
 
 	@Get('me')
 	async getProfile(@Request() req) {
-		console.log("req.session@ ",req.needs2FA)
 		return this.usersService.purgeData(
 			await this.usersService.findOneByID(req.user['id'])
 		);
