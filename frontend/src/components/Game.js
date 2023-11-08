@@ -1,7 +1,7 @@
-//import { useEffect} from 'react'
-import { apiBaseURL} from './API_Access';
-import { io } from 'socket.io-client';
-import {useEffect} from 'react'
+//import { apiBaseURL} from './API_Access';
+//import { io } from 'socket.io-client';
+import {useEffect, useRef} from 'react'
+
 
 import '../styles/Game.css'
 
@@ -9,53 +9,58 @@ import '../styles/Game.css'
 
 function Game() {
 
+	const canvasRef =useRef(null);
+
 	
-	var canvas;
-	var ctx;
-	var game;
-	var cmd;
-
-	var player1;
-	var player2;
-	var ball;
-
-	//La variable game contiendra  toutes les donnees du joueur 1 et joueur 2  ainsi que de la balle.
-
-	game =  {
-		 player1 : {
-			width : 20,
-			height :100,
-			x :  0,
-			y : player1.height,
-			color : "blue",
-			score : 0,
-			scoreX : (canvas.width / 2) + 70,
-			scoreY : 100,
-		},
-		player2 : {
-			width : 20,
-			height :100,
-			x :  canvas.width,
-			y : player2.height,
-			color : "red",
-			score : 0,
-			scoreX: (canvas.width / 2) - 130,
-			scoreY: 100,
-		},
-		ball : {
-			x : canvas.width / 2,
-			y : canvas.height / 2,
-			rad: 15,
-			speedX: 3,
-			speedY: 3,
-			accel: 0.2,
-			color: "whitesmoke"
-		}
-	};
+	
 
 	useEffect(()=> {
-		canvas = document.getElementById("canvas-id");
-		ctx = canvas.getContext("2d");
+
+		var canvas;
+		var ctx;
+		var game;
+		//var cmd;
+		var player1;
+		var player2;
+
+		canvas = canvasRef.current;
+		ctx = canvas.getContext("2d")
+
+		console.log('test:')
+		console.log(ctx);
+
+		//La variable game contiendra  toutes les donnees du joueur 1 et joueur 2  ainsi que de la balle.
+
+		player1 = {
+			width : 10,
+			height: 100,
+			x: 0,
+			y: ((canvas.height - 100) / 2),
+			color: "red",
+		}
+
+		player2 = {
+			width : 10,
+			height: 100,
+			x: canvas.width - 10,
+			y: ((canvas.height - 100) / 2),
+			color: "green",
+
+		}
+
+		game = {
+			player1: player1,
+			player2: player2,
+			ball: {
+				x : (canvas.width / 2),
+				y : (canvas.height / 2),
+				rad: 10,
+				color: "whitesmoke",
+			}
+		}
+
+
+		
 
 		//Permet de dessiner les paddles du joueur 1 et joueur 2 
 		function drawPaddle(posX, posY, width, height, color)
@@ -80,17 +85,17 @@ function Game() {
 		function draw()
 		{
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			drawPaddle(player1.x, player1.y, player1.width, player1.height, player1.color);
-			drawPaddle(player2.x, player2.y, player2.width, player2.height, player2.color);
-			drawBall(ball.x, ball.y, ball.rad, ball.color);
+			drawPaddle(game.player1.x, game.player1.y, game.player1.width, game.player1.height, game.player1.color);
+			drawPaddle(game.player2.x, game.player2.y, game.player2.width, game.player2.height, game.player2.color);
+			drawBall(game.ball.x, game.ball.y, game.ball.rad, game.ball.color);
 		}
 
-		function game()
+		function set_game()
 		{
-		draw();
+			draw();
 		}
 
-		setInterval(game, 1000 / 60);
+		setInterval(set_game, 1000 / 60);
 	},[]);
 
 		
@@ -98,7 +103,7 @@ function Game() {
 
 	return (
 		<>
-			<canvas className='canvas' id = 'canvas-id'></canvas>
+			<canvas className='canvas' ref={canvasRef} height={800} width={1200}> </canvas>
 		</>
 		
 	)

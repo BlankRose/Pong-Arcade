@@ -1,9 +1,12 @@
-.canvas{
+.canvas
+{
     margin-top: 10%;
     display: block;
     margin-left: auto;
     margin-right: auto;
-    background-color: black;
-    width: 1200px;
-    height:800px;
+    background-image: url(../assets/background.jpg);
+    background-size: cover;
+    background-position: center;
+    border: 5px solid;
+    border-color: red blue;
 }
