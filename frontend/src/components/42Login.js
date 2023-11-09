@@ -103,9 +103,11 @@ function LoginPage({ onLoginSuccess }) {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(res => {
+				console.log(res.data.access_token);
+				localStorage.setItem('token', res.data.access_token);
+
 				setNewbie(false);
 				setOAuthToken(null);
-				localStorage.setItem('token', res.data.access_token);
 				onLoginSuccess();
 			})
 			.catch((error) => {

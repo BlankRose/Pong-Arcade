@@ -6,10 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-
-class AuthPayload {
-	id: number;
-}
+import { AuthPayload } from './payload.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -24,12 +21,16 @@ export class AuthGuard implements CanActivate {
 		const token = this.extractTokenFromHeader(request);
 		request['user'] = await this.validateToken(token);
 
+		if (!request['user']) {
+			throw new UnauthorizedException('Invalid token');
+		}
+
 		return true;
 	}
 
 	async validateToken(token: string): Promise<AuthPayload> {
 		if (!token) {
-			throw new UnauthorizedException();
+			return undefined;
 		}
 		try {
 			const payload = await this.jwtService.verifyAsync(
@@ -37,7 +38,7 @@ export class AuthGuard implements CanActivate {
 			);
 			return payload;
 		} catch {
-			throw new UnauthorizedException();
+			return undefined;
 		}
 	}
 

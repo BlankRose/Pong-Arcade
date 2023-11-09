@@ -12,6 +12,7 @@ function Profil({ username }) {
 	useEffect(() => {
 		apiHandle.get(`/users/${username || 'me'}`, withAuth() )
 			.then(response => {
+				console.log(response);
 				setUser(response.data);
 				if (response.data && response.data.avatar)
 					setAvatar(response.data.avatar);
@@ -21,6 +22,7 @@ function Profil({ username }) {
 			});
 	}, [username]);
 
+	console.log(user);
 	return (
 		user
 			? <div className= "Container">

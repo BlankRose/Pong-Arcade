@@ -7,12 +7,15 @@ import './styles/index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import App from './App';
+import SocketProvider from './contexts/Sockets';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<Provider store={store}>
-	    	<App />
-		</Provider>
+		<SocketProvider>
+			<Provider store={store}>
+		    	<App />
+			</Provider>
+		</SocketProvider>
 	</React.StrictMode>
 );

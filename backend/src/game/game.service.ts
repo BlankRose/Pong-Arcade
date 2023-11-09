@@ -42,10 +42,19 @@ export class GameService {
 
 	async connect(client: UserSocket) {
 		const token = client.handshake.auth.token;
-		if (!token)
-			throw new UnauthorizedException();
+		if (!token) {
+			console.log('Client disconnected: No token provided');
+			client.disconnect(true);
+			return;
+		}
 
 		const user = this.authGuard.validateToken(token);
+		if (!user) {
+			console.log('Client disconnected: Invalid token');
+			client.disconnect(true);
+			return;
+		}
+
 		client.data.state = PlayerState.NONE;
 		client.data.game = undefined;
 		client.data.user = (await user).id;
