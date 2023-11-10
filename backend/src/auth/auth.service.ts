@@ -13,6 +13,7 @@ import { toDataURL } from 'qrcode'
 
 import {Request, Body} from '@nestjs/common'
 import { LoginDto } from './dto/login.dto';
+import { AuthPayload } from './jwt/payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -22,16 +23,22 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
+	generateNewJWT(user: User) {
+		const payload = new AuthPayload(user);
+		return {
+			access_token: this.jwtService.sign(Object.assign({}, payload)),
+		};
+	}
+
 	async login(req: LoginDto) {
 		const user = await this.validateUser(req.username, req.password);
 		if (!user) {
 			throw new UnauthorizedException();
 		}
 
-		const payload = { id: user.id };
-		return {
-			access_token: this.jwtService.sign(payload),
-		};
+		this.usersService.turnOnline(user.id);
+		this.usersService.setIsNeed2FA(user.id);
+		return this.generateNewJWT(user);
 	}
 
 	async login42(login42Dto: Login42Dto) {
@@ -44,9 +51,7 @@ export class AuthService {
 			this.usersService.turnOnline(user.id)
 			this.usersService.setIsNeed2FA(user.id)
 
-			return {
-				access_token: this.jwtService.sign(payload),
-			};
+			return this.generateNewJWT(user);
 		}
 		throw new UnauthorizedException();
 	}
@@ -55,6 +60,8 @@ export class AuthService {
 		await this.usersService.createUser({
 			username: registerDto.username,
 			password: registerDto.password,
+			status: 'online',
+			is2FANeeded: false,
 		});
 	}
 
@@ -70,7 +77,7 @@ export class AuthService {
 
 		});
 		console.log("user: ", user)
-		return user;
+		return this.generateNewJWT(user);
 	}
 
 	async token42(code: string, uri: string): Promise<any> {

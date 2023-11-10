@@ -21,6 +21,7 @@ export class ChatService
 		private userRepo: Repository<User>,
 	) {}
 
+
 	async createMessage(newMessage: NewMessageDto) {
 		const newMess = this.messageRepo.create(newMessage)
 		return await this.messageRepo.save(newMess)

@@ -52,7 +52,7 @@ export class User {
 	@Column({ default: null })
 	_2FAToken: string;
 
-	@Column({ default: true })
+	@Column({ default: false})
 	is2FANeeded: boolean;
 
 	/* ********************** */

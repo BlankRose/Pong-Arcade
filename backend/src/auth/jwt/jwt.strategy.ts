@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { AuthPayload } from './payload.interface'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,26 +15,31 @@ export class AuthGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest<Request>();
 		if (request.url.startsWith('/auth') && !(request.url === '/auth/loginStatus'
-			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa/') || request.url.startsWith('/auth/logout') || request.url.startsWith('/users/remove')))
+			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa') || request.url.startsWith('/auth/logout')))
 			return true;
-		   
-
 
 		const token = this.extractTokenFromHeader(request);
+		request['user'] = await this.validateToken(token);
+
+		if (!request['user']) {
+			throw new UnauthorizedException('Invalid token');
+		}
+
+		return true;
+	}
+
+	async validateToken(token: string): Promise<AuthPayload> {
 		if (!token) {
-			throw new UnauthorizedException();
+			return undefined;
 		}
 		try {
 			const payload = await this.jwtService.verifyAsync(
 				token, { secret: process.env.JWT_SECRET }
 			);
-			request['user'] = payload;
-			// request['needs2FA'] = true;
+			return payload;
 		} catch {
-			throw new UnauthorizedException();
+			return undefined;
 		}
-		
-		return true;
 	}
 
 	private extractTokenFromHeader(request: Request): string | undefined {

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import "../styles/Login.css";
 
 import apiHandle from "./API_Access";
-import {Navigate} from 'react-router-dom'
+import { withAuth } from "./API_Access";
 
 const apiUID = process.env.REACT_APP_API_UID;
 
-function LoginPage() {
+function LoginPage({DoRerender}) {
 	const [ authenticated, setAuthenticated ] = useState(false);
 	const [ errorMessage, setErrorMessage ] = useState(null);
 
@@ -16,9 +16,6 @@ function LoginPage() {
 	const [ OAuthToken, setOAuthToken ] = useState(null);
 	const [ OAuthPopup, setOAuthPopup ] = useState(null);
 
-	useEffect(() => {
-		console.log("authnticated", authenticated)
-	},[authenticated])
 	// Attach an event listener to the window to listen on the
 	// OAuth login popups events (checks every 500ms)
 	useEffect(() => {
@@ -64,6 +61,8 @@ function LoginPage() {
 							apiHandle.post('/auth/login42', { code: response.data })
 								.then((res) => {
 									localStorage.setItem('token', res.data.access_token);
+									console.log("mimi," ,localStorage.getItem('item'))
+									DoRerender();
 								})
 								.catch((error) => {
 									setNewbie(true);
@@ -81,7 +80,7 @@ function LoginPage() {
 				return;
 			}
 		}, 500)
-	}, [OAuthPopup, OAuthURI])
+	}, [OAuthPopup, DoRerender, OAuthURI])
 
 	// Triggers the OAuth login popup by opening a new window
 	// and attach it to the OAuthPopup state
@@ -106,11 +105,12 @@ function LoginPage() {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(res => {
+				console.log(res.data.access_token);
+				localStorage.setItem('token', res.data.access_token);
+
 				setNewbie(false);
 				setOAuthToken(null);
-				console.log("lolo", res.data.access_token)
-				localStorage.setItem('token', res.data.access_token);
-				console.log("token: ", localStorage.getItem('token'))
+				DoRerender();
 			})
 			.catch((error) => {
 				const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;
@@ -135,7 +135,6 @@ function LoginPage() {
 					</div>
 				) : (
 					<div className="login__success">
-						{/* <Navigate to='/profile'/> */}
 						<h1>Success!</h1>
 						<p>You are now logged in.</p>
 					</div>

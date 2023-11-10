@@ -22,7 +22,6 @@ import { Navigate } from 'react-router-dom'
 import { UserLoader } from './userLoader';
 import {statusLoader} from './Loader'
 
-// import { statusLoader } from './Loader'
 
 const Check2FAForSignIn = ({children}) => {
 	const loggedIn = useSelector(state => state.user.status)
@@ -41,8 +40,7 @@ const Check2FAForSignIn = ({children}) => {
 		return <Navigate to="/profile"/>
 	}
 	else {
-	    // return children
-		return <Navigate to="/profile"/>
+	    return children
 	}
 }
 
@@ -67,21 +65,12 @@ const Check2FAForOtherRoutes  = ({children}) => {
 
 
 function App() {
-	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-	// useEffect(() => {
-	// 	if (localStorage.getItem('token')) {
-	// 		apiHandle.get('/auth/verify', withAuth())
-	// 			.then((_) => {
-	// 				setIsLoggedIn(true);
-	// 			})
-	// 			.catch((_) => {
-	// 				console.error("Warning: Token is invalid or has expired!")
-	// 				localStorage.removeItem('token');
-	// 				setIsLoggedIn(false);
-	// 			})
-	// 	}
-	// })
+	const [rerenderKey, setRerenderKey] = useState(0);
+	const handleLRerender = () => {
+        setRerenderKey(prevKey => prevKey + 1);
+    };
+
 
 	const router = createBrowserRouter([
         {
@@ -118,10 +107,10 @@ function App() {
 					loader: statusLoader,
 					element: 
 							<Check2FAForSignIn>
-							 <>
-							  <Login  />,
-							  <Login42 />, 
-							 </> 
+							   		<>
+		                                <Login  DoRerender={handleLRerender}/>,
+	                                	<Login42  DoRerender={handleLRerender} />, 
+	                                </> 
 							</Check2FAForSignIn>
 				},
             ] 
@@ -141,3 +130,55 @@ function App() {
 }
 
 export default App;
+
+
+// import './styles/App.css';
+
+// import { useState } from 'react';
+// import ReactDom from "react-dom/client";
+// import {BrowserRouter, Routes, Route} from "react-router-dom";
+
+// import Login from './components/Login';
+// import Login42 from './components/42Login';
+// import ChatPage from './components/Chat';
+// import Nav from './components/Nav';
+
+// function App() {
+// 	const [isLoggedIn, setIsLoggedIn] = useState(false); // état de la connexion
+
+// 	const onLoginSuccess = () => {
+// 		setIsLoggedIn(true);
+// 	};
+
+// 	const onLogout = () => {
+// 		localStorage.removeItem('token');
+// 		setIsLoggedIn(false);
+// 	};
+
+// 	return (
+// 		<div className="App">
+// 			{isLoggedIn ? (
+// 				<>
+// 					<BrowserRouter>
+// 					<Routes>
+// 					<Route path="/" element={<Nav />}>
+// 						<Route index element={<p>tempo</p>} />
+// 						<Route path="game" element={<p>tempo</p>} />
+// 						<Route path= "chat" element={<ChatPage onLogout={onLogout}/>} />
+// 						<Route path="*" element={<p>tempo</p>} />
+// 					</Route>
+
+// 					</Routes>
+// 					</BrowserRouter>
+// 				</>
+// 			) : (
+// 				<>
+// 					<Login onLoginSuccess={onLoginSuccess} />
+// 					<Login42 onLoginSuccess={onLoginSuccess} />
+// 				</>
+// 			)}
+// 		</div>
+// 	);
+// }
+
+// export default App;
