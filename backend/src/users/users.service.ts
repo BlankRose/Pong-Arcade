@@ -123,7 +123,6 @@ export class UsersService {
 	async logout(userId: number) {
 		try {
 			const user= await this.findOneByID(userId)
-			console.log("USer", user)
 			if (!user) {
 				throw new NotFoundException()
 			}

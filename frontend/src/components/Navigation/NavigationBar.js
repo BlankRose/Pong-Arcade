@@ -2,7 +2,7 @@ import styles from './NavigationBar.module.css';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faComments, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faComments, faGamepad } from '@fortawesome/free-solid-svg-icons';
 import LogoutButton from '../Logout/LogoutButton'
 
 

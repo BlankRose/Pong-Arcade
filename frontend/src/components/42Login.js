@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "../styles/Login.css";
 
 import apiHandle from "./API_Access";
-import { withAuth } from "./API_Access";
 
 const apiUID = process.env.REACT_APP_API_UID;
 
@@ -61,7 +60,6 @@ function LoginPage({DoRerender}) {
 							apiHandle.post('/auth/login42', { code: response.data })
 								.then((res) => {
 									localStorage.setItem('token', res.data.access_token);
-									console.log("mimi," ,localStorage.getItem('item'))
 									DoRerender();
 								})
 								.catch((error) => {
@@ -105,7 +103,6 @@ function LoginPage({DoRerender}) {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(res => {
-				console.log(res.data.access_token);
 				localStorage.setItem('token', res.data.access_token);
 
 				setNewbie(false);

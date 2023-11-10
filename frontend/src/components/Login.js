@@ -1,7 +1,7 @@
 
 import apiHandle from './API_Access';
 import '../styles/Login.css';
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 
 
 

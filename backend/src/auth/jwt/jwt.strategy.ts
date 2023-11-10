@@ -14,9 +14,13 @@ export class AuthGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest<Request>();
+
 		if (request.url.startsWith('/auth') && !(request.url === '/auth/loginStatus'
-			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa') || request.url.startsWith('/auth/logout')))
-			return true;
+		|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa/') || request.url.startsWith('/auth/logout') || request.url.startsWith('/users/remove')))
+		return true;
+
+		if (request.url.startsWith('/users/remove'))
+		   return true;
 
 		const token = this.extractTokenFromHeader(request);
 		request['user'] = await this.validateToken(token);

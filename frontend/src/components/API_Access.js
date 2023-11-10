@@ -7,7 +7,7 @@ const apiBaseURL = `http://${hostname}:${apiPort}`;
 
 const apiHandle = axios.create({
 	baseURL: apiBaseURL,
-	timeout: 1000
+	timeout: 10000
 });
 
 const withAuth = () => {

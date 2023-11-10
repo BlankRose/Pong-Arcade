@@ -76,7 +76,6 @@ export class AuthService {
 			is2FANeeded: false,
 
 		});
-		console.log("user: ", user)
 		return this.generateNewJWT(user);
 	}
 

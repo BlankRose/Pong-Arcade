@@ -1,10 +1,9 @@
 import './styles/App.css';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from 'react';
 
-import apiHandle, { withAuth } from './components/API_Access';
 import Login from './components/Login';
 import Login42 from './components/42Login';
 
@@ -28,7 +27,6 @@ const Check2FAForSignIn = ({children}) => {
 	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
 	const is2FAEnabled = useSelector (state => state.user._2FAEnabled)
 
-	console.log("tuka", loggedIn)
 
 	if (loggedIn === 'offline') {
 		return children
@@ -47,7 +45,6 @@ const Check2FAForSignIn = ({children}) => {
 const Check2FAForOtherRoutes  = ({children}) => {
 	const loggedIn = useSelector(state => state.user.status)
 	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
-	const is2FAEnabled = useSelector (state => state.user._2FAEnabled)
 
 
 	if (loggedIn === 'offline') {
