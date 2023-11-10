@@ -30,7 +30,15 @@ export class GameState {
 
 	score1: number
 	score2: number
+	
+	player1: number
+	player2: number
 
-	player1: string
-	player2: string
+	player1_pressUp: boolean
+	player1_pressDown: boolean
+	player2_pressUp: boolean
+	player2_pressDown: boolean
+
+	player1_socket: string
+	player2_socket: string
 }

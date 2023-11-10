@@ -13,7 +13,6 @@ export const newSocketEvent = (socket, event, callback) => {
 const defaultGameContext = {
 	inQueue: false,
 	gameState: null,
-	opponent: null
 }
 
 const SocketProvider = ({ children }) => {

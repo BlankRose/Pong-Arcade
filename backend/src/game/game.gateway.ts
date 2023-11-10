@@ -23,7 +23,7 @@ class GameGateway
 	gameThread: NodeJS.Timeout
 
 	afterInit(server: Server) {
-		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/10);
+		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/30);
 	}
 
 	handleConnection(client: UserSocket, ...args: any[]) {
@@ -48,6 +48,31 @@ class GameGateway
 		return success
 			? { event: 'leaveQueueSuccess', data: '' }
 			: { event: 'leaveQueueError', data: '' };
+	}
+
+	@SubscribeMessage('abondonGame')
+	abondonGame(client: UserSocket) {
+		this.gameService.abondonGame(this.server, client);
+	}
+
+	@SubscribeMessage('startUp')
+	paddleMoveUp(client: UserSocket) {
+		this.gameService.shiftDirection(client, true, true);
+	}
+
+	@SubscribeMessage('startDown')
+	paddleMoveDown(client: UserSocket) {
+		this.gameService.shiftDirection(client, false, true);
+	}
+
+	@SubscribeMessage('stopUp')
+	paddleStopUp(client: UserSocket) {
+		this.gameService.shiftDirection(client, true, false);
+	}
+
+	@SubscribeMessage('stopDown')
+	paddleStopDown(client: UserSocket) {
+		this.gameService.shiftDirection(client, false, false);
 	}
 };
 

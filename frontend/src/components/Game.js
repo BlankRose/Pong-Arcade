@@ -1,8 +1,10 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
+import GameCanvas from './GameCanvas';
 
-function Game(props) {
+function Game() {
 
+	const [ isConnected, setIsConnected ] = useState(false);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
 	const [ lastGameContext, setLastGameContext ] = useState(null);
 
@@ -12,11 +14,11 @@ function Game(props) {
 			return;
 
 		newSocketEvent(gameSocket, 'connect', () => {
-			console.log('Connected to game socket');
+			setIsConnected(true);
 		})
 
 		newSocketEvent(gameSocket, 'disconnect', () => {
-			console.log('Disconnected from game socket');
+			setIsConnected(false);
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
@@ -30,16 +32,17 @@ function Game(props) {
 		})
 
 		newSocketEvent(gameSocket, 'gameStart', data => {
-			setGameContext({ inQueue: false, onpponent: data.opponent, gameState: data.game })
+			setGameContext({ inQueue: false, gameState: data })
 		})
 
 		newSocketEvent(gameSocket, 'gameUpdate', data => {
-			setGameContext({ ...gameContext, gameState: data.game })
+			setGameContext({ ...gameContext, gameState: data })
 		})
 
 		newSocketEvent(gameSocket, 'gameEnd', data => {
+			console.log('Game over:', data)
 			setLastGameContext({ ...gameContext, gameState: data.game, winner: data.winner })
-			setGameContext({ inQueue: false, onpponent: null, gameState: null })
+			setGameContext({ inQueue: false, gameState: null })
 		})
 
 		gameSocket.connect();
@@ -49,31 +52,66 @@ function Game(props) {
 	}, [gameSocket]);
 
 	useEffect(() => {
-		console.log('Game update:', gameContext);
-	}, [gameContext]);
+		const keyDownHandler = (e) => {
+			if (!gameSocket)
+				return;
+			if (e.key === 'ArrowUp')
+				gameSocket.emit('startUp');
+			if (e.key === 'ArrowDown')
+				gameSocket.emit('startDown');
+		}
 
-	function Canvas() {
-		const ref = useRef/*<HTMLCanvasElement>*/(null);
+		const keyUpHandler = (e) => {
+			if (!gameSocket)
+				return;
+			if (e.key === 'ArrowUp')
+				gameSocket.emit('stopUp');
+			if (e.key === 'ArrowDown')
+				gameSocket.emit('stopDown');
+		}
 
-		useEffect(() => {
-			if (ref.current) {
-			//	const canvas = ref.current.getContext('2d')
-			}
-		}, [ref]);
-		return <canvas ref={props.ref} className="canvas"/>
-	}
+		document.addEventListener('keydown', keyDownHandler);
+		document.addEventListener('keyup', keyUpHandler);
+
+		return () => {
+			document.removeEventListener('keydown', keyDownHandler);
+			document.removeEventListener('keyup', keyUpHandler);
+		}
+
+	//  --> Only run on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return(
 		<div className='pGame'>
 			{
-			lastGameContext ? <>
-				<div>Game Over</div>
-				<div>Winner: {lastGameContext.winner}</div>
-				<div>Score: {lastGameContext.gameState.score1} - {lastGameContext.gameState.score2}</div>
-				</> : undefined
+			!isConnected
+				? <div>Connecting...</div> :
+				<>
+				{
+				lastGameContext ? <>
+					<div>Game Over</div>
+					<div>Winner: {lastGameContext.winner}</div>
+					<div>Score: {lastGameContext.gameState.score1} - {lastGameContext.gameState.score2}</div>
+					</> : undefined
+				}
+				{
+					gameContext.gameState
+						? <>
+						<div>{gameContext.gameState.player1} VS {gameContext.gameState.player2}</div>
+						<div>Score: {gameContext.gameState.score1} - {gameContext.gameState.score2}</div>
+						<button onClick={() => {gameSocket.emit('abondonGame')}}>Give Up</button>
+						<GameCanvas ctx={gameContext.gameState}/>
+						</>
+						: gameContext.inQueue
+							? <>
+							<div>Waiting for opponent</div>
+							<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
+							</>
+							: <button onClick={() => {gameSocket.emit('joinQueue')}}>Join Queue</button>
+				}
+				</>
 			}
-			<button onClick={() => {gameSocket.emit('joinQueue')}}>Join Queue</button>
-			<Canvas />
 		</div>
 	)
 }

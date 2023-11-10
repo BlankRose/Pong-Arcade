@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Game } from "./entities/game.entity";
 import { Repository } from "typeorm";
-import { GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
+import { GameConstants, GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
 import { AuthGuard } from "src/auth/jwt/jwt.strategy";
 import { Server } from "socket.io";
 
@@ -16,16 +16,32 @@ export class GameService {
 
 	private activeGames: GameState[] = [];
 
-	private sanitizeGameState(game: GameState): GameState {
+	private sanitizeGameState(server: Server, game: GameState): GameState {
 		const sanitized = {...game};
-		delete sanitized.player1;
-		delete sanitized.player2;
+		delete sanitized.player1_socket;
+		delete sanitized.player2_socket;
+		delete sanitized.player1_pressUp;
+		delete sanitized.player2_pressUp;
+		delete sanitized.player1_pressDown;
+		delete sanitized.player2_pressDown;
 		return sanitized;
 	}
 
 	updateGames(server: Server) {
-		for (const game of this.activeGames) {
+		for (let game of this.activeGames) {
 			// TODO: Game logic here
+			Math.random() > 0.9 ? game.score1 += 1 : game.score1;
+			Math.random() < 0.1 ? game.score2 += 1 : game.score2;
+
+			if (game.player1_pressDown)
+				game.paddle1 < GameConstants.TOP ? game.paddle1 += 1 : game.paddle1;
+			if (game.player1_pressUp)
+				game.paddle1 > GameConstants.BOTTOM ? game.paddle1 -= 1 : game.paddle1;
+
+			if (game.player2_pressDown)
+				game.paddle2 < GameConstants.TOP ? game.paddle2 += 1 : game.paddle2;
+			if (game.player2_pressUp)
+				game.paddle2 > GameConstants.BOTTOM ? game.paddle2 -= 1 : game.paddle2;
 
 			if ((game.score1 > 10 || game.score2 > 10)
 				&& (Math.abs(game.score1 - game.score2) >= 2))
@@ -34,8 +50,8 @@ export class GameService {
 				continue;
 			}
 
-			const room_name = 'game_' + game.player1 + '_' + game.player2;
-			const sanitizedGame = this.sanitizeGameState(game);
+			const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
+			const sanitizedGame = this.sanitizeGameState(server, game);
 			server.to(room_name).emit('gameUpdate', sanitizedGame);
 		}
 	}
@@ -64,14 +80,14 @@ export class GameService {
 
 	async disconnect(server: Server, client: UserSocket) {
 		for (let game of this.activeGames) {
-			if (game.player1 == client.id) {
+			if (game.player1_socket == client.id) {
 				game.score1 = -1;
 				game.score2 = 11;
 				this.endGame(server, game);
 				break;
 			}
 
-			if (game.player2 == client.id) {
+			if (game.player2_socket == client.id) {
 				game.score1 = 11;
 				game.score2 = -1;
 				this.endGame(server, game);
@@ -107,40 +123,46 @@ export class GameService {
 			ballY: 0,
 			score1: 0,
 			score2: 0,
-			player1: players[0].id,
-			player2: players[1].id,
+			player1_socket: players[0].id,
+			player2_socket: players[1].id,
+			player1_pressUp: false,
+			player1_pressDown: false,
+			player2_pressUp: false,
+			player2_pressDown: false,
+			player1: players[0].data.user,
+			player2: players[1].data.user,
 		};
 
 		this.activeGames.push(game);
-		const sanitizedGame = this.sanitizeGameState(game);
+		const sanitizedGame = this.sanitizeGameState(server, game);
 		for (let i = 0; i < 2; i++) {
 			players[i].data.game = this.activeGames.indexOf(game);
 			players[i].join(room_name);
-			players[i].emit('gameStart', { opponent: players[i ? 0 : 1].data.user, game: sanitizedGame });
+			players[i].emit('gameStart', sanitizedGame);
 		}
 	}
 
 	endGame(server: Server, game: GameState) {
-		const room_name = 'game_' + game.player1 + '_' + game.player2;
-		const winner = game.score1 > game.score2 ? game.player1 : game.player2;
+		const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
+		const winner = game.score1 > game.score2 ? game.player1_socket : game.player2_socket;
 		const sockets = server.sockets.sockets;
 
 		try {
-			sockets.get(game.player1).data.state = PlayerState.NONE;
-			sockets.get(game.player1).data.game = undefined;
+			sockets.get(game.player1_socket).data.state = PlayerState.NONE;
+			sockets.get(game.player1_socket).data.game = undefined;
 		} catch {
 			console.log('End of game: Player 1 has disconnected');
 		}
 		try {
-			sockets.get(game.player2).data.state = PlayerState.NONE;
-			sockets.get(game.player2).data.game = undefined;
+			sockets.get(game.player2_socket).data.state = PlayerState.NONE;
+			sockets.get(game.player2_socket).data.game = undefined;
 		} catch {
 			console.log('End of game: Player 2 has disconnected');
 		}
 
 		server.to(room_name).emit('gameEnd', {
 			winner: sockets.get(winner)?.data.user,
-			game: this.sanitizeGameState(game)
+			game: this.sanitizeGameState(server, game)
 		});
 
 		this.activeGames.splice(this.activeGames.indexOf(game), 1);
@@ -165,4 +187,41 @@ export class GameService {
 		return true;
 	}
 
+	abondonGame(server: Server, client: UserSocket) {
+		for (let game of this.activeGames) {
+			if (game.player1_socket == client.id) {
+				game.score1 = -1;
+				game.score2 = 11;
+				this.endGame(server, game);
+				break;
+			}
+
+			if (game.player2_socket == client.id) {
+				game.score1 = 11;
+				game.score2 = -1;
+				this.endGame(server, game);
+				break;
+			}
+		}
+	}
+
+	shiftDirection(client: UserSocket, isUp: boolean, press: boolean) {
+		if (client.data.state != PlayerState.PLAYING)
+			return;
+		const game = this.activeGames[client.data.game];
+
+		if (game.player1_socket == client.id) {
+			if (isUp)
+				game.player1_pressUp = press;
+			else
+				game.player1_pressDown = press;
+		}
+
+		else if (game.player2_socket == client.id) {
+			if (isUp)
+				game.player2_pressUp = press;
+			else
+				game.player2_pressDown = press;
+		}
+	}
 }
