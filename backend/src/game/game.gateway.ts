@@ -23,7 +23,7 @@ class GameGateway
 	gameThread: NodeJS.Timeout
 
 	afterInit(server: Server) {
-		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/30);
+		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/20);
 	}
 
 	handleConnection(client: UserSocket, ...args: any[]) {

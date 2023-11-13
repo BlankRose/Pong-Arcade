@@ -17,8 +17,8 @@ export class UserSocket extends Socket {
 export const GameConstants = {
 	TOP: 50,
 	BOTTOM: -50,
-	LEFT: 100,
-	RIGHT: -100,
+	LEFT: 100,   // ==>
+	RIGHT: -100, // <==
 }
 
 export class GameState {
@@ -27,12 +27,13 @@ export class GameState {
 
 	ballX: number
 	ballY: number
-
-	score1: number
-	score2: number
+	ballVelX: number
+	ballVelY: number
 	
 	player1: number
 	player2: number
+	score1: number
+	score2: number
 
 	player1_pressUp: boolean
 	player1_pressDown: boolean

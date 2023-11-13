@@ -16,7 +16,7 @@ export class GameService {
 
 	private activeGames: GameState[] = [];
 
-	private sanitizeGameState(server: Server, game: GameState): GameState {
+	private sanitizeGameState(game: GameState): GameState {
 		const sanitized = {...game};
 		delete sanitized.player1_socket;
 		delete sanitized.player2_socket;
@@ -33,6 +33,28 @@ export class GameService {
 			Math.random() > 0.9 ? game.score1 += 1 : game.score1;
 			Math.random() < 0.1 ? game.score2 += 1 : game.score2;
 
+			// Scoring Detect
+			if (game.ballX >= GameConstants.LEFT)
+				game.score2 += 1;
+			else if (game.ballX <= GameConstants.RIGHT)
+				game.score1 += 1;
+			if (game.ballX <= GameConstants.RIGHT || game.ballX >= GameConstants.LEFT)
+			{
+				game.ballX = 0;
+				game.ballY = 0;
+				game.paddle1 = 0;
+				game.paddle2 = 0;
+			}
+
+			// Ending Trigger
+			if ((game.score1 > 10 || game.score2 > 10)
+				&& (Math.abs(game.score1 - game.score2) >= 2))
+			{
+				this.endGame(server, game);
+				continue;
+			}
+
+			// Movements
 			if (game.player1_pressDown)
 				game.paddle1 < GameConstants.TOP ? game.paddle1 += 1 : game.paddle1;
 			if (game.player1_pressUp)
@@ -43,15 +65,9 @@ export class GameService {
 			if (game.player2_pressUp)
 				game.paddle2 > GameConstants.BOTTOM ? game.paddle2 -= 1 : game.paddle2;
 
-			if ((game.score1 > 10 || game.score2 > 10)
-				&& (Math.abs(game.score1 - game.score2) >= 2))
-			{
-				this.endGame(server, game);
-				continue;
-			}
-
+			// Sends Update
 			const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
-			const sanitizedGame = this.sanitizeGameState(server, game);
+			const sanitizedGame = this.sanitizeGameState(game);
 			server.to(room_name).emit('gameUpdate', sanitizedGame);
 		}
 	}
@@ -117,24 +133,24 @@ export class GameService {
 
 		const room_name = 'game_' + players[0].id + '_' + players[1].id;
 		const game: GameState = {
-			paddle1: 0,
-			paddle2: 0,
-			ballX: 0,
-			ballY: 0,
-			score1: 0,
-			score2: 0,
+			paddle1: 0, paddle2: 0,
+			ballX: 0, ballY: 0,
+			ballVelX: 1, ballVelY: 0,
+			score1: 0, score2: 0,
+
+			player1: players[0].data.user,
 			player1_socket: players[0].id,
-			player2_socket: players[1].id,
 			player1_pressUp: false,
 			player1_pressDown: false,
+
+			player2_socket: players[1].id,
 			player2_pressUp: false,
 			player2_pressDown: false,
-			player1: players[0].data.user,
 			player2: players[1].data.user,
 		};
 
 		this.activeGames.push(game);
-		const sanitizedGame = this.sanitizeGameState(server, game);
+		const sanitizedGame = this.sanitizeGameState(game);
 		for (let i = 0; i < 2; i++) {
 			players[i].data.game = this.activeGames.indexOf(game);
 			players[i].join(room_name);
@@ -162,7 +178,7 @@ export class GameService {
 
 		server.to(room_name).emit('gameEnd', {
 			winner: sockets.get(winner)?.data.user,
-			game: this.sanitizeGameState(server, game)
+			game: this.sanitizeGameState(game)
 		});
 
 		this.activeGames.splice(this.activeGames.indexOf(game), 1);
