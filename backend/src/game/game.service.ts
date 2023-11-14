@@ -5,12 +5,14 @@ import { Repository } from "typeorm";
 import { GameConstants, GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
 import { AuthGuard } from "src/auth/jwt/jwt.strategy";
 import { Server } from "socket.io";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class GameService {
 	constructor(
 		@InjectRepository(Game)
 		private readonly gameRepository: Repository<Game>,
+		private readonly userService: UsersService,
 		private authGuard: AuthGuard,
 	) {}
 
@@ -183,7 +185,7 @@ export class GameService {
 		}
 	}
 
-	endGame(server: Server, game: GameState) {
+	async endGame(server: Server, game: GameState) {
 		const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
 		const winner = game.score1 > game.score2 ? game.player1_socket : game.player2_socket;
 		const sockets = server.sockets.sockets;
@@ -199,6 +201,15 @@ export class GameService {
 			sockets.get(game.player2_socket).data.game = undefined;
 		} catch {
 			console.log('End of game: Player 2 has disconnected');
+		}
+
+		if (game.player1 != game.player2) {
+			let game_entry = new Game();
+			game_entry.playerOne = await this.userService.findOneByID(game.player1);
+			game_entry.playerTwo = await this.userService.findOneByID(game.player2);
+			game_entry.scorePlayerOne = game.score1;
+			game_entry.scorePlayerTwo = game.score2;
+			this.gameRepository.save(game_entry);
 		}
 
 		server.to(room_name).emit('gameEnd', {
