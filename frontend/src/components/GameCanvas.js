@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import bg from '../assets/traditional.png';
 
 const CanvasConstants = {
-	HEIGHT: 600,
+	HEIGHT: 800,
 	WIDTH: 1200,
 
 	TOP: 50,
@@ -11,9 +11,9 @@ const CanvasConstants = {
 	LEFT: 100,
 	RIGHT: -100,
 
-	PADDLE_WIDTH: 20,
-	PADDLE_HEIGHT: 100,
-	BALL_RADIUS: 10
+	PADDLE_WIDTH: 3,
+	PADDLE_HEIGHT: 20,
+	BALL_RADIUS: 8
 }
 
 const GameCanvas = ({ ctx }) => {
@@ -48,6 +48,8 @@ const GameCanvas = ({ ctx }) => {
 
 			const p1 = (ctx.paddle1 - CanvasConstants.BOTTOM) * ratio_y;
 			const p2 = (ctx.paddle2 - CanvasConstants.BOTTOM) * ratio_y;
+			const ph = CanvasConstants.PADDLE_HEIGHT * ratio_y;
+			const pw = CanvasConstants.PADDLE_WIDTH * ratio_x;
 
 			const bX = (ctx.ballX - CanvasConstants.RIGHT) * ratio_x;
 			const bY = (ctx.ballY - CanvasConstants.BOTTOM) * ratio_y;
@@ -56,12 +58,12 @@ const GameCanvas = ({ ctx }) => {
 			// ctx.paddle_ = center height point of paddle
 			context.fillStyle = 'white';
 			context.fillRect(
-				0, p1 - CanvasConstants.PADDLE_HEIGHT / 2,
-				CanvasConstants.PADDLE_WIDTH, CanvasConstants.PADDLE_HEIGHT
+				0, p1 - ph / 2,
+				pw, ph
 			);
 			context.fillRect(
-				CanvasConstants.WIDTH - CanvasConstants.PADDLE_WIDTH, p2 - CanvasConstants.PADDLE_HEIGHT / 2,
-				CanvasConstants.PADDLE_WIDTH, CanvasConstants.PADDLE_HEIGHT
+				CanvasConstants.WIDTH - pw, p2 - ph / 2,
+				pw, ph
 			);
 			context.fillRect(
 				bX - CanvasConstants.BALL_RADIUS, bY - CanvasConstants.BALL_RADIUS,

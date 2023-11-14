@@ -7,14 +7,10 @@ import { Server, ServerOptions } from "socket.io";
 import { GameService } from "./game.service";
 
 
-@WebSocketGateway(
-	{
-		cors: {
-			origin: ['http://localhost:5500'],
-			path: '/game',
-		}
-	}
-)
+@WebSocketGateway(<ServerOptions>{
+	path: '/game',
+	connectTimeout: 10000,
+})
 class GameGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
@@ -79,12 +75,6 @@ class GameGateway
 	paddleStopDown(client: UserSocket) {
 		this.gameService.shiftDirection(client, false, false);
 	}
-
-	@SubscribeMessage('collisionBall')
-	colisionBall(client: UserSocket) {
-		this.gameService.collisionBall(client);
-	}
-	
 };
 
 export default GameGateway;

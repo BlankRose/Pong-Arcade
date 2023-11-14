@@ -29,17 +29,20 @@ export class GameService {
 
 	updateGames(server: Server) {
 		for (let game of this.activeGames) {
-			// TODO: Game logic here
-			Math.random() > 0.9 ? game.score1 += 1 : game.score1;
-			Math.random() < 0.1 ? game.score2 += 1 : game.score2;
-
 			// Scoring Detect
-			if (game.ballX >= GameConstants.LEFT)
-				game.score2 += 1;
-			else if (game.ballX <= GameConstants.RIGHT)
+			if (game.ballX >= GameConstants.LEFT
+				&& game.ballVelX >= 0) {
 				game.score1 += 1;
+				game.ballVelX = -2;
+			}
+			else if (game.ballX <= GameConstants.RIGHT
+				&& game.ballVelX <= 0) {
+				game.score2 += 1;
+				game.ballVelX = 2;
+			}
 			if (game.ballX <= GameConstants.RIGHT || game.ballX >= GameConstants.LEFT)
 			{
+				game.ballVelY = 0;
 				game.ballX = 0;
 				game.ballY = 0;
 				game.paddle1 = 0;
@@ -54,16 +57,38 @@ export class GameService {
 				continue;
 			}
 
-			// Movements
+			// Movements PADDLE
 			if (game.player1_pressDown)
-				game.paddle1 < GameConstants.TOP ? game.paddle1 += 1 : game.paddle1;
+				game.paddle1 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 += 2 : game.paddle1;
 			if (game.player1_pressUp)
-				game.paddle1 > GameConstants.BOTTOM ? game.paddle1 -= 1 : game.paddle1;
+				game.paddle1 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 -= 2 : game.paddle1;
 
 			if (game.player2_pressDown)
-				game.paddle2 < GameConstants.TOP ? game.paddle2 += 1 : game.paddle2;
+				game.paddle2 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 += 2 : game.paddle2;
 			if (game.player2_pressUp)
-				game.paddle2 > GameConstants.BOTTOM ? game.paddle2 -= 1 : game.paddle2;
+				game.paddle2 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 -= 2 : game.paddle2;
+
+			// Ball Movements
+			game.ballX += game.ballVelX;
+			game.ballY += game.ballVelY;
+
+			// Walls Collisions
+			if ((game.ballY + (GameConstants.BALL_RADIUS / 2) >= GameConstants.TOP && game.ballVelY >= 0)
+				|| (game.ballY - (GameConstants.BALL_RADIUS / 2) <= GameConstants.BOTTOM && game.ballVelY <= 0))
+				game.ballVelY = -game.ballVelY;
+
+			// Paddles Collisions
+			if ((game.ballX + (GameConstants.BALL_RADIUS / 2) >= GameConstants.LEFT - GameConstants.PADDLE_WIDTH
+					&& game.ballY <= game.paddle2 + (GameConstants.PADDLE_HEIGHT / 2)
+					&& game.ballY >= game.paddle2 - (GameConstants.PADDLE_HEIGHT / 2)
+					&& game.ballVelX >= 0)
+				|| ( game.ballX - (GameConstants.BALL_RADIUS / 2) <= GameConstants.RIGHT + GameConstants.PADDLE_WIDTH
+					&& game.ballY <= game.paddle1 + (GameConstants.PADDLE_HEIGHT / 2)
+					&& game.ballY >= game.paddle1 - (GameConstants.PADDLE_HEIGHT / 2)
+					&& game.ballVelX <= 0)) {
+				game.ballVelX = (-game.ballVelX) * 1.1;
+				game.ballVelY = (Math.random() - 0.5) * 8;
+			}
 
 			// Sends Update
 			const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
@@ -135,7 +160,7 @@ export class GameService {
 		const game: GameState = {
 			paddle1: 0, paddle2: 0,
 			ballX: 0, ballY: 0,
-			ballVelX: 1, ballVelY: 0,
+			ballVelX: 2, ballVelY: 0,
 			score1: 0, score2: 0,
 
 			player1: players[0].data.user,
@@ -240,34 +265,4 @@ export class GameService {
 				game.player2_pressDown = press;
 		}
 	}
-
-	collisionBall(client: UserSocket) { 
-		const game = this.activeGames[client.data.game];
-
-		if (game.ballX + game.ballVelX < game.ballRad + game.widthPaddle) //gere l'axe vertical cote gauche  x: 0;
-		{
-			if (game.ballY > game.paddle2 && game.ballY < game.paddle2 + game.heightPaddle) //si la balle rebondit sur la raquette du joueur 2
-			{
-				game.ballVelX = -game.ballVelX;
-			}
-			else // lq balle ne touche pas la raquette
-			{
-				// augmenter le score du joueur 1  + remmetre la position de la balle  au milieu du jeu.
-			}
-		}
-		else if (game.ballX + game.ballVelX > game.width - game.ballRad - game.widthPaddle) // gere l'axe vertical cote droit x: canvas.width 
-		{
-			if (game.ballY > game.paddle1 && game.ballY < game.paddle1 + game.heightPaddle) // si la balle rebondit sur la raquette du joueur 1 
-			{
-				game.ballVelX = -game.ballVelX;
-			}
-			else // la balle ne touche pas la raquette
-			{
-				// augmenter le score du joueur 2  + remettre la poistion de la balle au milieu du jeu
-			}
-		}
-		if (game.ballY + game.ballVelY > game.height - game.ballRad || game.ballY + game.ballVelY < game.ballRad) // faire rebondir la balle sur l'axe horizontal
-		{
-			game.ballVelY = -game.ballVelY;
-		}
 }
