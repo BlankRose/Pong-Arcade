@@ -79,6 +79,12 @@ class GameGateway
 	paddleStopDown(client: UserSocket) {
 		this.gameService.shiftDirection(client, false, false);
 	}
+
+	@SubscribeMessage('collisionBall')
+	colisionBall(client: UserSocket) {
+		this.gameService.collisionBall(client);
+	}
+	
 };
 
 export default GameGateway;

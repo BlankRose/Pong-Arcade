@@ -22,13 +22,23 @@ export const GameConstants = {
 }
 
 export class GameState {
+
+	width: number // largeur du canvas
+	height: number // hauteur du canvas
+
+
+	widthPaddle: number // largeur de la raquette
+	heightPaddle: number // hauteur de la raquette
+
 	paddle1: number
 	paddle2: number
+	
 
 	ballX: number
 	ballY: number
 	ballVelX: number
 	ballVelY: number
+	ballRad: number //rayon de la balle
 	
 	player1: number
 	player2: number

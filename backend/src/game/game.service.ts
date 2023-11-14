@@ -240,4 +240,34 @@ export class GameService {
 				game.player2_pressDown = press;
 		}
 	}
+
+	collisionBall(client: UserSocket) { 
+		const game = this.activeGames[client.data.game];
+
+		if (game.ballX + game.ballVelX < game.ballRad + game.widthPaddle) //gere l'axe vertical cote gauche  x: 0;
+		{
+			if (game.ballY > game.paddle2 && game.ballY < game.paddle2 + game.heightPaddle) //si la balle rebondit sur la raquette du joueur 2
+			{
+				game.ballVelX = -game.ballVelX;
+			}
+			else // lq balle ne touche pas la raquette
+			{
+				// augmenter le score du joueur 1  + remmetre la position de la balle  au milieu du jeu.
+			}
+		}
+		else if (game.ballX + game.ballVelX > game.width - game.ballRad - game.widthPaddle) // gere l'axe vertical cote droit x: canvas.width 
+		{
+			if (game.ballY > game.paddle1 && game.ballY < game.paddle1 + game.heightPaddle) // si la balle rebondit sur la raquette du joueur 1 
+			{
+				game.ballVelX = -game.ballVelX;
+			}
+			else // la balle ne touche pas la raquette
+			{
+				// augmenter le score du joueur 2  + remettre la poistion de la balle au milieu du jeu
+			}
+		}
+		if (game.ballY + game.ballVelY > game.height - game.ballRad || game.ballY + game.ballVelY < game.ballRad) // faire rebondir la balle sur l'axe horizontal
+		{
+			game.ballVelY = -game.ballVelY;
+		}
 }
