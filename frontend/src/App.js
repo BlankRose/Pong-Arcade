@@ -1,6 +1,6 @@
 import './styles/App.css';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from 'react';
 
@@ -16,6 +16,7 @@ import Game from './components/Game';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
+import { SocketContext } from './contexts/Sockets';
 
 // import { statusLoader } from './Loader'
 
@@ -46,7 +47,7 @@ const router = (onLogout) => {
 					path: "game",
 					// loader: userLoader, 
 					element: (
-						< Game />
+						<Game />
 					)
 				},
 				{
@@ -70,27 +71,30 @@ const router = (onLogout) => {
 }
 
 function App() {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+	const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+	const { connectSockets, disconnectSockets } = useContext(SocketContext);
 
 	const onLoginSuccess = () => {
 		setIsLoggedIn(true);
+		connectSockets();
 	};
 
 	const onLogout = () => {
 		localStorage.removeItem('token');
 		setIsLoggedIn(false);
+		disconnectSockets();
 	};
 
 	useEffect(() => {
 		if (localStorage.getItem('token')) {
 			apiHandle.get('/auth/verify', withAuth())
 				.then((_) => {
-					setIsLoggedIn(true);
+					onLoginSuccess();
 				})
 				.catch((_) => {
-					console.error("Warning: Token is invalid or has expired!")
-					localStorage.removeItem('token');
-					setIsLoggedIn(false);
+					console.warn("Warning: Token is invalid or has expired!")
+					onLogout();
 				})
 		}
 	})

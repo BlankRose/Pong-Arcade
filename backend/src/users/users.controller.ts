@@ -9,9 +9,8 @@ export class UsersController {
 
 	@Get('me')
 	async getProfile(@Request() req) {
-		return this.usersService.purgeData(
-			await this.usersService.findOneByID(req.user['id'])
-		);
+		const user = await this.usersService.findOneByID(req.user['id']);
+		return this.usersService.purgeData(user);
 	}
 
 	@Get(':username')

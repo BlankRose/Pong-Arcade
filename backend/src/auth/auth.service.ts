@@ -9,10 +9,11 @@ import { Api42Service } from '../API42/api42.service';
 import { User } from 'src/users/user.entity';
 
 import { authenticator } from 'otplib';
-import { toDataURL } from 'qrcode'
+import { toDataURL } from 'qrcode';
 
 import {Request, Body} from '@nestjs/common'
 import { LoginDto } from './dto/login.dto';
+import { AuthPayload } from './jwt/payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -22,28 +23,28 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
+	generateNewJWT(user: User) {
+		const payload = new AuthPayload(user);
+		return {
+			access_token: this.jwtService.sign(Object.assign({}, payload)),
+		};
+	}
+
 	async login(req: LoginDto) {
 		const user = await this.validateUser(req.username, req.password);
 		if (!user) {
 			throw new UnauthorizedException();
 		}
 
-		const payload = { id: user.id };
-		return {
-			access_token: this.jwtService.sign(payload),
-		};
+		return this.generateNewJWT(user);
 	}
 
 	async login42(@Request() req, login42Dto: Login42Dto) {
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 
-		if (user) {
-			const payload = { id: user.id };
-			return {
-				access_token: this.jwtService.sign(payload),
-			};
-		}
+		if (user)
+			return this.generateNewJWT(user);
 		throw new UnauthorizedException();
 	}
 
@@ -62,7 +63,8 @@ export class AuthService {
 			code: data.id,
 			status: 'online'
 		});
-		return user;
+
+		return this.generateNewJWT(user);
 	}
 
 	async token42(code: string, uri: string): Promise<any> {
@@ -80,7 +82,6 @@ export class AuthService {
 		}
 		return null;
 	}
-
 
 	// ****************************2FA Part****************************
 
@@ -129,7 +130,6 @@ export class AuthService {
 		const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
 		return qrCode
 	}
-
 
 	is2FASecretValid (ProvidedCode: string, user: User):boolean {
 		const L = authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})

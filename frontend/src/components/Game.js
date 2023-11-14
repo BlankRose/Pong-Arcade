@@ -1,111 +1,118 @@
-//import { apiBaseURL} from './API_Access';
-//import { io } from 'socket.io-client';
-import {useEffect, useRef} from 'react'
-
-
-import '../styles/Game.css'
-
-
+import { useContext, useEffect, useState } from 'react';
+import { SocketContext, newSocketEvent } from '../contexts/Sockets';
+import GameCanvas from './GameCanvas';
 
 function Game() {
 
-	const canvasRef =useRef(null);
+	const [ isConnected, setIsConnected ] = useState(false);
+	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
+	const [ lastGameContext, setLastGameContext ] = useState(null);
 
-	
-	
+	// Register events
+	useEffect(() => {
+		if (!gameSocket || gameSocket.connected)
+			return;
 
-	useEffect(()=> {
+		newSocketEvent(gameSocket, 'connect', () => {
+			setIsConnected(true);
+		})
 
-		var canvas;
-		var ctx;
-		var game;
-		//var cmd;
-		var player1;
-		var player2;
+		newSocketEvent(gameSocket, 'disconnect', () => {
+			setIsConnected(false);
+		})
 
-		canvas = canvasRef.current;
-		ctx = canvas.getContext("2d")
+		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
+			console.log('Joined queue');
+			setGameContext({ ...gameContext, inQueue: true });
+		})
 
-		console.log('test:')
-		console.log(ctx);
+		newSocketEvent(gameSocket, 'leaveQueueSuccess', () => {
+			console.log('Left queue');
+			setGameContext({ ...gameContext, inQueue: false });
+		})
 
-		//La variable game contiendra  toutes les donnees du joueur 1 et joueur 2  ainsi que de la balle.
+		newSocketEvent(gameSocket, 'gameStart', data => {
+			setGameContext({ inQueue: false, gameState: data })
+		})
 
-		player1 = {
-			width : 10,
-			height: 100,
-			x: 0,
-			y: ((canvas.height - 100) / 2),
-			color: "red",
+		newSocketEvent(gameSocket, 'gameUpdate', data => {
+			setGameContext({ ...gameContext, gameState: data })
+		})
+
+		newSocketEvent(gameSocket, 'gameEnd', data => {
+			console.log('Game over:', data)
+			setLastGameContext({ ...gameContext, gameState: data.game, winner: data.winner })
+			setGameContext({ inQueue: false, gameState: null })
+		})
+
+		gameSocket.connect();
+
+	//  --> Only run when socket changes and on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [gameSocket]);
+
+	useEffect(() => {
+		const keyDownHandler = (e) => {
+			if (!gameSocket)
+				return;
+			if (e.key === 'ArrowUp')
+				gameSocket.emit('startUp');
+			if (e.key === 'ArrowDown')
+				gameSocket.emit('startDown');
 		}
 
-		player2 = {
-			width : 10,
-			height: 100,
-			x: canvas.width - 10,
-			y: ((canvas.height - 100) / 2),
-			color: "green",
-
+		const keyUpHandler = (e) => {
+			if (!gameSocket)
+				return;
+			if (e.key === 'ArrowUp')
+				gameSocket.emit('stopUp');
+			if (e.key === 'ArrowDown')
+				gameSocket.emit('stopDown');
 		}
 
-		game = {
-			player1: player1,
-			player2: player2,
-			ball: {
-				x : (canvas.width / 2),
-				y : (canvas.height / 2),
-				rad: 10,
-				color: "whitesmoke",
+		document.addEventListener('keydown', keyDownHandler);
+		document.addEventListener('keyup', keyUpHandler);
+
+		return () => {
+			document.removeEventListener('keydown', keyDownHandler);
+			document.removeEventListener('keyup', keyUpHandler);
+		}
+
+	//  --> Only run on mount
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	return(
+		<div className='pGame'>
+			{
+			!isConnected
+				? <div>Connecting...</div> :
+				<>
+				{
+				lastGameContext ? <>
+					<div>Game Over</div>
+					<div>Winner: {lastGameContext.winner}</div>
+					<div>Score: {lastGameContext.gameState.score1} - {lastGameContext.gameState.score2}</div>
+					</> : undefined
+				}
+				{
+					gameContext.gameState
+						? <>
+						<div>{gameContext.gameState.player1} VS {gameContext.gameState.player2}</div>
+						<div>Score: {gameContext.gameState.score1} - {gameContext.gameState.score2}</div>
+						<button onClick={() => {gameSocket.emit('abondonGame')}}>Give Up</button>
+						<GameCanvas ctx={gameContext.gameState}/>
+						</>
+						: gameContext.inQueue
+							? <>
+							<div>Waiting for opponent</div>
+							<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
+							</>
+							: <button onClick={() => {gameSocket.emit('joinQueue')}}>Join Queue</button>
+				}
+				</>
 			}
-		}
-
-
-		
-
-		//Permet de dessiner les paddles du joueur 1 et joueur 2 
-		function drawPaddle(posX, posY, width, height, color)
-		{
-			ctx.beginPath();
-			ctx.rect(posX, posY, width, height);
-			ctx.fillStyle = color;
-			ctx.fill();
-			ctx.closePath();
-		}
-
-		//Permet de dessiner la balle
-		function drawBall(posX, posY, rad, color)
-		{
-			ctx.beginPath();
-			ctx.arc(posX, posY, rad, 0, Math.PI*2);
-			ctx.fillStyle = color;
-			ctx.fill();
-			ctx.closePath();
-		}
-
-		function draw()
-		{
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			drawPaddle(game.player1.x, game.player1.y, game.player1.width, game.player1.height, game.player1.color);
-			drawPaddle(game.player2.x, game.player2.y, game.player2.width, game.player2.height, game.player2.color);
-			drawBall(game.ball.x, game.ball.y, game.ball.rad, game.ball.color);
-		}
-
-		function set_game()
-		{
-			draw();
-		}
-
-		setInterval(set_game, 1000 / 60);
-	},[]);
-
-		
-
-
-	return (
-		<>
-			<canvas className='canvas' ref={canvasRef} height={800} width={1200}> </canvas>
-		</>
-		
+		</div>
 	)
 }
 
