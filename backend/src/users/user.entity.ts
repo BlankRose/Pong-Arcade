@@ -81,11 +81,14 @@ export class User {
 	@Column({ default: 0 })
 	lose: number;
 
-	@Column({ default: 0 })
+	@Column({type: "decimal", scale: 2, default: 0 })
 	streak: number;
 
 	@Column({ default: 1 })
 	rank: number;
+
+	@Column({default: 0})
+	xp: number;
 
 	/* ********************** */
 	/*        Chatting        */

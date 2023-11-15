@@ -203,12 +203,56 @@ export class GameService {
 			console.log('End of game: Player 2 has disconnected');
 		}
 
+		//Update des stats de chaque user (creer une fonction d'update dans user ?) ************
+
 		if (game.player1 != game.player2) {
 			let game_entry = new Game();
 			game_entry.playerOne = await this.userService.findOneByID(game.player1);
 			game_entry.playerTwo = await this.userService.findOneByID(game.player2);
 			game_entry.scorePlayerOne = game.score1;
 			game_entry.scorePlayerTwo = game.score2;
+			if (game_entry.scorePlayerOne == 11)
+			{
+				game_entry.playerOne.win += 1;
+				game_entry.playerTwo.lose += 1; 
+				game_entry.playerOne.streak = game_entry.playerOne.lose = 0 ? game_entry.playerOne.win : (game_entry.playerOne.win / game_entry.playerOne.lose);
+				game_entry.playerTwo.streak = game_entry.playerTwo.lose = 0 ? game_entry.playerTwo.win : (game_entry.playerTwo.win / game_entry.playerTwo.lose);
+				game_entry.playerOne.xp += 50;
+				game_entry.playerTwo.xp += 20; 
+				if (game_entry.playerOne.xp >= game_entry.playerOne.rank * 10 && game_entry.playerOne.rank < 98)
+				{
+					game_entry.playerOne.rank += 1;
+					game_entry.playerOne.xp = 0;
+				}
+				if (game_entry.playerTwo.xp >= game_entry.playerTwo.rank * 10  && game_entry.playerTwo.rank < 98)
+				{
+					game_entry.playerTwo.rank += 1;
+					game_entry.playerTwo.xp = 0;
+				}
+				
+			}
+			else if (game_entry.scorePlayerTwo == 11)
+			{
+				game_entry.playerTwo.win += 1;
+				game_entry.playerOne.lose += 1;
+				game_entry.playerOne.streak = game_entry.playerOne.lose = 0 ? game_entry.playerOne.win : (game_entry.playerOne.win / game_entry.playerOne.lose);
+				game_entry.playerTwo.streak = game_entry.playerTwo.lose = 0 ? game_entry.playerTwo.win : (game_entry.playerTwo.win / game_entry.playerTwo.lose);
+				game_entry.playerOne.xp += 20;
+				game_entry.playerTwo.xp += 50; 
+				if (game_entry.playerOne.xp >= game_entry.playerOne.rank * 10 && game_entry.playerOne.rank < 98)
+				{
+					game_entry.playerOne.rank += 1;
+					game_entry.playerOne.xp = 0;
+				}
+				if (game_entry.playerTwo.xp >= game_entry.playerTwo.rank * 10  && game_entry.playerTwo.rank < 98)
+				{
+					game_entry.playerTwo.rank += 1;
+					game_entry.playerTwo.xp = 0;
+				}			
+			}
+
+			//**************************************************************************************************************************************** */
+
 			this.gameRepository.save(game_entry);
 		}
 
