@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
+import styles from "./Chat.module.css"
 
 
 const SendForm = ({ sendMessage }) => {
     const userData = useSelector(state => state.user)
     const currentChatSelected = useSelector(
-      state => state.chat.currentChatSelected
+      state => state.chat.selectedChat
     )
     const [inputText, setInputText] = useState("")
   
@@ -13,7 +14,7 @@ const SendForm = ({ sendMessage }) => {
       const newMsg = {
         senderId: userData.id,
         content: text,
-        channelId: 2
+        channelId: currentChatSelected,
       }
       sendMessage(newMsg)
       setInputText("")
@@ -92,11 +93,10 @@ const ChatFeed = ({ messages}) => {
     //     isFeedFull.current.scrollTop = isFeedFull.current?.scrollHeight
     // }, [messages])
   
-    console.log("*****************: ", messages)
     return (
       <div >
         {messages.map(msg => (
-          <Msg msg={msg} ></Msg>
+          <Msg key={msg.id} msg={msg} ></Msg>
         ))}
       </div>
     )
@@ -104,7 +104,7 @@ const ChatFeed = ({ messages}) => {
 
 function ChatInterface(props) {
   return (
-    <div >
+    <div className={styles.column2} >
       <ChatFeed messages={props.messages} />
       <SendForm sendMessage={props.sendMessage} />
     </div>

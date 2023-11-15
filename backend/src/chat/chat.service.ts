@@ -69,19 +69,20 @@ export class ChatService
 				throw new UnauthorizedException()
 			}
 		}
-		console.log("channel: ", channel, "members: ", channel.members, "user: ", user)
 		channel.members.push(user)
 		return await this.channelRepo.save(channel)
 	}
 
-	async removeUserFromChannel (channelId: number, user: User) {
-		const channel = await this.channelRepo.findOne({where: {id: channelId}})
+	async removeUserFromChannel (channelId: number, userId: number) {
+		const channel = await this.channelRepo.findOne({relations: ['members'], where: {id: channelId}})
+		const user = await this.userRepo.findOne({where: { id: userId }})
 		channel.members = channel.members.filter(x => x.id !== user.id)
 		return await this.channelRepo.save(channel)
 	}
 
-	async changePassword (channel: Channel, password: string) {
+	async changePassword (channelId: number, password: string) {
 		try {
+			const channel = await this.channelRepo.findOne({where: { id: channelId }})
 			channel.password = await bcrypt.hash(password, 10)
 		    await this.channelRepo.update(channel.id, channel)
 		    return true

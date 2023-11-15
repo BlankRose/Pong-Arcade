@@ -9,6 +9,7 @@ import { UpdateUser } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+	channelsRepo: any;
 	constructor(
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
@@ -67,10 +68,15 @@ export class UsersService {
 	async removeUser (id: number) {
 		try {
 			const user = await this.findOneByID(id)
+			// await this.channelsRepo.delete({ owner: user });
 			return this.usersRepository.remove(user)
 		} catch (err) {
 			console.error("error: ", err)
 		}
+	}
+
+	async returnUsers() {
+		return ( await this.usersRepository.find())
 	}
 
 	async sessionStatus(id: number): Promise<UserStatus> {

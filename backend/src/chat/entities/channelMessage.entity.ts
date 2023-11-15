@@ -10,15 +10,18 @@ class ChannelMessage {
 
 	@Column()
 	content: string;
+
+	@Column({ default: -1 })
+    senderId: number
 	
 	@CreateDateColumn()
     creationDate: Date;
 
-	@Column({ type: 'text' })
+	@Column({ default: 'defaultNickname' })
     userNickname: string;
 
-	@ManyToOne(() => User, user => user.channelMessages, {onDelete: 'CASCADE'})
-	sender: User;
+	// @ManyToOne(() => User, user => user.channelMessages, {onDelete: 'CASCADE'})
+	// sender: User;
 
     @ManyToOne(() => Channel, (channel) => channel.messages, {
         onDelete: 'CASCADE',

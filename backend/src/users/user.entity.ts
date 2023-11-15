@@ -114,8 +114,8 @@ export class User {
 	@JoinTable()
 	mutedInChannels: Channel[];
 
-	@OneToMany(() => Message, message => message.sender)
-	channelMessages: ChannelMessage[];
+	// @OneToMany(() => Message, message => message.sender)
+	// channelMessages: ChannelMessage[];
 
 	/* ********************** */
 	/*    Direct Messages     */

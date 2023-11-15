@@ -21,7 +21,6 @@ const ChannelItems = props => {
     setOpen(false)
     setShowInput(false)
     setTimeout(() => {
-        console.log("titi1")
         props.joinChannel(props.channel.id, password)
     }, 300)
   }

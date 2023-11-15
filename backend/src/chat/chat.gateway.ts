@@ -53,7 +53,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('createNewChannel')
     async createChannel(@MessageBody() newChannel: NewChannelDto) {
         try {
-            console.log("sent data: ", newChannel)
             const newCreatedchannel = await this.chatService.createChannel(
                 newChannel
             )
@@ -76,7 +75,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@SubscribeMessage('ReturnChannels')
 	async returnChannels () {
 		try {
-            console.log("i'm in Return Channels")
 			return await this.chatService.getChannels()
 		} catch (error) {
 			console.log ("Error in fetching channel list. Error: ", error)
@@ -85,7 +83,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 	@SubscribeMessage('joinChannel')
     async joinChannel(@MessageBody() data) {
-        console.log("received data: ", data)
         const [channelId, userId, password] = data
         try {
             return await this.chatService.addUserToChannel (
@@ -99,11 +96,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
 
 	@SubscribeMessage('RemoveUserFromChannel')
-    async removeUser(@MessageBody() channelId: number, user: User) {
+    async removeUser(@MessageBody() data) {
         try {
-            return await this.chatService.removeUserFromChannel (channelId, user)
+            const [channelId, userId] = data
+            return await this.chatService.removeUserFromChannel (channelId, userId)
         } catch (error) {
-            console.log('Error in removing user from the channel ')
+            console.log('Error in removing user from the channel, Error: ', error)
         }
     }
     @SubscribeMessage('RemoveChannel')
@@ -117,7 +115,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
 
     @SubscribeMessage('changePassword')
-    async changeChannelPassword(@MessageBody() channelId, password: string) {
+    async changeChannelPassword(@MessageBody() data) {
+        const [channelId, password] = data
         try {
             return await this.chatService.changePassword(channelId, password)
         } catch (error) {

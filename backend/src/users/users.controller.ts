@@ -39,6 +39,11 @@ export class UsersController {
 		return this.usersService.removeUser(body.id);
 	}
 
+	@Get('me/users')
+	returnUsers() {
+		return this.usersService.returnUsers();
+	}
+
 	@Delete('me/avatar')
 	removeAvatar(@Request() req)
 	{

@@ -6,11 +6,11 @@ import chatSlice from "../store/chat"
 import ChatService from "../sockets/chatSocket"
 import ChannelInterface from "../components/Chat/ChannelInterface"
 import ChatInterface from "../components/Chat/ChatInterface"
+import styles from "./Chat.module.css"
 
 const ChatPage = () => {
 
     const userData = useSelector((state) => state.user)
-    console.log("UserData", userData)
     const currentChatSelected = useSelector(
         (state) => state.chat.currentChatSelected
     ) 
@@ -23,11 +23,9 @@ const ChatPage = () => {
 
     useEffect(() => {
         const newSocket = ChatService.getInstance().connect()
-        console.log("socket: ", newSocket)
         if (newSocket !== undefined) {
             setSocket(newSocket)
 
-            console.log("socket2: ", newSocket)
             newSocket.on('incomingMessages', (newMessages) => {
                 setMesssages(newMessages)
             })
@@ -80,7 +78,6 @@ const ChatPage = () => {
     }
 
     const createNewChannel = (channel) => {
-        console.log("channel: ", channel)
         if (socket !== undefined) {
             socket.emit('createNewChannel', channel, (channelId) => {
                 store.dispatch(chatSlice.actions.selectChat(channelId))
@@ -92,13 +89,10 @@ const ChatPage = () => {
     }
 
     const getAllChannels = () => {
-        console.log("********LiLi")
         if (socket !== undefined) {
             socket.emit('ReturnChannels', (response) => {
-                console.log("********response: ", response)
                 const allChannels = response
                 setChannels(allChannels)
-                console.log("allchannels: ", channels)
             })
         }
     }
@@ -160,8 +154,8 @@ const ChatPage = () => {
     }
 
     return (
-        <div>
-            <div>
+        <div >
+            <div className={styles.container}>
                 <ChannelInterface
                     channels={channels}
                     handleCreation={handleCreation}

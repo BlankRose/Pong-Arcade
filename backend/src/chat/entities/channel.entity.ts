@@ -9,7 +9,7 @@ export class Channel {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => User, (user) => user.ownedChannels)
+	@ManyToOne(() => User, (user) => user.ownedChannels, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'ownedChannels' })
     owner: User
 
@@ -61,7 +61,7 @@ export class Channel {
 	 mutedUsers: User[];
 
 
-	@ManyToMany(() => User, user => user.joinedChannels)
+	@ManyToMany(() => User, user => user.joinedChannels, { onDelete: 'CASCADE' })
 	members: User[];
 
 	@OneToMany(() => ChannelMessage, message => message.channelId)

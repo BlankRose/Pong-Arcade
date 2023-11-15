@@ -8,6 +8,7 @@ import SimpleInput from "../utils/SimpleInput"
 import Backdrop from "../utils/Backdrop"
 import Card from "../utils/Card"
 import AvailableChannels from "./AvailableChannels"
+import styles from "./Chat.module.css"
 
 
 const JoinedItem = props => {
@@ -77,16 +78,14 @@ const JoinedItem = props => {
         <div >{props.channel.name}</div>
         <div >
           {
-            <button
-              text="LeaveChannel"
-              onClick={showConfirmModal}
-            />
+            <button onClick={showConfirmModal}>
+              LeaveChannel
+            </button>
           }
           {props.channel.type === 'private' ? (
-            <img
-              alt="Private Channel"
-              onClick={showChangePasswordModal}
-            />
+            <button onClick={showChangePasswordModal}>
+              Change Password
+              </button>
           ) : null}
         </div>
       </li>
@@ -253,23 +252,17 @@ const NewChannel = ({ handleCreation }) => {
     }
   
     const onOk = () => {
-      console.log("tarataratartara")
       const isValid = checkInputValues()
-      console.log("isvalid: ", isValid)
       if (isValid) {
         const newChannel = {
-          id: userData.id,
+          ownerId: userData.id,
           name: inputChannelValue.trim(),
           type: channelType,
           password: inputPasswordValue.trim()
         }
-        console.log("newchannel: ", newChannel)
         props.onCreate(newChannel)
         setInputChannelValue("")
         setInputPasswordValue("")
-      }
-      else{
-        console.log("else")
       }
     }
   
@@ -318,7 +311,6 @@ const NewChannel = ({ handleCreation }) => {
     }
   
     const checkInputValues = () => {
-      console.log("momi")
       if (inputNotEmpty() && noLongerThanEight()) {
         return true
       }
@@ -398,7 +390,7 @@ const NewChannel = ({ handleCreation }) => {
 
 const ChannelInterface = props => {
   return (
-    <div>
+    <div className={styles.column1}>
       <NewChannel handleCreation={props.handleCreation} />
       <ChannelList
         allChan={props.channels}

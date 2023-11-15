@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+  }
+  
+  .column1 {
+    flex: 1;
+    margin: 10px; /* Adjust margin as needed */
+  }
+
+  .column2 {
+    flex: 1;
+    margin: 50px; /* Adjust margin as needed */
+  }
+  
