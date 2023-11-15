@@ -5,10 +5,16 @@ import { User } from "src/users/user.entity";
 
 export class NewMessageDto {
     @IsNotEmpty()
-    sender: User
+    senderId: number
 
     @IsNotEmpty()
     content: string
+
+    @IsOptional()
+    userNickname: string
+
+    @IsNotEmpty()
+    channelId: number
 
     @IsOptional()
     channel: Channel

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, JoinColumn, ManyToMany, JoinTable, } from "typeorm";
-import Message from "./channelMessage.entity";
+import ChannelMessage from "./channelMessage.entity";
 import { User } from "src/users/user.entity";
 
 
@@ -61,12 +61,12 @@ export class Channel {
 	 mutedUsers: User[];
 
 
-	@OneToMany(() => User, user => user.joinedChannels)
+	@ManyToMany(() => User, user => user.joinedChannels)
 	members: User[];
 
-	@OneToMany(() => Message, message => message.channel)
+	@OneToMany(() => ChannelMessage, message => message.channelId)
 	@JoinColumn({name: 'messages'})
-	messages: Message[];
+	messages: ChannelMessage[];
 
 }
 

@@ -10,6 +10,7 @@ import {
 	ManyToMany,
 	ManyToOne,
 	JoinColumn,
+	JoinTable,
 } from 'typeorm';
 
 
@@ -97,16 +98,20 @@ export class User {
 	@OneToMany(() => Channel, channel => channel.owner)
 	ownedChannels: Channel[];
 
-	@OneToMany(() => Channel, channel => channel.admins)
+	@ManyToMany(() => Channel, channel => channel.admins)
+	@JoinTable()
 	adminInChannels: Channel[];
 
-	@OneToMany(() => Channel, (channel) => channel.members)
+	@ManyToMany(() => Channel, (channel) => channel.members)
+	@JoinTable()
 	joinedChannels: Channel[];
 
-	@OneToMany(() => Channel, channel => channel.bannedUsers)
+	@ManyToMany(() => Channel, channel => channel.bannedUsers)
+	@JoinTable()
 	bannedInChannels: Channel[];
 
 	@OneToMany(() => Channel, channel => channel.mutedUsers)
+	@JoinTable()
 	mutedInChannels: Channel[];
 
 	@OneToMany(() => Message, message => message.sender)

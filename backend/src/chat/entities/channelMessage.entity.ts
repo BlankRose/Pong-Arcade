@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
 import {Channel} from "./channel.entity";
 import { User } from "src/users/user.entity";
 
@@ -12,13 +12,20 @@ class ChannelMessage {
 	content: string;
 	
 	@CreateDateColumn()
-    creationDate: Date
+    creationDate: Date;
+
+	@Column({ type: 'text' })
+    userNickname: string;
 
 	@ManyToOne(() => User, user => user.channelMessages, {onDelete: 'CASCADE'})
 	sender: User;
 
-	@ManyToOne(() => Channel, channel => channel.messages, {onDelete: 'CASCADE'})  
-	channel: Channel;
+    @ManyToOne(() => Channel, (channel) => channel.messages, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({ name: 'channelId' })
+    channelId: number;
+
 
 }
 

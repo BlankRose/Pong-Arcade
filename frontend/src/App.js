@@ -10,7 +10,7 @@ import Login42 from './components/42Login';
 import Template from './components/Template/template';
 import Profil from './components/Profil';
 import UpdateProfil from './components/UpdateProfil';
-import ChatPage from './components/Chat';
+import ChatPage from './pages/Chat';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
