@@ -31,6 +31,7 @@ export class GameService {
 
 	updateGames(server: Server) {
 		for (let game of this.activeGames) {
+			let playSound = false;
 			// Scoring Detect
 			if (game.ballX >= GameConstants.LEFT
 				&& game.ballVelX >= 0) {
@@ -76,8 +77,10 @@ export class GameService {
 
 			// Walls Collisions
 			if ((game.ballY + (GameConstants.BALL_RADIUS / 2) >= GameConstants.TOP && game.ballVelY >= 0)
-				|| (game.ballY - (GameConstants.BALL_RADIUS / 2) <= GameConstants.BOTTOM && game.ballVelY <= 0))
+				|| (game.ballY - (GameConstants.BALL_RADIUS / 2) <= GameConstants.BOTTOM && game.ballVelY <= 0)) {
 				game.ballVelY = -game.ballVelY;
+				playSound = true;
+			}
 
 			// Paddles Collisions
 			if ((game.ballX + (GameConstants.BALL_RADIUS / 2) >= GameConstants.LEFT - GameConstants.PADDLE_WIDTH
@@ -90,12 +93,13 @@ export class GameService {
 					&& game.ballVelX <= 0)) {
 				game.ballVelX = (-game.ballVelX) * 1.1;
 				game.ballVelY = (Math.random() - 0.5) * 8;
+				playSound = true;
 			}
 
 			// Sends Update
 			const room_name = 'game_' + game.player1_socket + '_' + game.player2_socket;
 			const sanitizedGame = this.sanitizeGameState(game);
-			server.to(room_name).emit('gameUpdate', sanitizedGame);
+			server.to(room_name).emit('gameUpdate', { ...sanitizedGame, playSound: playSound});
 		}
 	}
 

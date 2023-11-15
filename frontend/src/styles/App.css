@@ -1,38 +1,5 @@
-.App {
-	text-align: center;
-}
-
-.App-logo {
-	height: min(15vmin, 90%);
-	pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	.App-logo {
-		animation: App-logo-spin infinite 20s linear;
-	}
-}
-
-.App-header {
-	background-color: #282c34;
-	height: min(15vmin, 100pt);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: left;
-	font-size: min(10vmin, 60pt);
-	color: white;
-}
-
-.App-link {
-	color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
+@font-face {
+	font-family: "MarioMaker";
+	src: url();
+	color:
 }

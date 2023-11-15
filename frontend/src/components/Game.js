@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import GameCanvas from './GameCanvas';
+import BallSound from '../assets/ball.mp3';
 
 function Game() {
 
@@ -33,6 +34,11 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'gameUpdate', data => {
+			if (data.playSound) {
+				const sound = new Audio( BallSound );
+				sound.play();
+			}
+			delete data.playSound;
 			setGameContext({ ...gameContext, gameState: data })
 		})
 
