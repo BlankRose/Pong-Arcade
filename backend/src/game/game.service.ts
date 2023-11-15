@@ -211,48 +211,30 @@ export class GameService {
 			game_entry.playerTwo = await this.userService.findOneByID(game.player2);
 			game_entry.scorePlayerOne = game.score1;
 			game_entry.scorePlayerTwo = game.score2;
-			if (game_entry.scorePlayerOne == 11)
+
+			const winner = this.userService.quickFix(Math.max(game.score1, game.score2) === game.score1 ? game_entry.playerOne : game_entry.playerTwo);
+			const loser = this.userService.quickFix(Math.min(game.score1, game.score2) === game.score1 ? game_entry.playerOne : game_entry.playerTwo);
+			const scoreDiff = Math.max(game.score1, game.score2) - Math.min(game.score1, game.score2);
+
+			winner.win += 1;
+			loser.lose += 1;
+			winner.streak = winner.lose === 0 ? winner.win : (winner.win / winner.lose);
+			loser.streak = loser.lose === 0 ? loser.win : (loser.win / loser.lose);
+			winner.xp += 50 + scoreDiff * 2;
+			loser.xp += 21 - scoreDiff;
+			if (winner.xp >= winner.rank * 100 && winner.rank < 98)
 			{
-				game_entry.playerOne.win += 1;
-				game_entry.playerTwo.lose += 1; 
-				game_entry.playerOne.streak = game_entry.playerOne.lose = 0 ? game_entry.playerOne.win : (game_entry.playerOne.win / game_entry.playerOne.lose);
-				game_entry.playerTwo.streak = game_entry.playerTwo.lose = 0 ? game_entry.playerTwo.win : (game_entry.playerTwo.win / game_entry.playerTwo.lose);
-				game_entry.playerOne.xp += 50;
-				game_entry.playerTwo.xp += 20; 
-				if (game_entry.playerOne.xp >= game_entry.playerOne.rank * 10 && game_entry.playerOne.rank < 98)
-				{
-					game_entry.playerOne.rank += 1;
-					game_entry.playerOne.xp = 0;
-				}
-				if (game_entry.playerTwo.xp >= game_entry.playerTwo.rank * 10  && game_entry.playerTwo.rank < 98)
-				{
-					game_entry.playerTwo.rank += 1;
-					game_entry.playerTwo.xp = 0;
-				}
-				
+				winner.rank += 1;
+				winner.xp = 0;
 			}
-			else if (game_entry.scorePlayerTwo == 11)
+			if (loser.xp >= loser.rank * 100  && loser.rank < 98)
 			{
-				game_entry.playerTwo.win += 1;
-				game_entry.playerOne.lose += 1;
-				game_entry.playerOne.streak = game_entry.playerOne.lose = 0 ? game_entry.playerOne.win : (game_entry.playerOne.win / game_entry.playerOne.lose);
-				game_entry.playerTwo.streak = game_entry.playerTwo.lose = 0 ? game_entry.playerTwo.win : (game_entry.playerTwo.win / game_entry.playerTwo.lose);
-				game_entry.playerOne.xp += 20;
-				game_entry.playerTwo.xp += 50; 
-				if (game_entry.playerOne.xp >= game_entry.playerOne.rank * 10 && game_entry.playerOne.rank < 98)
-				{
-					game_entry.playerOne.rank += 1;
-					game_entry.playerOne.xp = 0;
-				}
-				if (game_entry.playerTwo.xp >= game_entry.playerTwo.rank * 10  && game_entry.playerTwo.rank < 98)
-				{
-					game_entry.playerTwo.rank += 1;
-					game_entry.playerTwo.xp = 0;
-				}			
+				loser.rank += 1;
+				loser.xp = 0;
 			}
 
-			//**************************************************************************************************************************************** */
-
+			this.userService.updateUser(winner.id, winner);
+			this.userService.updateUser(loser.id, loser);
 			this.gameRepository.save(game_entry);
 		}
 

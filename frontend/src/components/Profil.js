@@ -36,7 +36,9 @@ function Profil({ username }) {
 					</div>
 					<div className = 'stats'>
 						<ul className='list-stat'>
-							<li className='Profil-stat'>Rank: {user ? user.rank : undefined} <Progress_bar bgcolor={'green'} progress={user ? user.xp : undefined} height={30} /> </li>
+							<li className='Profil-stat'>Rank: {user ? user.rank : undefined} ( {user ? user.xp : undefined} / {user ? user.rank * 100 : undefined} )
+								<Progress_bar bgcolor={'lightpink'} progress={user ? (user.xp / user.rank).toFixed(2) : undefined} height={30} />
+							</li>
 							<li className='Profil-stat'>Wins: {user ? user.win : undefined}</li>
 							<li className='Profil-stat'>Lose: {user ? user.lose : undefined}</li>
 							<li className='Profil-stat'>Ratio: {user ? user.streak : undefined}</li>

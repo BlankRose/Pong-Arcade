@@ -4,7 +4,6 @@ import GameCanvas from './GameCanvas';
 
 function Game() {
 
-	const [ isConnected, setIsConnected ] = useState(false);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
 	const [ lastGameContext, setLastGameContext ] = useState(null);
 
@@ -14,11 +13,9 @@ function Game() {
 			return;
 
 		newSocketEvent(gameSocket, 'connect', () => {
-			setIsConnected(true);
 		})
 
 		newSocketEvent(gameSocket, 'disconnect', () => {
-			setIsConnected(false);
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
@@ -85,7 +82,7 @@ function Game() {
 	return(
 		<div className='pGame'>
 			{
-			!isConnected
+			! gameSocket.connected
 				? <div>Connecting...</div> :
 				<>
 				{
@@ -108,7 +105,7 @@ function Game() {
 							<div>Waiting for opponent</div>
 							<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
 							</>
-							: <button onClick={() => {gameSocket.emit('joinQueue')}}>Join Queue</button>
+							: <button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>Rejoindre une partie</button>
 				}
 				</>
 			}

@@ -34,6 +34,20 @@ export class UsersService {
 		return user;
 	}
 
+	quickFix(user: User): User {
+		if (!user)
+			return undefined;
+
+		if (!(user.win >= 0))
+			user.win = 0;
+		if (!(user.lose >= 0))
+			user.lose = 0;
+		if (!(user.streak >= 0))
+			user.streak = 0;
+
+		return user;
+	}
+
 	async findOne42(id42: number): Promise<User | undefined> {
 		return this.usersRepository.findOne({ where: { id42: id42 } });
 	}
@@ -109,6 +123,11 @@ export class UsersService {
 
 		const updateUser = await this.findOneByID(target);
 		return this.purgeData(updateUser);
+	}
+
+	async updateUser(target: number, user: User)
+	{
+		await this.usersRepository.update(target, user);
 	}
 
 	async replaceAvatar(target: number, newAvatar: UploadAvatarDto): Promise<User>
