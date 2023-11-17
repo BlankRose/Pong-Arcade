@@ -12,7 +12,7 @@ const ChatPage = () => {
 
     const userData = useSelector((state) => state.user)
     const currentChatSelected = useSelector(
-        (state) => state.chat.currentChatSelected
+        (state) => state.chat.selectedChat
     ) 
     const [channels, setChannels] = useState([])
     const [messages, setMesssages] = useState([])
@@ -21,6 +21,8 @@ const ChatPage = () => {
     const [socket, setSocket] = useState()
     const [owner, setOwner] = useState()
 
+
+    
     useEffect(() => {
         const newSocket = ChatService.getInstance().connect()
         if (newSocket !== undefined) {
@@ -154,7 +156,7 @@ const ChatPage = () => {
     }
 
     return (
-        <div >
+        // <div >
             <div className={styles.container}>
                 <ChannelInterface
                     channels={channels}
@@ -169,12 +171,15 @@ const ChatPage = () => {
                     messages={messages}
                     sendMessage={sendMessage}
                 />
+                <div className={styles.column1}>
+                    hhjdfg
+                </div>
                 {/* <ConnectedUsers
                     members={members}
                     owner={owner}
                 /> */}
             </div>
-        </div>
+        // </div>
     )
 
 }

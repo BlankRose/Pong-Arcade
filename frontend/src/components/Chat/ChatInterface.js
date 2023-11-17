@@ -86,12 +86,12 @@ const SendForm = ({ sendMessage }) => {
   
 
 const ChatFeed = ({ messages}) => {
-    // const isFeedFull = useRef(null)
+    const isFeedFull = useRef(null)
   
-    // useEffect(() => {
-    //   if (isFeedFull.current)
-    //     isFeedFull.current.scrollTop = isFeedFull.current?.scrollHeight
-    // }, [messages])
+    useEffect(() => {
+      if (isFeedFull.current)
+        isFeedFull.current.scrollTop = isFeedFull.current?.scrollHeight
+    }, [messages])
   
     return (
       <div >

@@ -14,7 +14,7 @@ import styles from "./Chat.module.css"
 const JoinedItem = props => {
   const userData = useSelector(state => state.user)
   const currentChatSelected = useSelector(
-    state => state.chat.currentChatSelected
+    state => state.chat.selectedChat
   )
   const [open, setOpen] = useState(false)
   const [isOwner, setIsOwner] = useState(false)

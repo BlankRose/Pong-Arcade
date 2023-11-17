@@ -7,7 +7,7 @@ const ChannelItems = props => {
   const [open, setOpen] = useState(false)
   const [showInput, setShowInput] = useState(false)
   const currentChatSelected = useSelector(
-    state => state.chat.currentChatSelected
+    state => state.chat.selectedChat
   )
 
   const showModal = () => {
