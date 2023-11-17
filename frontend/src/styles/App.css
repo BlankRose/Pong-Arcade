@@ -1,5 +1,4 @@
 @font-face {
-	font-family: "MarioMaker";
-	src: url();
-	color:
+	font-family: "Mario";
+	src: url("../assets/fonts/SuperMario256.ttf") format("truetype");
 }

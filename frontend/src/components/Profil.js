@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiHandle, { withAuth } from './API_Access';
 import Avatar from '../assets/avatar.jpeg';
 import {Link} from 'react-router-dom';
-import Progress_bar from './ProgressBar/bar';
+import ProgressBar from './ProgressBar/bar';
 
 import '../styles/Profil.css';
 
@@ -37,7 +37,7 @@ function Profil({ username }) {
 					<div className = 'stats'>
 						<ul className='list-stat'>
 							<li className='Profil-stat'>Rank: {user ? user.rank : undefined} ( {user ? user.xp : undefined} / {user ? user.rank * 100 : undefined} )
-								<Progress_bar bgcolor={'lightpink'} progress={user ? (user.xp / user.rank).toFixed(2) : undefined} height={30} />
+								<ProgressBar bgcolor={'lightpink'} progress={user ? (user.xp / user.rank).toFixed(2) : undefined} height={30} />
 							</li>
 							<li className='Profil-stat'>Wins: {user ? user.win : undefined}</li>
 							<li className='Profil-stat'>Lose: {user ? user.lose : undefined}</li>

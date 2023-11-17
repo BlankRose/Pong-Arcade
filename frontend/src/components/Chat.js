@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-import '../styles/ChatPage.css';
-
-import API_Access, { withAuth } from './API_Access';
-import { apiBaseURL } from './API_Access';
+import React from 'react';
 
 function ChatPage({ onLogout }) {
-	const [channels, setChannels] = useState([]);
+	/*const [channels, setChannels] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState(null);
 	const [messages, setMessages] = useState([]);
 	const [newMessage, setNewMessage] = useState('');
 	const [newChannelName, setNewChannelName] = useState('');
 	const [socket, setSocket] = useState(null);
 
-	/*useEffect(() => {
+	useEffect(() => {
 		const socketIo = io(apiBaseURL);
 		setSocket(socketIo);
 

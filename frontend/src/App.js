@@ -18,6 +18,9 @@ import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
 import { SocketContext } from './contexts/Sockets';
 
+//Fonts
+import "./assets/fonts/SuperMario256.ttf"
+
 // import { statusLoader } from './Loader'
 
 const router = (onLogout) => {

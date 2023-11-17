@@ -2,6 +2,7 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { User, UserStatus } from './user.entity';
+import {History} from './history.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
@@ -207,4 +208,10 @@ export class UsersService {
 	}
 
 // ************************2FA Part************************
+
+//***********************History Match *********************
 }
+
+
+
+

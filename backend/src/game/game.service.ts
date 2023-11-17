@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Game } from "./entities/game.entity";
 import { Repository } from "typeorm";
+import {History} from "../users/history.entity"
 import { GameConstants, GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
 import { AuthGuard } from "src/auth/jwt/jwt.strategy";
 import { Server } from "socket.io";
@@ -207,7 +208,7 @@ export class GameService {
 			console.log('End of game: Player 2 has disconnected');
 		}
 
-		//Update des stats de chaque user (creer une fonction d'update dans user ?) ************
+		//Update des stats de chaque user ************
 
 		if (game.player1 != game.player2) {
 			let game_entry = new Game();
@@ -236,9 +237,43 @@ export class GameService {
 				loser.rank += 1;
 				loser.xp = 0;
 			}
-
 			this.userService.updateUser(winner.id, winner);
 			this.userService.updateUser(loser.id, loser);
+
+			//Creer une partie de l'historique pour chaque joueur donc creer 2 historique different pour chaque joueur ********** 
+
+			let historyWinner = new History();
+			historyWinner.player1 = winner.username;
+			historyWinner.player2 = loser.username;
+			historyWinner.player1_score = game.score1 > game.score2 ? game.score1 : game.score2;
+			historyWinner.player2_score = game.score1 < game.score2 ? game.score1 : game.score2;
+			historyWinner.played_at = new Date().toLocaleDateString('fr-FR', {
+				weekday: 'short',
+				day: 'numeric',
+				month: 'numeric',
+				year: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric'
+			});
+
+			let historyLoser = new History();
+			historyLoser.player1 = loser.username;
+			historyLoser.player2 = winner.username;
+			historyLoser.player1_score = game.score1 > game.score2 ? game.score1 : game.score2;
+			historyLoser.player2_score = game.score1 < game.score2 ? game.score1 : game.score2;
+			historyLoser.played_at = new Date().toLocaleDateString('fr-FR', {
+				weekday: 'short',
+				day: 'numeric',
+				month: 'numeric',
+				year: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric'
+			});
+
+
+
 			this.gameRepository.save(game_entry);
 		}
 

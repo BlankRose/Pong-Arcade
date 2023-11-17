@@ -2,6 +2,9 @@ import { useContext, useEffect, useState } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import GameCanvas from './GameCanvas';
 import BallSound from '../assets/ball.mp3';
+import "../styles/Game.css"
+
+import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 
 function Game() {
 
@@ -111,7 +114,13 @@ function Game() {
 							<div>Waiting for opponent</div>
 							<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
 							</>
-							: <button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>Rejoindre une partie</button>
+							:
+							<div className='game'>
+								<div className='Title-game'>Welcome to 42_PONG !</div>
+								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}> <img src= {Solo} alt='solo' className='img-solo' />Rejoindre une partie !</button>
+								
+								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
+							</div> 
 				}
 				</>
 			}

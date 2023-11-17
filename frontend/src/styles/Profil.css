@@ -35,7 +35,7 @@
 .historique{
     height: 15%;
     border-radius: 5%;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: MarioMaker;
 }
 
 .Friend-list{
@@ -60,7 +60,7 @@
     margin-left: 5%;
     margin-top: 8%;
     font-size: 2rem;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: Mario;
 }
 
 .updateProfile{
@@ -89,7 +89,7 @@
     margin:3%;
     margin-left: 5%;
     font-size: 1.5rem;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: Mario;
     text-align: justify;
     line-height: 10px;
 }

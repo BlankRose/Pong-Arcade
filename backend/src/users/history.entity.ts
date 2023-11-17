@@ -7,10 +7,10 @@ class History
 	id: number;
 
 	@Column()
-	player1: number;
+	player1: string;
 
 	@Column()
-	player2: number;
+	player2: string;
 
 	@Column()
 	player1_score: number;
