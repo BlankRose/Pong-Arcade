@@ -29,6 +29,8 @@ function UpdateProfil() {
 			setErrorName(err.response.data.message);
 		});
 
+		if (avatar)
+			user.avatar = avatar;
 		if (user.avatar) {
 			apiHandle.post('/users/me/avatar', {
 					data: avatar ? avatar : user.avatar
@@ -99,13 +101,13 @@ function UpdateProfil() {
 							className='form-control'
 							placeholder='Modify avatar, via URL or upload a file'
 							value={user && user.avatar && user.avatar.startsWith('http') ? user.avatar : ''}
-							onChange={e =>setUser({...user, avatar: e.target.value})}
+							onChange={e => setUser({...user, avatar: e.target.value})}
 						/>
 						<input type="file"
 							id='avatarFile'
 							className='form-control'
 							onChange={e => handleUpload(e.target.files[0])}
-							onClick={e => {e.target.value = null && setAvatar(null)}}
+							onClick={e => {e.target.value = null; setAvatar(null); setUser({...user, avatar: null})}}
 						/>
 						</div>
 						<br></br>

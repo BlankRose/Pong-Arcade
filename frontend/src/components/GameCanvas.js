@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react";
 
-import default_bg from '../assets/traditional.png';
-import mario_bg from '../assets/background.jpg';
-import aa_bg from '../assets/aa_background.webp';
+import default_bg from '../assets/themes/1972_bg.png';
+import default_fx from '../assets/themes/1972_fx.mp3';
 
-import default_fx from '../assets/ball.mp3';
-import mario_fx from '../assets/ballM.ogg';
-import phoenix_fx from '../assets/Phoenix.mp3';
-import hunter_fx from '../assets/Hunter.mp3';
+import mario_bg from '../assets/themes/mario_bg.jpg';
+import mario_fx from '../assets/themes/mario_fx.ogg';
+
+import ace_bg from '../assets/themes/ace_bg.webp';
+import aceA_fx from '../assets/themes/ace_phoenix_fx.mp3';
+import aceB_fx from '../assets/themes/ace_hunter_fx.mp3';
 
 const CanvasConstants = {
 	HEIGHT: 800,
@@ -39,18 +40,21 @@ const GameCanvas = ({ ctx, theme }) => {
 
 		let img = new Image();
 		let audio, colors;
+
 		switch (theme) {
 			case 'Mario':
 				img.src = mario_bg;
 				audio = new Audio(mario_fx);
 				colors = color_schemes[1];
 				break;
+
 			case 'Ace Attorney':
-				img.src = aa_bg;
-				audio = Math.random() <= 0.5 ? new Audio(phoenix_fx) : new Audio(hunter_fx);
+				img.src = ace_bg;
+				audio = Math.random() <= 0.5 ? new Audio(aceA_fx) : new Audio(aceB_fx);
 				colors = color_schemes[2];
 				break;
-			default:
+
+			default: // Default
 				img.src = default_bg;
 				audio = new Audio(default_fx);
 				colors = color_schemes[0];
@@ -58,12 +62,6 @@ const GameCanvas = ({ ctx, theme }) => {
 
 		img.onload = () => {
 			context.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-			/*
-			WIDTH / 2 & WIDTH / 2 -> middle of canvas
-			paddle_ -> center height point of paddle to ref TOP | BOTTOM
-			ball_ -> position of ball to ref TOP | BOTTOM and LEFT | RIGHT
-			*/
 
 			const ratio_y = CanvasConstants.HEIGHT / (CanvasConstants.TOP - CanvasConstants.BOTTOM);
 			const ratio_x = CanvasConstants.WIDTH / (CanvasConstants.LEFT - CanvasConstants.RIGHT);

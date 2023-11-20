@@ -19,6 +19,8 @@ function Profil({ username }) {
 				setUser(response.data);
 				if (response.data && response.data.avatar)
 					setAvatar(response.data.avatar);
+				else
+					setAvatar(Avatar);
 			})
 			.catch(_ => {
 				console.error('Failed to fetch user data')
@@ -26,7 +28,6 @@ function Profil({ username }) {
 
 		apiHandle.get(`/users/${username || 'me'}/history`, withAuth())
 			.then(response => {
-				console.log(response.data);
 				setHistory(response.data)
 			})
 			.catch(_ => {

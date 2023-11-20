@@ -128,12 +128,8 @@ function Game() {
 				} </>
 			}
 			<br/>
-			Theme:
-			{
-				themes.map(elem =>
-					<button onClick={() => {setTheme(elem)}}>{elem}</button>
-				)
-			}
+			Themes: {' '}
+			{themes.map(elem => <button key={elem} onClick={() => setTheme(elem)}>{elem}</button>)}
 			<br/>
 			Selected: {theme}
 		</div>

@@ -11,6 +11,7 @@ import Login42 from './components/42Login';
 import Template from './components/Template/template';
 import Profil from './components/Profil';
 import UpdateProfil from './components/UpdateProfil';
+import ProfilContainer from './components/ProfilContainer';
 import ChatPage from './components/Chat';
 import Game from './components/Game';
 
@@ -37,6 +38,13 @@ const router = (onLogout) => {
 					// loader: userLoader, 
 					element: (
 						<Profil />
+					)
+				},
+				{
+					path: "profile/:username",
+					// loader: userLoader, 
+					element: (
+						<ProfilContainer />
 					)
 				},
 				{
