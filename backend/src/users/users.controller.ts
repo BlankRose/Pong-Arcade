@@ -2,10 +2,18 @@ import { Controller, Post, Get, Body, Request, Param, Patch, NotFoundException, 
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { Game } from 'src/game/entities/game.entity';
 
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
+
+	async getRawUser(target: string): Promise<User> {
+		const id = parseInt(target);
+		return Number.isNaN(id)
+			? await this.usersService.findOne(target)
+			: await this.usersService.findOneByID(id);
+	}
 
 	@Get('me')
 	async getProfile(@Request() req) {
@@ -13,13 +21,26 @@ export class UsersController {
 		return this.usersService.purgeData(user);
 	}
 
+	@Get('me/history')
+	async getHistory(@Request() req): Promise<Game[]> {
+		const user = await this.usersService.findOneByID(req.user['id']);
+		return this.usersService.getHistory(user);
+	}
+
 	@Get(':username')
 	async findOne(@Param() params): Promise<User> {
-		const user = await this.usersService.findOne(params.username);
-
+		const user = await this.getRawUser(params.username);
 		if (!user)
 			throw new NotFoundException;
 		return this.usersService.purgeData(user);
+	}
+
+	@Get(':username/history')
+	async getUserHistory(@Param() params): Promise<Game[]> {
+		const user = await this.getRawUser(params.username);
+		if (!user)
+			throw new NotFoundException;
+		return this.usersService.getHistory(user);
 	}
 
 	@Patch('me')

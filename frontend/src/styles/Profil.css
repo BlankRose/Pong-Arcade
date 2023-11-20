@@ -35,7 +35,7 @@
 .historique{
     height: 15%;
     border-radius: 5%;
-    font-family: MarioMaker;
+    font-family: Retro;
 }
 
 .Friend-list{
@@ -60,7 +60,7 @@
     margin-left: 5%;
     margin-top: 8%;
     font-size: 2rem;
-    font-family: Mario;
+    font-family: Retro;
 }
 
 .updateProfile{
@@ -75,6 +75,7 @@
     vertical-align: middle;
     width: 150px;
     height: 40px;
+    font-family: Retro;
 }
 
 .updateProfile:hover{
@@ -89,7 +90,7 @@
     margin:3%;
     margin-left: 5%;
     font-size: 1.5rem;
-    font-family: Mario;
+    font-family: Retro;
     text-align: justify;
     line-height: 10px;
 }
@@ -98,4 +99,14 @@
 	width: 80%;
 	margin: auto;
 	margin-top: 50px;
+}
+
+.button-h {
+    margin-left: 40%;
+    border-radius: 10%;
+    box-shadow: 10px 5px 5px black;
+    text-align: center;
+    vertical-align: middle;
+    background-color: rgb(127, 127, 137);
+    color: white;
 }

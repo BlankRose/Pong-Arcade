@@ -1,6 +1,5 @@
 // src/users/user.entity.ts
 import Channel from 'src/chat/entities/channel.entity';
-import History from 'src/users/history.entity';
 import ChannelMember from 'src/chat/entities/channel_member.entity';
 import Message from 'src/chat/entities/message.entity';
 import {
@@ -9,11 +8,8 @@ import {
 	Column,
 	OneToMany,
 	ManyToMany,
-	ManyToOne,
 	JoinColumn,
 } from 'typeorm';
-
-
 
 export enum UserStatus {
     Online = 'online',
@@ -90,11 +86,6 @@ export class User {
 
 	@Column({default: 0})
 	xp: number;
-
-	@OneToMany(() => History)
-	@JoinColumn()
-	history: History[];
-
 
 
 	/* ********************** */

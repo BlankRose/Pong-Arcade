@@ -1,15 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import GameCanvas from './GameCanvas';
 import BallSound from '../assets/ball.mp3';
 import "../styles/Game.css"
 
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
+import apiHandle, { withAuth } from './API_Access';
 
 function Game() {
 
+	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
-	const [ lastGameContext, setLastGameContext ] = useState(null);
+	const [ players, setPlayers ] = useState([null, null]);
 
 	// Register events
 	useEffect(() => {
@@ -17,9 +19,11 @@ function Game() {
 			return;
 
 		newSocketEvent(gameSocket, 'connect', () => {
+			forceUpdate();
 		})
 
 		newSocketEvent(gameSocket, 'disconnect', () => {
+			forceUpdate();
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
@@ -45,10 +49,9 @@ function Game() {
 			setGameContext({ ...gameContext, gameState: data })
 		})
 
-		newSocketEvent(gameSocket, 'gameEnd', data => {
-			console.log('Game over:', data)
-			setLastGameContext({ ...gameContext, gameState: data.game, winner: data.winner })
+		newSocketEvent(gameSocket, 'gameEnd', _ => {
 			setGameContext({ inQueue: false, gameState: null })
+			setPlayers([null, null]);
 		})
 
 		gameSocket.connect();
@@ -59,21 +62,17 @@ function Game() {
 
 	useEffect(() => {
 		const keyDownHandler = (e) => {
-			if (!gameSocket)
-				return;
 			if (e.key === 'ArrowUp')
-				gameSocket.emit('startUp');
+				gameSocket?.emit('startUp');
 			if (e.key === 'ArrowDown')
-				gameSocket.emit('startDown');
+				gameSocket?.emit('startDown');
 		}
 
 		const keyUpHandler = (e) => {
-			if (!gameSocket)
-				return;
 			if (e.key === 'ArrowUp')
-				gameSocket.emit('stopUp');
+				gameSocket?.emit('stopUp');
 			if (e.key === 'ArrowDown')
-				gameSocket.emit('stopDown');
+				gameSocket?.emit('stopDown');
 		}
 
 		document.addEventListener('keydown', keyDownHandler);
@@ -88,23 +87,30 @@ function Game() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		if (!gameContext.gameState)
+			return;
+
+		apiHandle.get(`/users/${gameContext.gameState.player1}`, withAuth())
+			.then(res => { setPlayers([res.data, players[1]]) })
+			.catch(_ => { });
+		apiHandle.get(`/users/${gameContext.gameState.player2}`, withAuth())
+			.then(res => { setPlayers([players[0], res.data]) })
+			.catch(_ => { })
+
+	//  --> Only run when game updates
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [gameContext])
+
 	return(
 		<div className='pGame'>
 			{
 			! gameSocket.connected
-				? <div>Connecting...</div> :
-				<>
-				{
-				lastGameContext ? <>
-					<div>Game Over</div>
-					<div>Winner: {lastGameContext.winner}</div>
-					<div>Score: {lastGameContext.gameState.score1} - {lastGameContext.gameState.score2}</div>
-					</> : undefined
-				}
-				{
+				? <div>Connecting...</div>
+				: <> {
 					gameContext.gameState
 						? <>
-						<div>{gameContext.gameState.player1} VS {gameContext.gameState.player2}</div>
+						<div>{players[0]?.username} VS {players[1]?.username}</div>
 						<div>Score: {gameContext.gameState.score1} - {gameContext.gameState.score2}</div>
 						<button onClick={() => {gameSocket.emit('abondonGame')}}>Give Up</button>
 						<GameCanvas ctx={gameContext.gameState}/>
@@ -120,9 +126,8 @@ function Game() {
 								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}> <img src= {Solo} alt='solo' className='img-solo' />Rejoindre une partie !</button>
 								
 								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
-							</div> 
-				}
-				</>
+							</div>
+				} </>
 			}
 		</div>
 	)

@@ -27,4 +27,7 @@ export class Game {
 
     @Column()
     scorePlayerTwo: number;
+
+    @Column()
+    playedOn: Date;
 }

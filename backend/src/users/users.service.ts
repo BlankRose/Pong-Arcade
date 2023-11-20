@@ -2,16 +2,18 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { User, UserStatus } from './user.entity';
-import {History} from './history.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { Game } from 'src/game/entities/game.entity';
 
 @Injectable()
 export class UsersService {
 	constructor(
 		@InjectRepository(User)
 		private readonly usersRepository: Repository<User>,
+		@InjectRepository(Game)
+		private readonly gamesRepository: Repository<Game>
 	) {}
 
 	async findOne(username: string): Promise<User | undefined> {
@@ -167,10 +169,24 @@ export class UsersService {
 		return rest
 	}
 
+	async getHistory(user: User): Promise<Game[]> {
+		const history = await this.gamesRepository.find({
+			relations: ['playerOne', 'playerTwo'],
+			where: [{ playerOne: user }, { playerTwo: user }]
+		})
+
+		history.forEach(elem => {
+			elem.playerOne = this.purgeData(elem.playerOne);
+			elem.playerTwo = this.purgeData(elem.playerTwo);
+		});
+
+		return history;
+	}
+
 // ************************2FA Part************************
 	async turnOn2FA(userID: number) {
         try {
-            const user = await this.usersRepository.findOne({where: { id: userID },})
+            const user = await this.usersRepository.findOne({where: { id: userID }})
             if (user) {
                 user._2FAEnabled = true
                 return this.usersRepository.save(user)
@@ -211,7 +227,3 @@ export class UsersService {
 
 //***********************History Match *********************
 }
-
-
-
-

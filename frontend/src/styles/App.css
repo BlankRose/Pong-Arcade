@@ -2,3 +2,8 @@
 	font-family: "Mario";
 	src: url("../assets/fonts/SuperMario256.ttf") format("truetype");
 }
+
+@font-face {
+	font-family: "Retro";
+	src: url("../assets/fonts/Retro\ Gaming.ttf") format("truetype");
+}
