@@ -1,6 +1,10 @@
 import { useEffect, useRef } from "react";
 
-import bg from '../assets/traditional.png';
+import default_bg from '../assets/traditional.png';
+import mario_bg from '../assets/background.jpg';
+
+import default_fx from '../assets/ball.mp3';
+import mario_fx from '../assets/ballM.ogg';
 
 const CanvasConstants = {
 	HEIGHT: 800,
@@ -16,16 +20,25 @@ const CanvasConstants = {
 	BALL_RADIUS: 8
 }
 
-const GameCanvas = ({ ctx }) => {
+const GameCanvas = ({ ctx, theme }) => {
 	let canvasRef = useRef(null);
 
 	useEffect(() => {
 		let canvas = canvasRef.current;
 		let context = canvas.getContext('2d');
 
-		// Load background image
 		let img = new Image();
-		img.src = bg;
+		let audio;
+		switch (theme) {
+			case 'Mario':
+				img.src = mario_bg;
+				audio = new Audio(mario_fx);
+				break;
+			default:
+				img.src = default_bg;
+				audio = new Audio(default_fx);
+		}
+
 		img.onload = () => {
 			context.drawImage(img, 0, 0, canvas.width, canvas.height);
 
@@ -33,14 +46,6 @@ const GameCanvas = ({ ctx }) => {
 			WIDTH / 2 & WIDTH / 2 -> middle of canvas
 			paddle_ -> center height point of paddle to ref TOP | BOTTOM
 			ball_ -> position of ball to ref TOP | BOTTOM and LEFT | RIGHT
-
-			Change ref TOP | BOTTOM to HEIGHT
-			ratio_y = HEIGHT / (TOP - BOTTOM)
-			ratio_x = WIDTH / (LEFT - RIGHT)
-
-			paddle_ = (paddle_ - BOTTOM) * ratio
-			ballX = (ballX - LEFT) * ratio
-			ballY = (ballY - BOTTOM) * ratio
 			*/
 
 			const ratio_y = CanvasConstants.HEIGHT / (CanvasConstants.TOP - CanvasConstants.BOTTOM);
@@ -54,8 +59,6 @@ const GameCanvas = ({ ctx }) => {
 			const bX = (ctx.ballX - CanvasConstants.RIGHT) * ratio_x;
 			const bY = (ctx.ballY - CanvasConstants.BOTTOM) * ratio_y;
 
-			// Draw paddles and ball
-			// ctx.paddle_ = center height point of paddle
 			context.fillStyle = 'white';
 			context.fillRect(
 				0, p1 - ph / 2,
@@ -70,7 +73,10 @@ const GameCanvas = ({ ctx }) => {
 				CanvasConstants.BALL_RADIUS * 2, CanvasConstants.BALL_RADIUS * 2
 			);
 		}
-	}, [ctx]);
+
+		if (ctx.playSound)
+			audio.play();
+	}, [ctx, theme]);
 
 	return (
 		<canvas

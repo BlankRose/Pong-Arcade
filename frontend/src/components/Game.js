@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import GameCanvas from './GameCanvas';
-import BallSound from '../assets/ball.mp3';
 import "../styles/Game.css"
 
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
@@ -9,9 +8,12 @@ import apiHandle, { withAuth } from './API_Access';
 
 function Game() {
 
+	const themes = ['1972', 'Mario' /*, 'Ace Atorney', 'Minecraft'*/];
+
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
 	const [ players, setPlayers ] = useState([null, null]);
+	const [ theme, setTheme ] = useState(themes[0]);
 
 	// Register events
 	useEffect(() => {
@@ -41,11 +43,6 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'gameUpdate', data => {
-			if (data.playSound) {
-				const sound = new Audio( BallSound );
-				sound.play();
-			}
-			delete data.playSound;
 			setGameContext({ ...gameContext, gameState: data })
 		})
 
@@ -112,8 +109,8 @@ function Game() {
 						? <>
 						<div>{players[0]?.username} VS {players[1]?.username}</div>
 						<div>Score: {gameContext.gameState.score1} - {gameContext.gameState.score2}</div>
+						<GameCanvas ctx={gameContext.gameState} theme={theme}/><br/>
 						<button onClick={() => {gameSocket.emit('abondonGame')}}>Give Up</button>
-						<GameCanvas ctx={gameContext.gameState}/>
 						</>
 						: gameContext.inQueue
 							? <>
@@ -123,12 +120,22 @@ function Game() {
 							:
 							<div className='game'>
 								<div className='Title-game'>Welcome to 42_PONG !</div>
-								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}> <img src= {Solo} alt='solo' className='img-solo' />Rejoindre une partie !</button>
-								
+								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>
+									<img src= {Solo} alt='solo' className='img-solo' />Rejoindre une partie !
+								</button>
 								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
 							</div>
 				} </>
 			}
+			<br/>
+			Theme:
+			{
+				themes.map(elem =>
+					<button onClick={() => {setTheme(elem)}}>{elem}</button>
+				)
+			}
+			<br/>
+			Selected: {theme}
 		</div>
 	)
 }
