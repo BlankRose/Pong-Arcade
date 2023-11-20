@@ -8,7 +8,7 @@ import apiHandle, { withAuth } from './API_Access';
 
 function Game() {
 
-	const themes = ['1972', 'Mario' /*, 'Ace Atorney', 'Minecraft'*/];
+	const themes = ['1972', 'Mario' , 'Ace Attorney' /*, 'Minecraft'*/];
 
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);

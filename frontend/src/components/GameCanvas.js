@@ -2,9 +2,12 @@ import { useEffect, useRef } from "react";
 
 import default_bg from '../assets/traditional.png';
 import mario_bg from '../assets/background.jpg';
+import aa_bg from '../assets/aa_background.webp';
 
 import default_fx from '../assets/ball.mp3';
 import mario_fx from '../assets/ballM.ogg';
+import phoenix_fx from '../assets/Phoenix.mp3';
+import hunter_fx from '../assets/Hunter.mp3';
 
 const CanvasConstants = {
 	HEIGHT: 800,
@@ -20,6 +23,13 @@ const CanvasConstants = {
 	BALL_RADIUS: 8
 }
 
+// [ PADDLE 1 , PADDLE 2, BALLZ ]
+const color_schemes = [
+	['white', 'white', 'white'],
+	['red', 'green', 'yellow'],
+	['red', 'blue', 'black']
+]
+
 const GameCanvas = ({ ctx, theme }) => {
 	let canvasRef = useRef(null);
 
@@ -28,15 +38,22 @@ const GameCanvas = ({ ctx, theme }) => {
 		let context = canvas.getContext('2d');
 
 		let img = new Image();
-		let audio;
+		let audio, colors;
 		switch (theme) {
 			case 'Mario':
 				img.src = mario_bg;
 				audio = new Audio(mario_fx);
+				colors = color_schemes[1];
+				break;
+			case 'Ace Attorney':
+				img.src = aa_bg;
+				audio = Math.random() <= 0.5 ? new Audio(phoenix_fx) : new Audio(hunter_fx);
+				colors = color_schemes[2];
 				break;
 			default:
 				img.src = default_bg;
 				audio = new Audio(default_fx);
+				colors = color_schemes[0];
 		}
 
 		img.onload = () => {
@@ -58,20 +75,17 @@ const GameCanvas = ({ ctx, theme }) => {
 
 			const bX = (ctx.ballX - CanvasConstants.RIGHT) * ratio_x;
 			const bY = (ctx.ballY - CanvasConstants.BOTTOM) * ratio_y;
+			const br = CanvasConstants.BALL_RADIUS;
+			const bd = CanvasConstants.BALL_RADIUS * 2;
 
-			context.fillStyle = 'white';
-			context.fillRect(
-				0, p1 - ph / 2,
-				pw, ph
-			);
-			context.fillRect(
-				CanvasConstants.WIDTH - pw, p2 - ph / 2,
-				pw, ph
-			);
-			context.fillRect(
-				bX - CanvasConstants.BALL_RADIUS, bY - CanvasConstants.BALL_RADIUS,
-				CanvasConstants.BALL_RADIUS * 2, CanvasConstants.BALL_RADIUS * 2
-			);
+			context.fillStyle = colors[0];
+			context.fillRect(0, p1 - ph / 2, pw, ph);
+
+			context.fillStyle = colors[1];
+			context.fillRect(CanvasConstants.WIDTH - pw, p2 - ph / 2, pw, ph);
+
+			context.fillStyle = colors[2];
+			context.fillRect(bX - br, bY - br, bd, bd);
 		}
 
 		if (ctx.playSound)
