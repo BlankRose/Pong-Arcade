@@ -8,12 +8,26 @@ import apiHandle, { withAuth } from './API_Access';
 
 function Game() {
 
-	const themes = ['1972', 'Mario' , 'Ace Attorney' /*, 'Minecraft'*/];
+	const themes = ['1972', 'Ace Attorney', 'Mario', 'Minecraft'];
+	const savedTheme = localStorage.getItem('theme');
 
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
 	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
 	const [ players, setPlayers ] = useState([null, null]);
-	const [ theme, setTheme ] = useState(themes[0]);
+	const [ theme, setTheme ] = useState(savedTheme || themes[0]);
+
+	const changeTheme = (theme) => {
+		localStorage.setItem('theme', theme);
+		setTheme(theme);
+	}
+
+	const toggleMute = () => {
+		const toggle = localStorage.getItem('mute');
+		if (toggle === 'false')
+			localStorage.setItem('mute', true);
+		else
+			localStorage.setItem('mute', false);
+	}
 
 	// Register events
 	useEffect(() => {
@@ -29,12 +43,10 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
-			console.log('Joined queue');
 			setGameContext({ ...gameContext, inQueue: true });
 		})
 
 		newSocketEvent(gameSocket, 'leaveQueueSuccess', () => {
-			console.log('Left queue');
 			setGameContext({ ...gameContext, inQueue: false });
 		})
 
@@ -102,36 +114,59 @@ function Game() {
 	return(
 		<div className='pGame'>
 			{
-			! gameSocket.connected
+			! gameSocket?.connected
 				? <div>Connecting...</div>
 				: <> {
 					gameContext.gameState
 						? <>
-						<div>{players[0]?.username} VS {players[1]?.username}</div>
-						<div>Score: {gameContext.gameState.score1} - {gameContext.gameState.score2}</div>
-						<GameCanvas ctx={gameContext.gameState} theme={theme}/><br/>
-						<button onClick={() => {gameSocket.emit('abondonGame')}}>Give Up</button>
+						<div className='players-display'>
+							<img className='players-icon' src={players[0]?.avatar} alt='avatar'/>
+							<div className='players-name'>
+								{players[0]?.username} VS {players[1]?.username}<br/>
+								{gameContext.gameState.score1} - {gameContext.gameState.score2}
+							</div>
+							<img className='players-icon' src={players[1]?.avatar} alt='avatar'/>
+						</div>
+						<div className='force-center'>
+							<GameCanvas ctx={gameContext.gameState} theme={theme}/><br/>
+						</div>
+
+						<div className='btn-triggers'>
+							<button
+								onClick={() => gameSocket.emit('abondonGame')}>
+									Give Up
+							</button>
+							<button style={{ color: localStorage.getItem('mute') === 'true' ? 'red' : 'green' }}
+								onClick={() => toggleMute()}>
+									Mute
+							</button>
+						</div>
 						</>
+
 						: gameContext.inQueue
-							? <>
-							<div>Waiting for opponent</div>
-							<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
-							</>
-							:
-							<div className='game'>
+							? <div className='queue force-center'>
+								<div>... Waiting for opponent ...</div>
+								<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
+							</div>
+							: <div className='game'>
 								<div className='Title-game'>Welcome to 42_PONG !</div>
 								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>
-									<img src= {Solo} alt='solo' className='img-solo' />Rejoindre une partie !
+									<img src={Solo} alt='solo' className='img-solo' />Rejoindre une partie !
 								</button>
 								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
 							</div>
-				} </>
+				}
+				<div className='theme-title force-center'>Themes:</div>
+				<div className='theme-selection'>
+					{themes.map(elem => <button
+						key={elem} className='btn-theme'
+						onClick={() => changeTheme(elem)}>
+							{elem}
+					</button>)}
+				</div>
+				<div className='theme-selected force-center'>Selected: {theme}</div>
+				</>
 			}
-			<br/>
-			Themes: {' '}
-			{themes.map(elem => <button key={elem} onClick={() => setTheme(elem)}>{elem}</button>)}
-			<br/>
-			Selected: {theme}
 		</div>
 	)
 }

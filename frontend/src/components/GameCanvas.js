@@ -3,12 +3,15 @@ import { useEffect, useRef } from "react";
 import default_bg from '../assets/themes/1972_bg.png';
 import default_fx from '../assets/themes/1972_fx.mp3';
 
-import mario_bg from '../assets/themes/mario_bg.jpg';
-import mario_fx from '../assets/themes/mario_fx.ogg';
-
 import ace_bg from '../assets/themes/ace_bg.webp';
 import aceA_fx from '../assets/themes/ace_phoenix_fx.mp3';
 import aceB_fx from '../assets/themes/ace_hunter_fx.mp3';
+
+import mario_bg from '../assets/themes/mario_bg.jpg';
+import mario_fx from '../assets/themes/mario_fx.ogg';
+
+import minecraft_bg from '../assets/themes/minecraft_bg.jpg';
+import minecraft_fx from '../assets/themes/minecraft_fx.mp3';
 
 const CanvasConstants = {
 	HEIGHT: 800,
@@ -24,11 +27,12 @@ const CanvasConstants = {
 	BALL_RADIUS: 8
 }
 
-// [ PADDLE 1 , PADDLE 2, BALLZ ]
+//  [   PADDLE 1   ,   PADDLE 2   ,   BALLZ   ]
 const color_schemes = [
-	['white', 'white', 'white'],
-	['red', 'green', 'yellow'],
-	['red', 'blue', 'black']
+	['white', 'white', 'white'],                  // Default (1972)
+	['cornflowerblue', 'greenyellow', 'aqua'],    // Minecraft
+	['red', 'green', 'yellow'],				      // Mario
+	['red', 'blue', 'black'],                     // Ace Attorney
 ]
 
 const GameCanvas = ({ ctx, theme }) => {
@@ -42,16 +46,22 @@ const GameCanvas = ({ ctx, theme }) => {
 		let audio, colors;
 
 		switch (theme) {
-			case 'Mario':
-				img.src = mario_bg;
-				audio = new Audio(mario_fx);
-				colors = color_schemes[1];
-				break;
-
 			case 'Ace Attorney':
 				img.src = ace_bg;
 				audio = Math.random() <= 0.5 ? new Audio(aceA_fx) : new Audio(aceB_fx);
+				colors = color_schemes[3];
+				break;
+
+			case 'Mario':
+				img.src = mario_bg;
+				audio = new Audio(mario_fx);
 				colors = color_schemes[2];
+				break;
+
+			case 'Minecraft':
+				img.src = minecraft_bg;
+				audio = new Audio(minecraft_fx);
+				colors = color_schemes[1];
 				break;
 
 			default: // Default
@@ -86,16 +96,11 @@ const GameCanvas = ({ ctx, theme }) => {
 			context.fillRect(bX - br, bY - br, bd, bd);
 		}
 
-		if (ctx.playSound)
+		if (ctx.playSound && localStorage.getItem('mute') === 'true')
 			audio.play();
 	}, [ctx, theme]);
 
-	return (
-		<canvas
-			className="gameCanvas" ref={canvasRef}
-			width={CanvasConstants.WIDTH} height={CanvasConstants.HEIGHT}
-		/>
-	)
+	return <canvas className="gameCanvas" ref={canvasRef} width={CanvasConstants.WIDTH} height={CanvasConstants.HEIGHT} />
 }
 
 export default GameCanvas;

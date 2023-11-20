@@ -98,9 +98,18 @@ function App() {
 	};
 
 	useEffect(() => {
+		const lastTry = localStorage.getItem('lastTry');
+
+		// If last try was less than 3 minutes ago, don't try to verify token
+		// This is to avoid spamming the server with requests and helps prevent
+		// re-rendering the app too often
+		if (isLoggedIn && lastTry && Date.now() - lastTry < 3 * 60 * 1000)
+			return;
+
 		if (localStorage.getItem('token')) {
 			apiHandle.get('/auth/verify', withAuth())
 				.then((_) => {
+					localStorage.setItem('lastTry', Date.now());
 					onLoginSuccess();
 				})
 				.catch((_) => {
