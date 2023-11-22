@@ -1,8 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
+import apiHandle, { withAuth } from './API_Access';
 import { Link } from 'react-router-dom';
+import '../styles/HistoryItem.css'
+
 
 function HistoryItem({player1, player2, player1_score, player2_score, played_at}){
+
 	const [ display, setDisplay ] = useState({display: 'none'});
+	const [user, setUser] = useState(null);
+
+	useEffect(() => {
+		apiHandle.get('/users/me', withAuth() )
+			.then(response => {
+				setUser(response.data);
+			})
+			.catch(err => {
+				console.error(err);
+			});
+	}, [])
 
 	const date = new Date(played_at); // Convert to Date object
 	const min_ago = Math.floor((Date.now() - date.getTime()) / 60000);
@@ -14,11 +29,17 @@ function HistoryItem({player1, player2, player1_score, player2_score, played_at}
 			onMouseEnter={() => setDisplay({display: 'block'})}
 			onMouseLeave={() => setDisplay({display: 'none'})}>
 
-			<Link to={`/profile/${player1?.id}`}>{player1?.username}</Link> {' '}
+			<Link className='link-name' to={`/profile/${player1?.id}`}>{player1?.username}</Link> {' '}
 			{player1_score < 0 ? 'Gave Up' : player1_score} : {' '}
-			<Link to={`/profile/${player2?.id}`}>{player2?.username}</Link> {' '}
+			<Link className='link-name' to={`/profile/${player2?.id}`}>{player2?.username}</Link> {' '}
 			{player2_score < 0 ? 'Gave Up' : player2_score}
-
+			{(player1_score > player2_score && player1?.username === user?.username )
+			|| (player2_score > player1_score && player2?.username === user?.username) ?
+			<span className='victory'>   Victoire</span> 
+			: 
+			<span className='defeat'>   Defaite</span>
+			
+			}
 			<div className='history-date' style={display}>
 				Played on: {date.toLocaleString()} ({
 					min_ago <= 0
@@ -30,7 +51,9 @@ function HistoryItem({player1, player2, player1_score, player2_score, played_at}
 						: `${days_ago} days ago`
 				})
 			</div>
+			<br></br>
 		</li>
+		
 	)
 }
 

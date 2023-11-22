@@ -1,0 +1,23 @@
+.history-item{
+    list-style: none;
+    color: black;
+    font-family: 'Retro';
+    font-size: 1.5rem;
+}
+
+.link-name{
+    text-decoration: none;
+    color: black;
+}
+
+.link-name:hover{
+    font-weight: bolder;
+}
+
+.victory{
+    color: green;
+}
+
+.defeat{
+    color:red
+}

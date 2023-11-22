@@ -60,7 +60,7 @@ function Profil({ username }) {
     				<>
       				<button className='button-h' onClick={() => setIsHistory(false)}>Historique des match</button>
       				{history && history.length > 0 ? (
-        			<ul>
+        			<ul className='history-list'>
           				{history.map(game => (
             			<HistoryItem
               				key={game.id}
