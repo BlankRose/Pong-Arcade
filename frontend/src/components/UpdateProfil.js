@@ -8,6 +8,7 @@ function UpdateProfil() {
 
 	const [errorName, setErrorName] = useState(null);
 	const [errorAvatar, setErrorAvatar] = useState(null);
+	const [message, setMessage] = useState('')
 
 	useEffect(() => {
 		apiHandle.get('/users/me', withAuth() )
@@ -53,6 +54,7 @@ function UpdateProfil() {
 					setErrorAvatar(err.response.data.message);
 				});
 		}
+		setMessage("Votr profil a bien ete mis a jour !")
 	}
 
 	const handleUpload = (img) => {
@@ -62,6 +64,7 @@ function UpdateProfil() {
 		reader.onload = () => {
 			setAvatar(reader.result);
 			setErrorAvatar(null);
+			
 		}
 		reader.onerror = (err) => {
 			setAvatar(null);
@@ -74,6 +77,7 @@ function UpdateProfil() {
 		<div className="d-block w-100 vh-100 m-4">
 			<div className='border bg-gray w-50 p-5 mx-auto'>
 				<h2>Modify your profile</h2>
+				{message && <div style={{color: 'green'}}> {message}</div>}
 				<br></br>
 				<form onSubmit={handleSubmit}>
 					<div>

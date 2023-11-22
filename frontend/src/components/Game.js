@@ -8,7 +8,7 @@ import apiHandle, { withAuth } from './API_Access';
 
 function Game() {
 
-	const themes = ['1972', 'Ace Attorney', 'Mario', 'Minecraft'];
+	const themes = ['1972', 'Ace Attorney', 'Mario', 'Minecraft', 'Street Fighter 2'];
 	const savedTheme = localStorage.getItem('theme');
 
 	const [, forceUpdate] = useReducer(x => x + 1, 0);

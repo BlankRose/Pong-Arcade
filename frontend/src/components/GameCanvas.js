@@ -13,6 +13,10 @@ import mario_fx from '../assets/themes/mario_fx.ogg';
 import minecraft_bg from '../assets/themes/minecraft_bg.jpg';
 import minecraft_fx from '../assets/themes/minecraft_fx.mp3';
 
+import sf2_bg from '../assets/themes/street_fighter2.jpg';
+import sf2A_fx from '../assets/themes/Ryu.mp3';
+import sf2B_fx from '../assets/themes/Ken.mp3';
+
 const CanvasConstants = {
 	HEIGHT: 800,
 	WIDTH: 1200,
@@ -33,6 +37,7 @@ const color_schemes = [
 	['cornflowerblue', 'greenyellow', 'aqua'],    // Minecraft
 	['red', 'green', 'yellow'],				      // Mario
 	['red', 'blue', 'black'],                     // Ace Attorney
+	['red', 'white', 'aqua'],					  //Street Fighter 2
 ]
 
 const GameCanvas = ({ ctx, theme }) => {
@@ -63,6 +68,12 @@ const GameCanvas = ({ ctx, theme }) => {
 				audio = new Audio(minecraft_fx);
 				colors = color_schemes[1];
 				break;
+			
+			case 'Street Fighter 2':
+				img.src = sf2_bg;
+				audio = Math.random() <= 0.5 ? new Audio(sf2A_fx) : new Audio(sf2B_fx);
+				colors = color_schemes[4];
+				break;
 
 			default: // Default
 				img.src = default_bg;
@@ -87,6 +98,15 @@ const GameCanvas = ({ ctx, theme }) => {
 			const bd = CanvasConstants.BALL_RADIUS * 2;
 
 			context.fillStyle = colors[0];
+
+			//Ajout d'ombres
+			context.shadowColor = 'rgba(244, 244, 244, 0.5)';
+			context.shadowOffsetX = 5;
+			context.shadowOffsetY = 10;
+			context.shadowBlur = 9;
+			
+
+
 			context.fillRect(0, p1 - ph / 2, pw, ph);
 
 			context.fillStyle = colors[1];
