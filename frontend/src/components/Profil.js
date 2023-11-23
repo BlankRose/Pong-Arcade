@@ -37,7 +37,8 @@ function Profil({ username }) {
 
 	return (
 		user
-			? <div className= "Container">
+			?
+			 <div className= "Container">
 				<div className='CardProfil'>
 					<div className='profil'>
 						<img className='Profil-avatar' alt='profil' src= {avatar}/>
@@ -88,7 +89,6 @@ function Profil({ username }) {
 					Comming Soon (TM)
 				</div>
 			</div>
-			
 			: <p className='Profil-load alert alert-warning'>Loading... Are you sure the user exists?</p>
 	)
 }

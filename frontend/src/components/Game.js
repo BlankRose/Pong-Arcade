@@ -2,7 +2,6 @@ import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import GameCanvas from './GameCanvas';
 import "../styles/Game.css"
-
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import apiHandle, { withAuth } from './API_Access';
 

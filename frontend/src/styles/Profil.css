@@ -15,7 +15,7 @@
 }
 
 .CardProfil{
-    border: 1px solid black;
+    box-shadow: 15px 10px 20px black;
 }
 
 .profil{
@@ -41,7 +41,7 @@
 .Friend-list{
     grid-area: friendlist;
     border: 1px solid black;
-    background-color: aqua;
+    background-color: gray;
 }
 
 
@@ -61,6 +61,7 @@
     margin-top: 8%;
     font-size: 2rem;
     font-family: Retro;
+    color: #3a3c42;
 }
 
 .updateProfile{
@@ -93,6 +94,7 @@
     font-family: Retro;
     text-align: justify;
     line-height: 10px;
+    color: #3a3c42;
 }
 
 .Profil-load {
