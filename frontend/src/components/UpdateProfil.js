@@ -54,7 +54,7 @@ function UpdateProfil() {
 					setErrorAvatar(err.response.data.message);
 				});
 		}
-		setMessage("Votr profil a bien ete mis a jour !")
+		setMessage("Votre profil à bien été mis a jour !")
 	}
 
 	const handleUpload = (img) => {

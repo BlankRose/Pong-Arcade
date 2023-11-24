@@ -11,7 +11,7 @@ body {
 
 /* Navbar styles */
 .nav {
-  background-color: #23252d;
+  background-color: #c0c1c2;
   padding: 0;
   overflow: auto; /* Ensure content visibility */
   font-family: 'Retro';
@@ -42,10 +42,10 @@ body {
 
 .leftContainer a:hover {
   color: #fff;
-  background-color: #4f5153; /* Adjust hover background */
+  background-color: #818283; /* Adjust hover background */
 }
 
 .leftContainer .active {
   color: #fff;
-  background-color: #4f5153; /* Adjust active background */
+  background-color: #818283; /* Adjust active background */
 }

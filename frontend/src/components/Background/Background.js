@@ -5,11 +5,16 @@ import styled, { keyframes } from 'styled-components';
 
 const animated = keyframes`
     0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(0) rotate(45deg);
+        filter: brightness(1); 
         opacity: 0.7;
     }
+    50%{
+        filter: brightness(1.5);
+    }
     100% {
-        transform: translateY(-1000px) rotate(720deg);
+        transform: translateY(1000px) rotate(45deg);
+        filter: brightness(1);
         opacity: 0;
     }
 `;
@@ -17,9 +22,9 @@ const animated = keyframes`
 const Square = styled.li`
     position: absolute;
     list-style: none;
-    background-color: gray;
-    animation: ${animated} 15s linear infinite;
-    bottom: 0%;
+    background-color: #C4D9E8;
+    animation: ${animated} 20s linear infinite;
+    bottom: 100%;
 `;
 
 const Background = styled.ul`
@@ -27,7 +32,7 @@ const Background = styled.ul`
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-color: #929d97;
+    background: linear-gradient(#FFFFFF, #E1DDDD, #85AAC5, #3EA0E9, #85AAC5,  #E1DDDD, #FFFFFF);
     overflow: hidden;
 `;
 
