@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 // import { useAppSelector } from '../../store/types';
 // import LogoutButton from './LogOutButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faComments, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faLock, faComments, faGamepad, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 
 const Navbar = () => {
@@ -14,7 +14,8 @@ const Navbar = () => {
         { to: '/profile', text: 'Profile', icon: faUser },
         { to: '/2fa', text: '2FA', icon: faLock },
         { to: '/chat', text: 'Chat', icon: faComments },
-        { to: '/game', text: 'Game', icon: faGamepad }
+        { to: '/game', text: 'Game', icon: faGamepad },
+        { to: '/leader', text: 'Leader', icon: faTrophy}
     ];
 
     return (

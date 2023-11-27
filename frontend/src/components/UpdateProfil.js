@@ -28,6 +28,7 @@ function UpdateProfil() {
 		})
 		.catch(err => {
 			setErrorName(err.response.data.message);
+			setMessage('');
 		});
 
 		if (avatar)
@@ -41,9 +42,15 @@ function UpdateProfil() {
 				})
 				.catch(err => {
 					if (413 === err.response.status)
+					{
 						setErrorAvatar('Provided image is too large');
+						setMessage('');
+					}
 					else
+					{
 						setErrorAvatar(err.response.data.message);
+						setMessage('');
+					}
 				});
 		} else {
 			apiHandle.delete('/users/me/avatar', withAuth())
@@ -52,9 +59,10 @@ function UpdateProfil() {
 				})
 				.catch(err => {
 					setErrorAvatar(err.response.data.message);
+					setMessage('');
 				});
 		}
-		setMessage("Votre profil à bien été mis a jour !")
+		setMessage("Votre profil à bien été mis a jour !");
 	}
 
 	const handleUpload = (img) => {

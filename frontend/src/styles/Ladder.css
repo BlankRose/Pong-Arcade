@@ -1,0 +1,67 @@
+.Container_two{
+    display: block;
+    margin-top: 10%;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    background: rgba(200, 206, 214, 0.4);
+    border: #85AAC5 1px solid;
+    box-shadow: 4px 4px 15px #85aac5;   
+}
+
+.ladder-title{
+    font-family: Retro;
+    text-shadow: 5px 5px 15px #e0e2e4;
+    font-size: 5rem;
+}
+
+.ladder-list{
+    font-size: 1.5rem;
+    list-style: none;
+    font-family: Retro;
+}
+
+.ladder{
+    border-bottom: 1px solid #85AAC5;
+    margin-bottom: 1%;
+}
+
+.ladder .first{
+    margin-right: 2%;
+    font-size: 2.5rem;
+    background: linear-gradient(#dbc230, #e9cd50);
+    font-weight: bolder;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.5px black;   
+}
+
+.ladder .second{
+    margin-right: 2%;
+    font-size: 2rem;
+    background: linear-gradient(#b4b4b2, #e2e2dd);
+    font-weight: bolder;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.5px black; 
+
+}
+
+.ladder .leader-user {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.ladder .link {
+    text-decoration: none;
+    color: black;
+}
+
+.ladder .link:hover {
+    font-size: 1.3em;
+}
