@@ -15,6 +15,14 @@ export class UsersController {
 			: await this.usersService.findOneByID(id);
 	}
 
+	@Get('all')
+	async getAllUsers() {
+		let users = await this.usersService.getAllUsers();
+		for (let i = 0; i < users.length; i++)
+			users[i] = this.usersService.purgeData(users[i]);
+		return users;
+	}
+
 	@Get('me')
 	async getProfile(@Request() req) {
 		const user = await this.usersService.findOneByID(req.user['id']);

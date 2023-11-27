@@ -237,6 +237,11 @@ export class GameService {
 				loser.rank += 1;
 				loser.xp = 0;
 			}
+
+			winner.elo +=  100;
+			loser.elo -= (loser.elo < 0 ? 0: 25);
+
+
 			this.userService.updateUser(winner.id, winner);
 			this.userService.updateUser(loser.id, loser);
 

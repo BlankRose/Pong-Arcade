@@ -16,6 +16,10 @@ export class UsersService {
 		private readonly gamesRepository: Repository<Game>
 	) {}
 
+	getAllUsers(): Promise<User[]> {
+		return this.usersRepository.find();
+	}
+
 	async findOne(username: string): Promise<User | undefined> {
 		return this.usersRepository.findOne({ where: { username: username } });
 	}
@@ -33,6 +37,7 @@ export class UsersService {
 		delete user.password;
 		delete user.id42;
 		delete user._2FAToken;
+		delete user._2FAEnabled;
 
 		return user;
 	}

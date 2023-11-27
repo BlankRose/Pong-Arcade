@@ -87,6 +87,10 @@ export class User {
 	@Column({default: 0})
 	xp: number;
 
+	//Stat for the ladder
+	@Column({default: 500})
+	elo: number;
+
 
 	/* ********************** */
 	/*        Chatting        */
