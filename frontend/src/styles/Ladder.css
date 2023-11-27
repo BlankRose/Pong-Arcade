@@ -1,3 +1,21 @@
+@keyframes animation {
+    0% {
+        filter: brightness(1);
+    }
+
+    50%{
+        filter: brightness(1.75);
+    }
+
+    100%{
+        filter: brightness(1);
+    }
+    
+}
+
+
+
+
 .Container_two{
     display: block;
     margin-top: 10%;
@@ -13,7 +31,7 @@
 .ladder-title{
     font-family: Retro;
     text-shadow: 5px 5px 15px #e0e2e4;
-    font-size: 5rem;
+    font-size: 4rem;
 }
 
 .ladder-list{
@@ -35,18 +53,45 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 0.5px black;   
+    -webkit-text-stroke: 0.5px black; 
+    animation-duration: 5s;
+    animation-name:  animation;
+    animation-iteration-count: infinite;
 }
 
 .ladder .second{
     margin-right: 2%;
-    font-size: 2rem;
+    font-size: 2.2rem;
     background: linear-gradient(#b4b4b2, #e2e2dd);
     font-weight: bolder;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 0.5px black; 
+
+}
+
+.ladder .third{
+    margin-right: 2%;
+    font-size: 1.9rem;
+    background: linear-gradient(#6d5233, #966143);
+    font-weight: bolder;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.5px black;
+
+}
+
+.ladder .others{
+    margin-right: 2%;
+    font-size: 1.5rem;
+    background: linear-gradient(#070707, #363635);
+    font-weight: bolder;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.5px black;
 
 }
 

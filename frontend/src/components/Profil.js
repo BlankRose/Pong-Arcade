@@ -82,7 +82,7 @@ function Profil({ username }) {
       			<button className='button-h' onClick={() => setIsHistory(true)}>Historique des match</button>
     			</>
   )}
-</div>
+				</div>
 
 				</div>
 				<div className='Friend-list'>
