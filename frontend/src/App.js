@@ -14,7 +14,7 @@ import UpdateProfil from './components/UpdateProfil';
 import ProfilContainer from './components/ProfilContainer';
 import ChatPage from './components/Chat';
 import Game from './components/Game';
-import Ladder from './components/Ladder';
+import Leader from './components/Leader';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
@@ -75,7 +75,7 @@ const router = (onLogout) => {
 				},
 				{
 					path: "leader",
-					element: <Ladder />
+					element: <Leader />
 				}
 			]
 		},

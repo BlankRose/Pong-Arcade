@@ -1,9 +1,9 @@
 import React, { useEffect, useState} from 'react';
 import apiHandle, { withAuth } from './API_Access';
-import '../styles/Ladder.css';
+import '../styles/Leader.css';
 import { Link } from 'react-router-dom';
 
-const Ladder = () => {
+const Leader = () => {
 
     const [listUser, setlistUser] = useState([]);
 
@@ -36,11 +36,11 @@ const Ladder = () => {
 
     return (
         <div className = "Container_two">
-            <h1 className='ladder-title'>Leaderboard</h1>
+            <h1 className='leader-title'>Leaderboard</h1>
             <br></br>
-            <ul className='ladder-list'>
+            <ul className='leader-list'>
                 {elolist.map((user, index) => (
-                    <li key={user.id} position={index + 1} className='ladder'>
+                    <li key={user.id} position={index + 1} className='leader'>
                         <div className='leader-user'>
                             <div className={`${rankClass(index + 1)}`}> {index === 0 ? index + 1 + 'ST': 
                                 index === 1 ? index + 1 + 'ND' : 
@@ -58,4 +58,4 @@ const Ladder = () => {
 }
 
 
-export default Ladder;
+export default Leader;

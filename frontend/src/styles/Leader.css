@@ -28,24 +28,24 @@
     box-shadow: 4px 4px 15px #85aac5;   
 }
 
-.ladder-title{
+.leader-title{
     font-family: Retro;
     text-shadow: 5px 5px 15px #e0e2e4;
     font-size: 4rem;
 }
 
-.ladder-list{
+.leader-list{
     font-size: 1.5rem;
     list-style: none;
     font-family: Retro;
 }
 
-.ladder{
+.leader{
     border-bottom: 1px solid #85AAC5;
     margin-bottom: 1%;
 }
 
-.ladder .first{
+.leader .first{
     margin-right: 2%;
     font-size: 2.5rem;
     background: linear-gradient(#dbc230, #e9cd50);
@@ -59,7 +59,7 @@
     animation-iteration-count: infinite;
 }
 
-.ladder .second{
+.leader .second{
     margin-right: 2%;
     font-size: 2.2rem;
     background: linear-gradient(#b4b4b2, #e2e2dd);
@@ -71,7 +71,7 @@
 
 }
 
-.ladder .third{
+.leader .third{
     margin-right: 2%;
     font-size: 1.9rem;
     background: linear-gradient(#6d5233, #966143);
@@ -83,7 +83,7 @@
 
 }
 
-.ladder .others{
+.leader .others{
     margin-right: 2%;
     font-size: 1.5rem;
     background: linear-gradient(#070707, #363635);
@@ -95,18 +95,18 @@
 
 }
 
-.ladder .leader-user {
+.leader .leader-user {
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-around;
 }
 
-.ladder .link {
+.leader .link {
     text-decoration: none;
     color: black;
 }
 
-.ladder .link:hover {
+.leader .link:hover {
     font-size: 1.3em;
 }

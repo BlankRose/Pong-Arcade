@@ -17,7 +17,7 @@ function HistoryItem({player1, player2, player1_score, player2_score, played_at}
 			onMouseLeave={() => setDisplay({display: 'none'})}>
 
 			<Link className='link-name' to={`/profile/${player1?.id}`}>{player1?.username}</Link> {' '}
-			{player1_score < 0 ? 'Gave Up' : player1_score} : {' '}
+			{player1_score < 0 ? 'Gave Up' :  player1_score}  : {' '}
 			<Link className='link-name' to={`/profile/${player2?.id}`}>{player2?.username}</Link> {' '}
 			{player2_score < 0 ? 'Gave Up' : player2_score}
 			<div className='history-date' style={display}>

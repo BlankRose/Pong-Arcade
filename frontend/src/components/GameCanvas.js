@@ -10,6 +10,9 @@ import aceB_fx from '../assets/themes/ace_hunter_fx.mp3';
 import mario_bg from '../assets/themes/mario_bg.jpg';
 import mario_fx from '../assets/themes/mario_fx.ogg';
 
+import zelda_bg from '../assets/themes/zelda.webp';
+import zelda_fx from '../assets/themes/zelda.mp3';
+
 import minecraft_bg from '../assets/themes/minecraft_bg.jpg';
 import minecraft_fx from '../assets/themes/minecraft_fx.mp3';
 
@@ -38,6 +41,7 @@ const color_schemes = [
 	['red', 'green', 'yellow'],				      // Mario
 	['red', 'blue', 'black'],                     // Ace Attorney
 	['red', 'white', 'aqua'],					  //Street Fighter 2
+	['darkgreen', 'hotpink', 'darkred'],		  //Zelda
 ]
 
 const GameCanvas = ({ ctx, theme }) => {
@@ -73,6 +77,12 @@ const GameCanvas = ({ ctx, theme }) => {
 				img.src = sf2_bg;
 				audio = Math.random() <= 0.5 ? new Audio(sf2A_fx) : new Audio(sf2B_fx);
 				colors = color_schemes[4];
+				break;
+			
+			case 'Zelda':
+				img.src = zelda_bg;
+				audio = new Audio(zelda_fx);
+				colors = color_schemes[5]
 				break;
 
 			default: // Default
