@@ -1,0 +1,62 @@
+.home{
+    margin: auto;
+    max-width: 60%;
+}
+
+.home .title{
+    font-family: Retro;
+    text-align: center;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    background: linear-gradient(#e6e8e9, #4f5152);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px black;
+}
+
+.home .description{
+    display: flex;
+    font-family: Retro;
+    text-align: justify;
+    display: flex;
+    flex-direction: column;
+}
+
+.home .img-pong{
+    width: 400px;
+    height: 300px;
+    margin-bottom: 2%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.home .subtitle{
+    text-decoration:underline;
+    margin-bottom: 2%;
+}
+
+.home .title-creators{
+    margin-top: 30%;
+    font-family: Retro;
+    text-align: center;
+}
+
+.home .creators{
+    margin-top: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.home .link{
+    text-decoration: none;
+    color: black; 
+    font-size: 1.2rem;
+    font-style: italic;  
+}
+
+.home .link:hover{
+    font-size: 1.5rem;
+}
+

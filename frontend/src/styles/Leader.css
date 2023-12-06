@@ -24,8 +24,8 @@
     margin-right: auto;
     text-align: center;
     background: rgba(200, 206, 214, 0.4);
-    border: #85AAC5 1px solid;
-    box-shadow: 4px 4px 15px #85aac5;   
+    border: gray 1px solid;
+    box-shadow: 4px 4px 15px #dbdcdd;   
 }
 
 .leader-title{
@@ -41,7 +41,7 @@
 }
 
 .leader{
-    border-bottom: 1px solid #85AAC5;
+    border-bottom: 1px solid gray;
     margin-bottom: 1%;
 }
 

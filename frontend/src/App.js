@@ -15,6 +15,7 @@ import ProfilContainer from './components/ProfilContainer';
 import ChatPage from './components/Chat';
 import Game from './components/Game';
 import Leader from './components/Leader';
+import Home from './components/Home';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
@@ -33,6 +34,13 @@ const router = (onLogout) => {
 			// errorElement: <ErrorPage/>,
 			// loader: statusLoader,
 			children:[
+				{
+					inde: true,
+					path: "/",
+					element: (
+						<Home />
+					)
+				},
 				{
 					index: true,
 					path: "profile",

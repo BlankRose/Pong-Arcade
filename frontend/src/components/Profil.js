@@ -74,7 +74,7 @@ function Profil({ username }) {
           				))}
         			</ul>
       					) : (
-        					<p>Aucun historique disponible.</p>
+        					<p className="empty-h">Aucun historique disponible.</p>
     		 	 )}
     				</>
   			) : (

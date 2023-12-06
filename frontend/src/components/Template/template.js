@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../Navigation/NavigationBar.js";
 import BackgroundComponent from "../Background/Background.js";
-import Footer from "../Footer.js";
 
 
 const Template = () => {
@@ -12,7 +11,6 @@ const Template = () => {
 			<Outlet>				
 			</Outlet>		
 		</main>
-		<Footer />
 	</>)
 }
 
