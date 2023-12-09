@@ -3,18 +3,17 @@ import { useSelector } from "react-redux"
 import styles from "./Chat.module.css"
 
 
+
 const SendForm = ({ sendMessage }) => {
     const userData = useSelector(state => state.user)
-    const currentChatSelected = useSelector(
-      state => state.chat.selectedChat
-    )
+    const selectedChat = useSelector(state => state.chat.selectedChat)
     const [inputText, setInputText] = useState("")
   
     const handleCreation = text => {
       const newMsg = {
         senderId: userData.id,
         content: text,
-        channelId: currentChatSelected,
+        channelId: selectedChat,
       }
       sendMessage(newMsg)
       setInputText("")
@@ -31,7 +30,7 @@ const SendForm = ({ sendMessage }) => {
     }
   
     return (
-      <div >
+      <div style={{ textAlign: 'center' }}>
         <input
           placeholder="Send message"
           type="text"
@@ -40,6 +39,7 @@ const SendForm = ({ sendMessage }) => {
           onKeyDown={handleKeyDown}
           id="message-input"
           autoComplete="off"
+          style={{ width: '80%'}}
         />
       </div>
     )
@@ -49,44 +49,47 @@ const SendForm = ({ sendMessage }) => {
   const Msg = ({ msg, blockedUsers }) => {
     const userData = useSelector(state => state.user)
     const myNickname = userData.username
-    // const isCreatorBlocked = blockedUsers.indexOf(msg.creator) !== -1
+    const isCreatorBlocked = blockedUsers.indexOf(msg.creator) !== -1
   
     return (
       <>
-        {msg.userNickname === myNickname ? (
-          <div >
-            <div >
-              <p >
-                <b>{msg.userNickname} : </b> {msg.content}
-              </p>
-            </div>
-            {/* <img
-              src={msg.userAvatarUrl}
-              alt="Avatar"
-              className={styles.profilePicture}
-            /> */}
-          </div>
-        ) : (
-          <div >
-            {/* <img
-              src={msg.userAvatarUrl}
-              alt="Avatar"
-              className={styles.profilePicture}
-            /> */}
-            <div >
-              <p >
-                <b>{msg.userNickname} : </b> {msg.content}
-              </p>
-            </div>
-          </div>
-        )}
-      </>
+            {msg.username === myNickname ? (
+                <div >
+                    <div >
+                        <p >
+                            <b>{msg.username} : </b> {msg.content}
+                        </p>
+                    </div>
+                       {/* add avatar */}
+                </div>
+            ) : isCreatorBlocked ? (
+                <div>
+                    {/* add avatar */}
+                    <div >
+                        <p>
+                            <b>{'BLOCKED'} : </b> {'blalblalblblalbal'}
+                        </p>
+                    </div>
+                </div>
+            ) : (
+                <div >
+                    {/* add avatar */}
+                    <div >
+                        <p >
+                            <b>{msg.username} : </b> {msg.content}
+                        </p>
+                    </div>
+                </div>
+            )}
+        </>
     )
   }
   
 
-const ChatFeed = ({ messages}) => {
-    const isFeedFull = useRef(null)
+const ChatFeed = ({ messages, blockedUsers}) => {
+
+  
+  const isFeedFull = useRef(null)
   
     useEffect(() => {
       if (isFeedFull.current)
@@ -96,19 +99,62 @@ const ChatFeed = ({ messages}) => {
     return (
       <div >
         {messages.map(msg => (
-          <Msg key={msg.id} msg={msg} ></Msg>
+          <Msg key={msg.id} msg={msg} blockedUsers={blockedUsers} ></Msg>
         ))}
       </div>
     )
   }
 
-function ChatInterface(props) {
-  return (
-    <div className={styles.column2} >
-      <ChatFeed messages={props.messages} />
-      <SendForm sendMessage={props.sendMessage} />
-    </div>
-  )
-}
+  function ChatInterface(props) {
+    const [isChatValid, setIsChatValid] = useState(true);
+    const selectedChatName = useSelector(state => state.chat.chatName);
+    const h1Styles = {
+      fontFamily: 'Roboto', 
+      textAlign: 'center',
+      fontSize: '50px', 
+    };
+  
+    const chatFeedStyles = {
+      maxHeight: '1000px',
+      overflowY: 'auto',
+      scrollBehavior: 'auto contain', // Use camelCase for property names
+      overflow: 'auto',
+      msOverflowStyle: 'none',
+      scrollbarWidth: 'none',
+    };
+
+
+
+   
+
+    return (
+      <div className={styles.column2}>
+        {props.selectedChat > 0 && <h1 style={h1Styles}>{selectedChatName}</h1>}
+        <div style={chatFeedStyles}>
+        {
+         props.selectedChat > 0  && isChatValid ? (
+         <ChatFeed 
+          messages={props.messages}
+          blockedUsers={props.blockedUsers} />
+         ) :
+         (
+          <ChatFeed 
+          messages={[]}
+          blockedUsers={[]} />
+         )
+
+         }
+        </div>
+        {
+       props.selectedChat > 0 && !props.amImuted && isChatValid ? (
+       <SendForm sendMessage={props.sendMessage} />
+       ) : props.amImuted ? (
+       <p>You're muted, select another chat</p>
+       ) : null
+       }
+      </div>
+    );
+  }
+  
 
 export default ChatInterface

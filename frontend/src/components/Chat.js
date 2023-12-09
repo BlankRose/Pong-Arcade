@@ -60,7 +60,7 @@ function ChatPage() {
 		.catch(console.error);
 	};
 
-	const handleJoinChannel = (channelId) => {
+	const handleJoinChannel = (channelId, channelName) => {
 		setSelectedChannel(channelId);
 		fetch(`${apiBaseURL}/channels/${channelId}/messages`)
 			.then(response => response.json())
@@ -92,7 +92,7 @@ function ChatPage() {
 					{channels ? channels.map(channel => (
 						<div
 							key={channel.id}
-							onClick={() => handleJoinChannel(channel.id)}
+							onClick={() => handleJoinChannel(channel.id, channel.name)}
 							className={channel.id === selectedChannel ? 'selected' : ''}
 						>
 							{channel.name}

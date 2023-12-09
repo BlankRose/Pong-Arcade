@@ -1,7 +1,6 @@
 import ReactDOM from "react-dom"
 import { useState } from "react"
-import Backdrop from "./Backdrop"
-import Card from "./Card"
+
 
 const Input = props => {
   const [errorMessage, setErrorMessage] = useState("")
@@ -14,16 +13,9 @@ const Input = props => {
     }
     return true
   }
-  const noLongerThanEight = () => {
-    if (inputValue.trim().length > 8) {
-      setErrorMessage(`${props.name} is too long (8 characters max)`)
-      return false
-    }
-    return true
-  }
 
   const checkInputValues = () => {
-    if (inputNotEmpty() && noLongerThanEight()) {
+    if (inputNotEmpty()) {
       return true
     }
     return false
@@ -43,7 +35,7 @@ const Input = props => {
   }
 
   return (
-    <Card >
+    <div >
       <header >
         <h4>{props.title}</h4>
       </header>
@@ -65,14 +57,13 @@ const Input = props => {
           Cancel
         </button>
       </div>
-    </Card>
+    </div>
   )
 }
 
 const SimpleInput = props => {
   return (
     <>
-      {/* {ReactDOM.createPortal(<Backdrop />, document.getElementById("backdrop"))} */}
       {ReactDOM.createPortal(
         <Input
           onConfirm={props.onConfirm}

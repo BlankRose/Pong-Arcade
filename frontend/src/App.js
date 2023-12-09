@@ -20,6 +20,7 @@ import {useSelector} from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { UserLoader } from './userLoader';
 import {statusLoader} from './Loader'
+import FriendsPage from './pages/FriendsPage';
 
 
 const Check2FAForSignIn = ({children}) => {
@@ -93,6 +94,10 @@ function App() {
                 {
                     path: 'chat',
                     element: <Check2FAForOtherRoutes><ChatPage/></Check2FAForOtherRoutes>,
+                },
+				{
+                    path: 'friends',
+                    element: <Check2FAForOtherRoutes><FriendsPage/></Check2FAForOtherRoutes>,
                 },
                 {
                     path: '2fa',

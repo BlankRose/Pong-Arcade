@@ -13,7 +13,8 @@ const Navbar = () => {
         { to: '/profile', text: 'Profile', icon: faUser },
         // { to: '/2fa', text: '2FA', icon: faLock },
         { to: '/chat', text: 'Chat', icon: faComments },
-        { to: '/game', text: 'Game', icon: faGamepad }
+        { to: '/game', text: 'Game', icon: faGamepad },
+        { to: '/friends', text: 'Friends', icon: faUser}
     ];
 
     return (

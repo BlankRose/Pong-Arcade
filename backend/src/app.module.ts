@@ -15,6 +15,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { GameModule } from './game/game.module';
+import { Friend } from './friends/friends.entity';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
 	imports: [
@@ -39,6 +41,7 @@ import { GameModule } from './game/game.module';
 		UsersModule,
 		ChatModule,
 		GameModule,
+		FriendsModule,
 		JwtModule
 	],
 	controllers: [AppController],

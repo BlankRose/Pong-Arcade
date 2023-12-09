@@ -1,0 +1,39 @@
+.usersBox {
+    flex: 0 0 18rem;
+    padding-left: 2rem;
+    margin-left: 1rem;
+    height: inherit;
+    border-radius: 10px;
+    border: 1px solid #3a3a42;
+    background: var(--color-black-transparent);
+    opacity: 100;
+    scroll-behavior: auto contain;
+    overflow: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.usersBox::-webkit-scrollbar {
+    /* Chrome */
+    display: none;
+}
+
+.usersBox h2 {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    margin-top: 50px;
+    color: var(--color-white);
+    text-align: center;
+}
+
+@media screen and (max-width: 1200px) {
+    .usersBox {
+        flex: none;
+        width: 25rem;
+        max-width: 95vw;
+        height: 25rem;
+        margin-left: 0;
+        padding: 0;
+    }
+}

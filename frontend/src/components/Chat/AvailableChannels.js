@@ -6,12 +6,12 @@ import SimpleInput from "../utils/SimpleInput"
 const ChannelItems = props => {
   const [open, setOpen] = useState(false)
   const [showInput, setShowInput] = useState(false)
-  const currentChatSelected = useSelector(
+  const selectedChat = useSelector(
     state => state.chat.selectedChat
   )
 
   const showModal = () => {
-    if (props.channel.type === 'private') {
+    if (props.channel.password !== '') {
       setShowInput(true)
     }
     setOpen(true)
@@ -21,7 +21,7 @@ const ChannelItems = props => {
     setOpen(false)
     setShowInput(false)
     setTimeout(() => {
-        props.joinChannel(props.channel.id, password)
+        props.joinChannel(props.channel.id, password, props.channel.name)
     }, 300)
   }
 
@@ -47,17 +47,11 @@ const ChannelItems = props => {
 
   return (
     <>
-      <li  onClick={showModal}>
-        <div >{props.channel.name}</div>
-        <div >
-          {/* {props.channel.type === ChannelType.Private ? (
-            <img
-              src={IconPrivate}
-              alt="Private Channel"
-            />
-          ) : null} */}
-        </div>
-      </li>
+       {props.channel.type !== 'private' && (
+       <li onClick={showModal}>
+        <div>{props.channel.name}</div>
+       </li>
+       )}
       {open && !showInput && (
         <SimpleConfirm
           onConfirm={handleNoPassword}

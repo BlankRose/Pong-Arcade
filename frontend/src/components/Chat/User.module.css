@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 2rem;
+}
+.left {
+    display: flex;
+    align-items: center;
+}
+.right {
+    display: flex;
+    margin-right: 4rem;
+    align-items: center;
+}
+.right div {
+    margin: 0 0.5rem;
+    cursor: pointer;
+}
+
+.profilePicture {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0px -4px 16px var(--color-black));
+    border-radius: 50%;
+    transform: scale(80%);
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.user {
+    border: 0.2rem solid var(--color-white);
+}
+
+.admin {
+    border: 0.2rem solid var(--color-mid-green);
+}
+
+.owner {
+    border: 0.2rem solid var(--color-purple);
+}
+
+.status {
+    font-size: 10px;
+    line-height: 18px;
+    color: #11dce8;
+}
+
+.contextMenu {
+    position: absolute;
+    background-color: var(--color-black);
+    border: 1px solid var(--color-black-transparent);
+    padding: 8px;
+    border-radius: 4px;
+    width: 80px;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: left;
+    z-index: 1;
+}
+
+.contextMenu li {
+    border-bottom: 1px solid var(--color-black-transparent);
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer;
+}

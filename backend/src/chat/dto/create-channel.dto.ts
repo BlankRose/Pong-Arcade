@@ -16,7 +16,7 @@ export class NewChannelDto {
 	owner: User
 
 	@IsNotEmpty()
-    type: 'public' | 'private';
+    type: 'public' | 'private' | 'direct';
 
 	@IsOptional()
 	isProtected: boolean;
@@ -28,7 +28,7 @@ export class NewChannelDto {
 	members: User[]
 
 	@IsOptional()
-	admin: User[];
+	admins: User[];
 
 	@IsOptional()
     messages: ChannelMessage[]

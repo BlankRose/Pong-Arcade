@@ -1,7 +1,5 @@
-// src/users/user.entity.ts
 import {Channel} from '../chat/entities/channel.entity';
-import ChannelMessage from 'src/chat/entities/channelMessage.entity';
-import Message from 'src/chat/entities/channelMessage.entity';
+import ChannelMessage from '../chat/entities/channelMessage.entity';
 import {
 	Entity,
 	PrimaryGeneratedColumn,
@@ -12,6 +10,8 @@ import {
 	JoinColumn,
 	JoinTable,
 } from 'typeorm';
+import { Friend } from '../friends/friends.entity';
+import { MutedUserChannel } from '../chat/entities/muted-user.entity';
 
 
 
@@ -63,17 +63,26 @@ export class User {
 	@Column({ default: null })
 	avatar: string;
 
-	// @ManyToMany(() => User)
-	// @JoinColumn()
-	// friends: User[];
 
-	// @ManyToMany(() => User)
-	// @JoinColumn()
-	// friendRequest: User[];
+	/* ********************** */
+	/*        Friends         */
+	/* ********************** */
 
-	// @ManyToMany(() => User)
-	// @JoinColumn()
-	// blocked: User[];
+	@OneToMany(() => Friend, (friend) => friend.user)
+    friends: Friend[];
+
+    @OneToMany(() => Friend, (friend) => friend.friend)
+    friendsAdded: Friend[];
+
+    @OneToMany(() => Friend, (friend) => friend.createdBy)
+    FriendsInvitedBy: Friend[];
+
+    @ManyToMany(() => User, (user) => user.blockers)
+    @JoinTable()
+    blockedMembers: User[]
+
+    @ManyToMany(() => User, (user) => user.blockedMembers)
+    blockers: User[]
 
 	/* ********************** */
 	/*   Account Statistics   */
@@ -100,7 +109,7 @@ export class User {
 
 	@ManyToMany(() => Channel, channel => channel.admins)
 	@JoinTable()
-	adminInChannels: Channel[];
+	admins: Channel[];
 
 	@ManyToMany(() => Channel, (channel) => channel.members)
 	@JoinTable()
@@ -110,9 +119,13 @@ export class User {
 	@JoinTable()
 	bannedInChannels: Channel[];
 
-	@OneToMany(() => Channel, channel => channel.mutedUsers)
-	@JoinTable()
-	mutedInChannels: Channel[];
+	// @OneToMany(() => Channel, channel => channel.muted)
+	// @JoinTable()
+	// mutedInChannels: Channel[];
+
+	@OneToMany(() => MutedUserChannel, (channel) => channel.mutedUser)
+    mutedInChannel: MutedUserChannel[]
+
 
 	// @OneToMany(() => Message, message => message.sender)
 	// channelMessages: ChannelMessage[];

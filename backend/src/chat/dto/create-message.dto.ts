@@ -11,7 +11,7 @@ export class NewMessageDto {
     content: string
 
     @IsOptional()
-    userNickname: string
+    username: string
 
     @IsNotEmpty()
     channelId: number

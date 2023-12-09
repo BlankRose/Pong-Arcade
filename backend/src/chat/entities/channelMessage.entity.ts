@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
 import {Channel} from "./channel.entity";
-import { User } from "src/users/user.entity";
+import { User } from "src/users/user.entity"
 
 @Entity()
 class ChannelMessage {
@@ -18,10 +18,9 @@ class ChannelMessage {
     creationDate: Date;
 
 	@Column({ default: 'defaultNickname' })
-    userNickname: string;
+    username: string;
 
-	// @ManyToOne(() => User, user => user.channelMessages, {onDelete: 'CASCADE'})
-	// sender: User;
+
 
     @ManyToOne(() => Channel, (channel) => channel.messages, {
         onDelete: 'CASCADE',

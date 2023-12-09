@@ -5,23 +5,22 @@ import store from "../../store/index"
 import chatSlice from "../../store/chat"
 import SimpleConfirm from "../utils/SimpleConfirm"
 import SimpleInput from "../utils/SimpleInput"
-import Backdrop from "../utils/Backdrop"
-import Card from "../utils/Card"
 import AvailableChannels from "./AvailableChannels"
 import styles from "./Chat.module.css"
+import DmDisplay from "./PrivateMessage"
 
 
 const JoinedItem = props => {
   const userData = useSelector(state => state.user)
-  const currentChatSelected = useSelector(
-    state => state.chat.selectedChat
-  )
+
   const [open, setOpen] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const [canChangePassword, setCanChangePassword] = useState(false)
 
   const handleClick = () => {
     store.dispatch(chatSlice.actions.selectChat(props.channel.id))
+    store.dispatch(chatSlice.actions.selectChatName(props.channel.name))
+    props.handleselectedChat(props.channel.id)
   }
 
   const handleOk = () => {
@@ -82,7 +81,7 @@ const JoinedItem = props => {
               LeaveChannel
             </button>
           }
-          {props.channel.type === 'private' ? (
+          {(props.channel.password !== '' && props.channel.owner.id === userData.id)? (
             <button onClick={showChangePasswordModal}>
               Change Password
               </button>
@@ -122,6 +121,7 @@ const JoinedDisplay = props => {
         deleteChannel={props.deleteChannel}
         leaveChannel={props.leaveChannel}
         changePassword={props.changePassword}
+        handleselectedChat={props.handleselectedChat}
       ></JoinedItem>
     ))
   }
@@ -187,6 +187,7 @@ const ChannelList = props => {
             deleteChannel={props.deleteChannel}
             leaveChannel={props.leaveChannel}
             changePassword={props.changePassword}
+            handleselectedChat={props.handleselectedChat}
           ></JoinedDisplay>
         </div>
         <div >
@@ -197,12 +198,13 @@ const ChannelList = props => {
           ></AvailableChannels>
         </div>
         <div >
-          <h2> DM </h2>
-          {/* <DmDisplay
-            channels={myDms}
-            deleteChannel={props.deleteChannel}
-            leaveChannel={props.leaveChannel}
-          ></DmDisplay> */}
+          <h2> Direct Messages </h2>
+          <DmDisplay
+                    channels={myDms}
+                    deleteChannel={props.deleteChannel}
+                    leaveChannel={props.leaveChannel}
+                    handleselectedChat={props.handleselectedChat}
+          ></DmDisplay>
         </div>
       </div>
     )
@@ -266,27 +268,6 @@ const NewChannel = ({ handleCreation }) => {
       }
     }
   
-    const noLongerThanEight = () => {
-      if (channelType === "public") {
-        if (inputChannelValue.trim().length > 8) {
-          setChannelErrorMessage("Channel name is too long (8 characters max)")
-          return false
-        }
-        return true
-      }
-      if (channelType === "private") {
-        if (inputChannelValue.trim().length > 8) {
-          setChannelErrorMessage("Channel name is too long (8 characters max)")
-          return false
-        }
-        setChannelErrorMessage("")
-        if (inputPasswordValue.trim().length > 8) {
-          setPasswordErrorMessage("Password is too long (8 characters max)")
-          return false
-        }
-      }
-      return true
-    }
   
     const inputNotEmpty = () => {
       if (channelType === "public") {
@@ -302,23 +283,23 @@ const NewChannel = ({ handleCreation }) => {
           return false
         }
         setChannelErrorMessage("")
-        if (inputPasswordValue.trim() === "") {
-          setPasswordErrorMessage("Password is required")
-          return false
-        }
+        // if (inputPasswordValue.trim() === "") {
+        //   setPasswordErrorMessage("Password is required")
+        //   return false
+        // }
       }
       return true
     }
   
     const checkInputValues = () => {
-      if (inputNotEmpty() && noLongerThanEight()) {
+      if (inputNotEmpty()) {
         return true
       }
       return false
     }
   
     return (
-      <Card >
+      <div>
         <header >
           <h4>Create new Channel</h4>
         </header>
@@ -350,7 +331,7 @@ const NewChannel = ({ handleCreation }) => {
           />
           Private
         </div>
-        {channelType === "private" && (
+        {/* {channelType === "private" && ( */}
           <div >
             <input
               type="text"
@@ -362,7 +343,7 @@ const NewChannel = ({ handleCreation }) => {
               <p >{passwordErrorMessage}</p>
             )}
           </div>
-        )}
+        {/* )} */}
         <div >
           <button  type="button" onClick={onOk}>
             Create
@@ -371,7 +352,7 @@ const NewChannel = ({ handleCreation }) => {
             Cancel
           </button>
         </div>
-      </Card>
+      </div>
     )
   }
   
@@ -379,7 +360,6 @@ const NewChannel = ({ handleCreation }) => {
   const NewChannelForm = props => {
     return (
       <>
-        {/* {ReactDOM.createPortal(<Backdrop />, document.getElementById("backdrop"))} */}
         {ReactDOM.createPortal(
           <Form onCreate={props.onCreate} onCancel={props.onCancel} />,
           document.getElementById("modal")
@@ -398,6 +378,7 @@ const ChannelInterface = props => {
         leaveChannel={props.leaveChannel}
         joinChannel={props.joinChannel}
         changePassword={props.changePassword}
+        handleselectedChat={props.handleselectedChat}
       ></ChannelList>
     </div>
   )

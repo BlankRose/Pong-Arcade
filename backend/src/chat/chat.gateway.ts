@@ -28,20 +28,21 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		console.log(`Socket disconnected, client: ${client.id}`)
 	}
 
-	@SubscribeMessage('SubmitMsg')
-	async submitMsg(@MessageBody() newMessage: NewMessageDto ) {
+	@SubscribeMessage('HandleNewMessage')
+	async HandleNewMessage(@MessageBody() newMessage: NewMessageDto ) {
 		try {
-            console.log("newMsg: ", newMessage)
 			await this.chatService.createMessage(newMessage)
 			const allChannelMsg = await this.chatService.findChannelMessages(newMessage.channelId)
-			this.server.emit('incomingMessages', allChannelMsg)
+			this.server.emit('newMessage', allChannelMsg, newMessage.channelId)
+
+
 		} catch (error) {
 			console.log("Error in adding new msg. Error: ", error)
 		}
 	}
 
     @SubscribeMessage('ReturnChannelMsg')
-    async ReturnMsgs(@MessageBody() channelId: number) {
+    async FetchChannelMessages(@MessageBody() channelId: number) {
         try {
             const allMsgs = await this.chatService.ReturnAllMsg(channelId)
             return allMsgs
@@ -63,17 +64,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         }
     }
 
-	@SubscribeMessage('ReturnChannelMembers')
-	async returnChannelmembers (@MessageBody() channelId: number) {
+	@SubscribeMessage('FetchChannelMembers')
+	async FetchChannelMembers (@MessageBody() channelId: number) {
 		try {
-			await await this.chatService.findChannelMembers(channelId)
+		   return await this.chatService.findChannelMembers(channelId)
 		} catch (error) {
 			console.log ("Error in fetching channel members")
 		}
 	}
 
-	@SubscribeMessage('ReturnChannels')
-	async returnChannels () {
+	@SubscribeMessage('FetchChannels')
+	async FetchChannels () {
 		try {
 			return await this.chatService.getChannels()
 		} catch (error) {
@@ -109,18 +110,140 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         try {
             const [channelId, userId] = data;
             return await this.chatService.deleteChannel(channelId, userId)
+            // this.server.emit('updateData', data)
         } catch (error) {
             console.log('Failed to delete the channel. Error: ', error)
         }
     }
 
-    @SubscribeMessage('changePassword')
+    @SubscribeMessage('changeChannelPassword')
     async changeChannelPassword(@MessageBody() data) {
         const [channelId, password] = data
         try {
-            return await this.chatService.changePassword(channelId, password)
+            return await this.chatService.changeChannelPassword(channelId, password)
         } catch (error) {
             console.log('Failed to change password')
         }
     }
+
+
+    @SubscribeMessage('createDM')
+    // @UsePipes(ValidationPipe)
+    async createDirectChannel(@MessageBody() [userId, otherUserId]: [number, number]) {
+        console.log("Backend: create DM")
+        const channel = await this.chatService.createDirectMsgChannel(userId, otherUserId)
+        console.log("Backend: complete DM")
+        this.server.emit('newChannel', channel)
+        return channel
+    }
+
+    @SubscribeMessage('blockMember')
+    async blockUserHandler(@MessageBody() [blockerId, toBlockId]: [number, number]) {
+      try {
+          await this.chatService.blockMember(blockerId, toBlockId);
+          return { message: 'User blocked successfully' };
+      } catch (error) {
+          console.error(`Failed to block user with blockerUserId: ${blockerId} and toBlockUserId: ${toBlockId}`);
+      }
+   }
+
+   @SubscribeMessage('unblockMember')
+    async unblockUserHanlder(@MessageBody() [blockerId, toUnblockId]: [number, number]) {
+        try {
+            this.chatService.unblockMember(blockerId, toUnblockId)
+            return { message: 'User unblocked successfully' }
+        } catch (error) {
+            console.log(`Failed to unblock user with blockerUserId: ${blockerId} and toBlockUserId: ${toUnblockId}`)
+        }
+    }
+
+    @SubscribeMessage('getBlockedUsers')
+    async getBlockedUsers(@MessageBody() myId: number) {
+        try {
+            return await this.chatService.fetchBlockedMembers(myId)
+        } catch (error) {
+            console.log('Failed to get blocked users', error)
+        }
+    }
+
+    @SubscribeMessage('setAdmin')
+    async setAdmin(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            await this.chatService.setAsAdmin(userId, targetId, channelId)
+            return { message: 'User is now admin' }
+        } catch (error) {
+            console.log('Failed to set admin')
+        }
+    }
+
+    @SubscribeMessage('unsetAdmin')
+    async unsetAdmin(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            this.chatService.unsetAdmin(userId, targetId, channelId)
+            return { message: 'User it is no longer admin' }
+        } catch (error) {
+            console.log('Failed to unset admin')
+        }
+    }
+
+    @SubscribeMessage('kickUser')
+    async kickUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            this.chatService.kickMember(userId, targetId, channelId)
+            this.server.emit("UserKicked")
+            return { message: 'User kicked successfully' }
+        } catch (error) {
+            console.log('Failed to kick user')
+        }
+    }
+
+    @SubscribeMessage('banUser')
+    async banUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            console.log("I'm in ban backend")
+            this.chatService.banMember(userId, targetId, channelId)
+            return { message: 'User banned successfully' }
+        } catch (error) {
+            console.log('Failed to ban user')
+        }
+    }
+
+    @SubscribeMessage('unbanUser')
+    async unbanUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            this.chatService.unbanMember(userId, targetId, channelId)
+            return { message: 'User unbanned successfully' }
+        } catch (error) {
+            console.log('Failed to unban user')
+        }
+    }
+
+    @SubscribeMessage('getBannedUsers')
+    async getBannedUsers(@MessageBody() channelId: number) {
+        try {
+            return await this.chatService.getBannedMembers(channelId)
+        } catch (error) {
+            console.log('Failed to get banned users')
+        }
+    }
+
+    @SubscribeMessage('muteUser')
+    async muteUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
+        try {
+            this.chatService.muteMember(userId, targetId, channelId)
+            return { message: 'User muted successfully' }
+        } catch (error) {
+            console.log('Failed to mute user')
+        }
+    }
+
+    @SubscribeMessage('getMutedUsers')
+    async getMutedUsers(@MessageBody() channelId: number) {
+        try {
+            return await this.chatService.fetchMutedMembers(channelId)
+        } catch (error) {
+            console.log('Failed to get muted users')
+        }
+    }
+
 }

@@ -43,3 +43,13 @@ export async function statusLoader() {
 	return null;
 	
 }
+
+
+apiHandle.get('/auth/loginStatus', withAuth())
+.then(res => {
+    
+})
+.catch(err => {
+    console.warn(err.response);
+
+});

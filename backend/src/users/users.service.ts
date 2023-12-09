@@ -2,8 +2,11 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { User, UserStatus } from './user.entity';
+import {Friend} from '../friends/friends.entity'
+import {FriendsService} from '../friends/friends.service'
+import {Channel} from '../chat/entities/channel.entity'
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { UploadAvatarDto } from './dto/upload-avatar.dto';
 import { UpdateUser } from './dto/update-user.dto';
 
@@ -12,15 +15,20 @@ export class UsersService {
 	channelsRepo: any;
 	constructor(
 		@InjectRepository(User)
-		private readonly usersRepository: Repository<User>,
+		private readonly usersRepo: Repository<User>,
+		private readonly friendsService: FriendsService,
+        @InjectRepository(Friend)
+        private readonly friendRepo: Repository<Friend>,
+        @InjectRepository(Channel)
+        private readonly channelRepo: Repository<Channel>
 	) {}
 
 	async findOne(username: string): Promise<User | undefined> {
-		return this.usersRepository.findOne({ where: { username: username } });
+		return this.usersRepo.findOne({ where: { username: username } });
 	}
 
 	async findOneByID(id: number): Promise<User | undefined> {
-		return this.usersRepository.findOne({where: {id: id}});
+		return this.usersRepo.findOne({where: {id: id}});
 	}
 
 	// Removes critical information of the User data
@@ -37,12 +45,12 @@ export class UsersService {
 	}
 
 	async findOne42(id42: number): Promise<User | undefined> {
-		return this.usersRepository.findOne({ where: { id42: id42 } });
+		return this.usersRepo.findOne({ where: { id42: id42 } });
 	}
 
 	async createUser(data: any): Promise<User> {
 		// Vérifiez si l'utilisateur existe déjà
-		const existingUser = await this.usersRepository.findOne({ where: { username: data.username } });
+		const existingUser = await this.usersRepo.findOne({ where: { username: data.username } });
 		if (existingUser) {
 			throw new ConflictException('Username already exists');
 		}
@@ -52,15 +60,15 @@ export class UsersService {
 		user.password = await bcrypt.hash(data.password, 10);
 		user._2FAEnabled = false
 
-		const createdUser = await this .usersRepository.create(user)
-		const savedUser = await this.usersRepository.save(createdUser);
+		const createdUser = await this .usersRepo.create(user)
+		const savedUser = await this.usersRepo.save(createdUser);
 		return savedUser;
 	}
 
 	async updateUser(id: number, updatedinfo: UpdateUser) {
 		try {
 			const user = await this.findOneByID(id)
-			return this.usersRepository.save({...user, ...updatedinfo})
+			return this.usersRepo.save({...user, ...updatedinfo})
 		} catch (err) {
 			console.error(err)
 		}
@@ -69,14 +77,14 @@ export class UsersService {
 		try {
 			const user = await this.findOneByID(id)
 			// await this.channelsRepo.delete({ owner: user });
-			return this.usersRepository.remove(user)
+			return this.usersRepo.remove(user)
 		} catch (err) {
 			console.error("error: ", err)
 		}
 	}
 
 	async returnUsers() {
-		return ( await this.usersRepository.find())
+		return ( await this.usersRepo.find())
 	}
 
 	async sessionStatus(id: number): Promise<UserStatus> {
@@ -92,7 +100,7 @@ export class UsersService {
 			const user = await this.findOneByID(userId)
 
 			if (user && user.status != UserStatus.Online) {
-				this.usersRepository.update(userId, {id: userId, status: UserStatus.Online})
+				this.usersRepo.update(userId, {id: userId, status: UserStatus.Online})
 			}
 		}
 		catch (error) {
@@ -105,7 +113,7 @@ export class UsersService {
 			const user = await this.findOneByID(userId)
 
 			if (user ) {
-				this.usersRepository.update(userId, {id: userId, is2FANeeded: user._2FAEnabled})
+				this.usersRepo.update(userId, {id: userId, is2FANeeded: user._2FAEnabled})
 			}
 		}
 		catch (error) {
@@ -118,7 +126,7 @@ export class UsersService {
 			const user = await this.findOneByID(userId)
 
 			if (user ) {
-				this.usersRepository.update(userId, {id: userId, is2FANeeded: false})
+				this.usersRepo.update(userId, {id: userId, is2FANeeded: false})
 			}
 		}
 		catch (error) {
@@ -139,7 +147,7 @@ export class UsersService {
 	}
 
 	async createUserFrom42(data: any): Promise<User> {
-		const existingUser = await this.usersRepository.findOne({ where: { username: data.username } });
+		const existingUser = await this.usersRepo.findOne({ where: { username: data.username } });
 		if (existingUser) {
 			throw new ConflictException('Username already exists');
 		}
@@ -150,12 +158,12 @@ export class UsersService {
 		user.status = UserStatus.Online 
 
 		user.id42 = data.code;
-		const savedUser = await this.usersRepository.save(user);
+		const savedUser = await this.usersRepo.save(user);
 		return savedUser;
 	}
 
 	async validateUserPassword(username: string, rawPassword: string): Promise<boolean> {
-		const user = await this.usersRepository.findOne({ where: { username: username } });
+		const user = await this.usersRepo.findOne({ where: { username: username } });
 		if (!user) {
 				return false;
 		}
@@ -170,7 +178,7 @@ export class UsersService {
 		const existingUser = await this.findOne(newUserName);
 
 		if (!existingUser)
-			await this.usersRepository.update(target, { username: newUserName });
+			await this.usersRepo.update(target, { username: newUserName });
 		else if (existingUser.id !== target)
 			throw new ConflictException('Username already exists');
 
@@ -192,13 +200,13 @@ export class UsersService {
 				throw new BadRequestException('Unsupported image type');
 		}
 
-		await this.usersRepository.update(target, { avatar: newAvatar.data });
+		await this.usersRepo.update(target, { avatar: newAvatar.data });
 		return this.purgeData(await this.findOneByID(target));
 	}
 
 	async removeAvatar(target: number): Promise<User>
 	{
-		await this.usersRepository.update(target, { avatar: null });
+		await this.usersRepo.update(target, { avatar: null });
 		return this.purgeData(await this.findOneByID(target));
 	}
 
@@ -215,10 +223,10 @@ export class UsersService {
 // ************************2FA Part************************
 	async turnOn2FA(userID: number) {
         try {
-            const user = await this.usersRepository.findOne({where: { id: userID },})
+            const user = await this.usersRepo.findOne({where: { id: userID },})
             if (user) {
                 user._2FAEnabled = true
-                return this.usersRepository.save(user)
+                return this.usersRepo.save(user)
             }
             console.log(`User with id ${userID} does not exist`)
         } catch (error) {
@@ -228,10 +236,10 @@ export class UsersService {
 
 	async turnOff2FA(userID: number) {
         try {
-            const user = await this.usersRepository.findOne({where: { id: userID },})
+            const user = await this.usersRepo.findOne({where: { id: userID },})
             if (user) {
                 user._2FAEnabled = false
-                return this.usersRepository.save(user)
+                return this.usersRepo.save(user)
             }
             console.log(`User with id ${userID} does not exist`)
         } catch (error) {
@@ -241,10 +249,10 @@ export class UsersService {
 
 	async set2FASecret (secret: string, userID: number) {
 		try {
-			const user = await this.usersRepository.findOne({where: {id: userID}})
+			const user = await this.usersRepo.findOne({where: {id: userID}})
 			if (user) {
 				user._2FAToken = secret
-				return this.usersRepository.save(user)
+				return this.usersRepo.save(user)
 			}
 			console.warn(`User with  id=${userID} does not exist`)
 		} catch (error) {
@@ -253,4 +261,50 @@ export class UsersService {
 	}
 
 // ************************2FA Part************************
+
+async getFriendsAndRequests(userId: number) {
+	const user = await this.usersRepo.findOne({where: {id: userId}})
+	if (!user) {
+		throw new NotFoundException('User not found')
+	}
+	return this.friendsService.fetchUserConnections(user.id)
+}
+
+async getAllUsersWithNoFriendship(userId: number) {
+	const user = await this.usersRepo.findOne({where: {id: userId}})
+	if (!user) {
+		throw new NotFoundException('User not found')
+	}
+
+	const friendsAddedByMe = await this.friendRepo
+		.createQueryBuilder('friend')
+		.select('friend.friendId', 'friendId')
+		.where('friend.userId = :userId', { userId })
+		.getRawMany()
+
+	const friendsWhoAddedMe = await this.friendRepo
+		.createQueryBuilder('follower')
+		.select('follower.userId', 'userId')
+		.where('follower.friendId = :userId', { userId })
+		.getRawMany()
+
+	const friendsByMeIds = friendsAddedByMe.map((friend) => friend.friendId)
+
+	const friendsByOthersIds = friendsWhoAddedMe.map(
+		(follower) => follower.userId
+	)
+
+	const usersNotFriends = await this.usersRepo.find({
+		where: {
+			id: Not(In([...friendsByMeIds, ...friendsByOthersIds, userId])),
+		},
+		select: ['id', 'username', 'avatar'],
+	})
+
+	if (!usersNotFriends) {
+		throw new NotFoundException('Users not found')
+	}
+	return { usersNotFriends }
+}
+
 }

@@ -1,10 +1,9 @@
 import ReactDOM from "react-dom"
-import Backdrop from "./Backdrop"
-import Card from "./Card"
+
 
 const ConfirmModal = props => {
   return (
-    <Card >
+    <div >
       <header >
         <h4>{props.title}</h4>
       </header>
@@ -19,14 +18,13 @@ const ConfirmModal = props => {
           Cancel
         </button>
       </footer>
-    </Card>
+    </div>
   )
 }
 
 const SimpleConfirm = props => {
   return (
     <>
-      {/* {ReactDOM.createPortal(<Backdrop />, document.getElementById("backdrop"))} */}
       {ReactDOM.createPortal(
         <ConfirmModal
           onConfirm={props.onConfirm}
