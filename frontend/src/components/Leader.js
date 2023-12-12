@@ -38,10 +38,10 @@ const Leader = () => {
 	return (
 		<div className = "Container_two">
 			<h1 className='leader-title'>Leaderboard</h1>
-			<br></br>
+			<br/>
 			<ul className='leader-list'>
 				{elolist.map((user, index) => (
-					<li key={user.id} position={index + 1} className='leader'>
+					<li key={user.id} className='leader'>
 						<div className='leader-user'>
 							<div className={`${rankClass(index + 1)}`}> {index === 0 ? index + 1 + 'ST':
 								index === 1 ? index + 1 + 'ND' :

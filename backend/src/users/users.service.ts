@@ -80,12 +80,11 @@ export class UsersService {
 		return user.status;
     }
 
-	async turnOnline (username: string) {
+	async toggleStatus (target: number, status: UserStatus) {
 		try {
-			const user = await this.findOne(username)
-
-			if (user && user.status != UserStatus.Online) {
-				this.usersRepository.update(username, {username: username, status: UserStatus.Online})
+			const user = await this.findOneByID(target)
+			if (user) {
+				this.usersRepository.update(target, {status: status})
 			}
 		}
 		catch (error) {

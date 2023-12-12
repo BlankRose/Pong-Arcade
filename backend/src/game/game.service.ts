@@ -1,11 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Game } from "./entities/game.entity";
-import { Repository } from "typeorm";
-import { GameConstants, GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
-import { AuthGuard } from "src/auth/jwt/jwt.strategy";
-import { Server } from "socket.io";
-import { UsersService } from "src/users/users.service";
+import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Game} from "./entities/game.entity";
+import {Repository} from "typeorm";
+import {GameConstants, GameState, PlayerState, UserSocket} from "./entities/gamestate.entity";
+import {AuthGuard} from "src/auth/jwt/jwt.strategy";
+import {Server} from "socket.io";
+import {UsersService} from "src/users/users.service";
+import {UserStatus} from "../users/user.entity";
 
 @Injectable()
 export class GameService {
@@ -115,7 +116,7 @@ export class GameService {
 			return;
 		}
 
-		const user = this.authGuard.validateToken(token);
+		const user = await this.authGuard.validateToken(token);
 		if (!user) {
 			console.log('Client disconnected: Invalid token');
 			client.disconnect(true);
@@ -124,13 +125,17 @@ export class GameService {
 
 		client.data.state = PlayerState.NONE;
 		client.data.game = undefined;
-		client.data.user = (await user).id;
+		client.data.user = user.id;
 
+		if (await this.userService.sessionStatus(user.id) != UserStatus.Playing)
+			void this.userService.toggleStatus(user.id, UserStatus.Online);
 		console.log('New client connected', client.data);
 	}
 
 	disconnect(server: Server, client: UserSocket) {
 		this.abondonGame(server, client);
+		if (client?.data?.user)
+			void this.userService.toggleStatus(client.data.user, UserStatus.Offline);
 		console.log('Client disconnected');
 	}
 
@@ -175,6 +180,7 @@ export class GameService {
 			players[i].data.game = this.activeGames.indexOf(game);
 			players[i].join(room_name);
 			players[i].emit('gameStart', sanitizedGame);
+			void this.userService.toggleStatus(players[i].data.user, UserStatus.Playing);
 		}
 	}
 
@@ -241,6 +247,8 @@ export class GameService {
 			game: this.sanitizeGameState(game)
 		});
 
+		void this.userService.toggleStatus(game.player1, UserStatus.Online);
+		void this.userService.toggleStatus(game.player2, UserStatus.Online);
 		this.activeGames.splice(this.activeGames.indexOf(game), 1);
 	}
 
