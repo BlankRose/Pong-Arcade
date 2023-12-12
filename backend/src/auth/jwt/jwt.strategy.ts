@@ -7,21 +7,28 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { AuthPayload } from './payload.interface';
+import {UsersService} from "../../users/users.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor(private jwtService: JwtService) {}
+	constructor(
+		private jwtService: JwtService,
+		private userService: UsersService
+	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest<Request>();
+
+		// PATHS TO LIFT RESTRICTIONS
 		if (request.url.startsWith('/auth') && !(request.url === '/auth/loginStatus'
 			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa')))
 			return true;
 
+		// VALIDATE TOKEN AND CHECK IF USER EXISTS
 		const token = this.extractTokenFromHeader(request);
 		request['user'] = await this.validateToken(token);
-
-		if (!request['user']) {
+		if (!request['user']
+			|| !await this.userService.findOneByID(request['user']['id'])) {
 			throw new UnauthorizedException('Invalid token');
 		}
 

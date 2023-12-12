@@ -60,13 +60,15 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - /var/lib/postgresql/data
+      - pong-data:/var/lib/postgresql/data
     networks:
       - pong-data
     restart: always
 
 networks:
-
   pong-data:
     driver: bridge
     name: pong-data
+
+volumes:
+  pong-data:
