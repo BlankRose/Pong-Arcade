@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
-import GameCanvas from './GameCanvas';
 import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import apiHandle, { withAuth } from './API_Access';
 
+import Avatar from "../assets/avatar.jpeg";
+import GameCanvas from './GameCanvas';
 import CanvasConstants from "../contexts/CanvasConstants";
+//import PlayerDisplay from "./PlayerDisplay";
 
 function Game() {
 
@@ -133,12 +135,12 @@ function Game() {
 					gameContext.gameState
 						? <>
 						<div className='players-display'>
-							<img className='players-icon' src={players[0]?.avatar} alt='avatar'/>
+							<img className='players-icon' src={players[0]?.avatar ? players[0].avatar : Avatar} alt='avatar'/>
 							<div className='players-name'>
 								{players[0]?.username} VS {players[1]?.username}<br/>
 								{gameContext.gameState.score1} - {gameContext.gameState.score2}
 							</div>
-							<img className='players-icon' src={players[1]?.avatar} alt='avatar'/>
+							<img className='players-icon' src={players[1]?.avatar ? players[1].avatar : Avatar} alt='avatar'/>
 						</div>
 						<div className='force-center'>
 							<GameCanvas ctx={gameContext.gameState} theme={theme}/><br/>

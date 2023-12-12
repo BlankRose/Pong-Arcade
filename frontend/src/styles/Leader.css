@@ -102,6 +102,14 @@
     justify-content: space-around;
 }
 
+.leader .leader-user img {
+	height: 50px;
+	width: 50px;
+	margin: 5px 10px;
+    border-radius: 50%;
+    border: solid black 1px;
+}
+
 .leader .link {
     text-decoration: none;
     color: black;
