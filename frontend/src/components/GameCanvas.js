@@ -20,19 +20,7 @@ import sf2_bg from '../assets/themes/street_fighter2.jpg';
 import sf2A_fx from '../assets/themes/Ryu.mp3';
 import sf2B_fx from '../assets/themes/Ken.mp3';
 
-const CanvasConstants = {
-	HEIGHT: 800,
-	WIDTH: 1200,
-
-	TOP: 50,
-	BOTTOM: -50,
-	LEFT: 100,
-	RIGHT: -100,
-
-	PADDLE_WIDTH: 3,
-	PADDLE_HEIGHT: 20,
-	BALL_RADIUS: 8
-}
+import CanvasConstants from "../contexts/CanvasConstants";
 
 //  [   PADDLE 1   ,   PADDLE 2   ,   BALLZ   ]
 const color_schemes = [
@@ -114,8 +102,6 @@ const GameCanvas = ({ ctx, theme }) => {
 			context.shadowOffsetX = 5;
 			context.shadowOffsetY = 10;
 			context.shadowBlur = 9;
-			
-
 
 			context.fillRect(0, p1 - ph / 2, pw, ph);
 
@@ -130,7 +116,7 @@ const GameCanvas = ({ ctx, theme }) => {
 			audio.play();
 	}, [ctx, theme]);
 
-	return <canvas className="gameCanvas" ref={canvasRef} width={CanvasConstants.WIDTH} height={CanvasConstants.HEIGHT} />
+	return <canvas className="gameCanvas" id="canvas" ref={canvasRef} width={CanvasConstants.WIDTH} height={CanvasConstants.HEIGHT} />
 }
 
 export default GameCanvas;

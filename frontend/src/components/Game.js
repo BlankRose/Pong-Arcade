@@ -5,6 +5,8 @@ import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import apiHandle, { withAuth } from './API_Access';
 
+import CanvasConstants from "../contexts/CanvasConstants";
+
 function Game() {
 
 	const themes = ['1972', 'Ace Attorney', 'Mario', 'Minecraft', 'Street Fighter 2', 'Zelda'];
@@ -83,12 +85,24 @@ function Game() {
 				gameSocket?.emit('stopDown');
 		}
 
+		const mouseMoveHandler = (e) => {
+			const rect = document.getElementById('canvas')?.getBoundingClientRect();
+			if (rect) {
+				const y =
+					(e.clientY - rect.top - rect.height / 2)                        // RELATIVE
+					* (CanvasConstants.TOP - CanvasConstants.BOTTOM) / rect.height; // RATIO
+				gameSocket?.emit('fastMove', y);
+			}
+		}
+
 		document.addEventListener('keydown', keyDownHandler);
 		document.addEventListener('keyup', keyUpHandler);
+		document.addEventListener('mousemove', mouseMoveHandler);
 
 		return () => {
 			document.removeEventListener('keydown', keyDownHandler);
 			document.removeEventListener('keyup', keyUpHandler);
+			document.removeEventListener('mousemove', mouseMoveHandler);
 		}
 
 	//  --> Only run on mount
