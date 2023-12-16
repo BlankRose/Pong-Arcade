@@ -1,11 +1,11 @@
 # ############################################################################ #
 #          .-.                                                                 #
 #    __   /   \   __                                                           #
-#   (  `'.\   /.'`  )   Pong-Arcade - docker-compose.yaml                      #
+#   (  `'.\   /.'`  )  docker-compose.yaml                                     #
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Tuesday, August 15, 2023 3:30 PM         #
+#       //\   /        Last Updated: December 16, 2023 [01:35 pm]              #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
@@ -25,8 +25,8 @@ services:
       - REACT_APP_API_PORT=${API_ACCESS_PORT}
       - REACT_APP_API_UID=${API_UID}
     volumes:
-      - ${PWD}/frontend/src:/app/src:ro
-      - ${PWD}/frontend/public:/app/public:ro
+      - ${PWD:-.}/frontend/src:/app/src:ro
+      - ${PWD:-.}/frontend/public:/app/public:ro
     restart: always
 
   # Backend written in NestJS
@@ -44,7 +44,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ${PWD}/backend/src:/app/src
+      - ${PWD:-.}/backend/src:/app/src
     networks:
       - pong-data
     restart: always
