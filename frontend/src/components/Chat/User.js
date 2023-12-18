@@ -35,7 +35,7 @@ const User = ({
 }) => {
   const userData = useSelector(state => state.user)
   const myId = userData.id
-  const navigate = useNavigate()
+
 
 
   const [showContextMenu, setShowContextMenu] = useState(false)
@@ -136,7 +136,6 @@ const User = ({
           alt="Avatar"
           onContextMenu={id !== myId ? handleContextMenu : undefined}
         />
-
         {showContextMenu && (
           <div
             ref={contextMenuRef}

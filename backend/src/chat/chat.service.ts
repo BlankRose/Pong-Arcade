@@ -69,6 +69,17 @@ export class ChatService
 				throw new UnauthorizedException("Invalid Password")
 			}
 		}
+        if (channel.bannedUsers.some((x) => x.id === user.id)) {
+            throw new UnauthorizedException()
+        }
+        if (channel.type === 'direct') {
+            if (channel.members.length === 1) {
+                channel.members.push(user)
+            } else {
+                console.log('Cannot add more than 2 members')
+                throw new UnauthorizedException()
+            }
+        }
 		channel.members.push(user)
 		return await this.channelRepo.save(channel)
 	}
