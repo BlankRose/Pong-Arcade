@@ -1,6 +1,9 @@
 import { IsNotEmpty, IsOptional } from 'class-validator'
 import { UserStatus } from 'src/users/user.entity'
-export class CreateUserDto {
+export class CreateUser {
+    @IsNotEmpty()
+    id: number
+
     @IsNotEmpty()
     username: string
 
@@ -23,7 +26,7 @@ export class CreateUserDto {
     _2FAEnabled?: boolean
 
     @IsOptional()
-    id42?: string
+    id42?: number
 
     @IsOptional()
     status: UserStatus

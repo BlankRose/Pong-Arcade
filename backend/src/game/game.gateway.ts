@@ -6,7 +6,6 @@ import { UserSocket } from "./entities/gamestate.entity";
 import { Server, ServerOptions } from "socket.io";
 import { GameService } from "./game.service";
 
-
 @WebSocketGateway(<ServerOptions>{
 	path: '/game',
 	connectTimeout: 10000,

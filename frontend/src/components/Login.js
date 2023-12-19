@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import apiHandle from './API_Access';
 import '../styles/Login.css';
 
-
-
 function LoginPage({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

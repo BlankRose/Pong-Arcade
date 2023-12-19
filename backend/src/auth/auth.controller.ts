@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Request, Body, ConflictException } from '@nestjs/common';
+import { Controller, Post, Get, Header, Request, Body, ConflictException, NotFoundException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 import { LoginDto } from './dto/login.dto';
@@ -19,8 +19,8 @@ export class AuthController {
 	}
 
 	@Post('/login42')
-	async login42(@Request() req , @Body() login42Dto: Login42Dto) {
-		return this.authService.login42(req, login42Dto);
+	async login42(@Body() login42Dto: Login42Dto) {
+		return this.authService.login42(login42Dto);
 	}
 
 	@Post('/register')
@@ -52,10 +52,21 @@ export class AuthController {
 		return this.authService.token42(req.query.code, req.query.uri);
 	}
 
-    @Get('loginStatus')
+
+    @Get('/loginStatus')
+	@Header('Access-Control-Allow-Origin', 'http://localhost:5500')
     getStatus(@Request() req) {
-        return this.usersService.sessionStatus(req.user['id'])
+        if (req ) {
+		  return "online"
+		}
+		else
+		  return "offline"
     }
+
+	@Post('/logout')
+	async logoutSession(@Request() req) {
+			return await this.usersService.logout(req.user['id'])
+	}
 
 	/* -- AUTH GUARD ENFORCED BELOW -- */
 
@@ -65,13 +76,13 @@ export class AuthController {
 		return { status: 'ok' };
 	}
 
-    @Post('2fa/turn-on')
+    @Post('/2fa/turn-on')
     async turnOn2FA(@Request() req: any, @Body() body) {
         return await this.authService.turnOn2fa(req, body)
     }
 
-    @Post('2fa/turn-off')
-    async turnOff2FA(@Request() req: any) {
+    @Post('/2fa/turn-off')
+    async turnOff2FA(@Request() req: any, @Body() body) {
         return await this.authService.turnOff2fa(req)
     }
 
@@ -80,7 +91,7 @@ export class AuthController {
         return await this.authService.generateQrCode(req)
     }
 
-    @Post('2fa/authenticate')
+    @Post('/2fa/authenticate')
     async codeVerification(@Request() req: any, @Body() body) {
         return await this.authService.codeVerification(req, body)
     }

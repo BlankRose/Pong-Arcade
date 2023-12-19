@@ -1,0 +1,99 @@
+.container {
+    padding: 1rem;
+    width: 90vw;
+    min-height: 80vh;
+    min-height: 500px;
+    margin: 1rem auto;
+    background: var(--color-black-transparent);
+    box-shadow: 0px -4px 16px var(--color-black);
+    border-radius: 28px;
+}
+
+.container h1 {
+    margin: 1rem;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 32px;
+    text-align: center;
+    color: var(--color-white);
+}
+
+.body {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 80%;
+}
+
+.bodyRightSide,
+.bodyLeftSide {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+    height: inherit;
+    margin: 2rem;
+    min-height: 25rem;
+}
+.bodyLeftSide {
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 770px) {
+    .body {
+        margin-top: 5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: inherit;
+    }
+}
+
+.overlay {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure the overlay appears above other elements */
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0rem;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-dark-green);
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--color-mid-green);
+}
+
+.btn:active {
+    background-color: var(--color-purple);
+}
+
+.buttonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10rem;
+}

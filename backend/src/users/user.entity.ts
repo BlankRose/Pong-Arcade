@@ -1,15 +1,14 @@
-// src/users/user.entity.ts
-import Channel from 'src/chat/entities/channel.entity';
-import ChannelMember from 'src/chat/entities/channel_member.entity';
-import Message from 'src/chat/entities/message.entity';
+import {Channel} from '../chat/entities/channel.entity';
 import {
 	Entity,
 	PrimaryGeneratedColumn,
 	Column,
 	OneToMany,
 	ManyToMany,
-	JoinColumn,
+	JoinTable,
 } from 'typeorm';
+import { Friend } from '../friends/friends.entity';
+import { MutedUserChannel } from '../chat/entities/muted-user.entity';
 
 export enum UserStatus {
     Online = 'online',
@@ -49,6 +48,9 @@ export class User {
 	@Column({ default: null })
 	_2FAToken: string;
 
+	@Column({ default: false})
+	is2FANeeded: boolean;
+
 	/* ********************** */
 	/*   Account Information  */
 	/* ********************** */
@@ -56,17 +58,26 @@ export class User {
 	@Column({ default: null })
 	avatar: string;
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	friends: User[];
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	friendRequest: User[];
+	/* ********************** */
+	/*        Friends         */
+	/* ********************** */
 
-	@ManyToMany(() => User)
-	@JoinColumn()
-	blocked: User[];
+	@OneToMany(() => Friend, (friend) => friend.user)
+    friends: Friend[];
+
+    @OneToMany(() => Friend, (friend) => friend.friend)
+    friendsAdded: Friend[];
+
+    @OneToMany(() => Friend, (friend) => friend.createdBy)
+    FriendsInvitedBy: Friend[];
+
+    @ManyToMany(() => User, (user) => user.blockers)
+    @JoinTable()
+    blockedMembers: User[]
+
+    @ManyToMany(() => User, (user) => user.blockedMembers)
+    blockers: User[]
 
 	/* ********************** */
 	/*   Account Statistics   */
@@ -91,18 +102,38 @@ export class User {
 	@Column({default: 500})
 	elo: number;
 
-
 	/* ********************** */
-	/*        Chatting        */
+	/*    Channels Chatting   */
 	/* ********************** */
 
 	@OneToMany(() => Channel, channel => channel.owner)
 	ownedChannels: Channel[];
 
-	@OneToMany(() => ChannelMember, member => member.user)
-	channels: ChannelMember[];
+	@ManyToMany(() => Channel, channel => channel.admins)
+	@JoinTable()
+	admins: Channel[];
 
-	@OneToMany(() => Message, message => message.sender)
-	messages: Message[];
+	@ManyToMany(() => Channel, (channel) => channel.members)
+	@JoinTable()
+	joinedChannels: Channel[];
 
+	@ManyToMany(() => Channel, channel => channel.bannedUsers)
+	@JoinTable()
+	bannedInChannels: Channel[];
+
+	// @OneToMany(() => Channel, channel => channel.muted)
+	// @JoinTable()
+	// mutedInChannels: Channel[];
+
+	@OneToMany(() => MutedUserChannel, (channel) => channel.mutedUser)
+    mutedInChannel: MutedUserChannel[]
+
+	// @OneToMany(() => Message, message => message.sender)
+	// channelMessages: ChannelMessage[];
+
+	/* ********************** */
+	/*    Direct Messages     */
+	/* ********************** */
+
+	// do it later
 }

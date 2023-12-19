@@ -5,6 +5,9 @@ import {Link} from 'react-router-dom';
 import ProgressBar from './ProgressBar/bar';
 import HistoryItem from './HistoryItem';
 
+import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
+
 import '../styles/Profil.css';
 
 function Profil({ username }) {
@@ -12,6 +15,23 @@ function Profil({ username }) {
 	const [avatar, setAvatar] = useState(Avatar);
 	const [isHistory, setIsHistory] = useState(false);
 	const [history, setHistory] = useState(null);
+
+	const [is2FAEnabled, set2FAOption] = useState(useSelector(state => state.user._2FAEnabled))
+	const navigate = useNavigate();
+
+	const toogle2FA = async () => {
+		if (is2FAEnabled) {
+				apiHandle.post('/auth/2fa/turn-off', {}, withAuth())
+				.then(res => {
+					set2FAOption(false)
+				})
+				.catch (err => {
+					console.warn(err.response)});
+		}
+	    else {
+			navigate('/2fa')
+		}
+	}
 
 	useEffect(() => {
 		apiHandle.get(`/users/${username || 'me'}`, withAuth())
@@ -21,6 +41,7 @@ function Profil({ username }) {
 					setAvatar(response.data.avatar);
 				else
 					setAvatar(Avatar);
+				set2FAOption(response.data._2FAEnabled)
 			})
 			.catch(_ => {
 				console.error('Failed to fetch user data')
@@ -88,6 +109,9 @@ function Profil({ username }) {
 				<div className='Friend-list'>
 					Comming Soon (TM)
 				</div>
+				<button className='button-h' onClick={toogle2FA}>
+					{is2FAEnabled ? "Turn 2FA off" : "Turn 2FA On"}
+				</button>
 			</div>
 			: <p className='Profil-load alert alert-warning'>Loading... Are you sure the user exists?</p>
 	)

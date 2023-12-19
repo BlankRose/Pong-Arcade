@@ -1,22 +1,19 @@
 import { useState } from "react"
-import React from "react"
+import store from "../../store/index"
+import authSlice from '../../store/auth'
+
 
 const CodeValidation = ({ url, logOutButton }) => {
-  const [ProvidedCode, setProvidedCode] = useState(["", "", "", "", "", ""])
+  const [providedCode, setProvidedCode] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
-  const handleVerificationCodeChange = (event, index) => {
-    const newCode = [...ProvidedCode]
-    newCode[index] = event.target.value
-    setProvidedCode(newCode)
+  const handleVerificationCodeChange = event => {
+    setProvidedCode(event.target.value)
   }
 
   const handleSubmit = async event => {
     event.preventDefault()
 
-    const code = ProvidedCode.join("")
-    console.log("**********88", code)
-    const body = JSON.stringify({ twoFactorAuthenticationCode: code })
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -24,95 +21,63 @@ const CodeValidation = ({ url, logOutButton }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
-        body: body,
-        credentials: "include"
+        body: JSON.stringify({ ProvidedCode: providedCode })
       })
 
       const data = await response.json()
 
-      if (
-        data.error === "Unauthorized" &&
-        data.message === "Wrong authentication code"
-      )
-        setErrorMessage("Wrong Code")
-      else if (
-        data.error === "Forbidden" &&
-        data.message === "Forbidden resource"
-      )
-        console.log(
-          "Forbidden resource: you should not be trying this. You will be reported."
-        )
-      else {
+      if (response.ok) {
         setErrorMessage("")
-        // window.location.href = "http://localhost:5500/game"
+    
+          store.dispatch(authSlice.actions.require2FAAuth())
+          store.dispatch(authSlice.actions.confirm2FAAuth(false))
+          store.dispatch(authSlice.actions.require2FAAuth())
+
+        
+        window.location.href = "http://localhost:5500/profile"
+        
+      } else {
+        const errorMessage = data.error || "An error occurred"
+        setErrorMessage(errorMessage)
       }
     } catch (error) {
       console.error(error)
+      setErrorMessage("An error occurred")
     }
+
   }
 
   const handleClear = () => {
-    setProvidedCode(["", "", "", "", "", ""])
+    setProvidedCode("")
     setErrorMessage("")
   }
 
+  
   return (
     <form onSubmit={handleSubmit}>
       <div>
         <span>Two Factor Authentication</span>
         <p>
-          Enter the twofactor authentication code displayed on the google
-          authenticator application
+          Enter the two-factor authentication code displayed on the Google Authenticator application
         </p>
       </div>
 
       <div>
         <input
-          maxLength={1}
+          maxLength={6}
           type="tel"
           placeholder=""
-          value={ProvidedCode[0]}
-          onChange={event => handleVerificationCodeChange(event, 0)}
-        />
-
-        <input
-          maxLength={1}
-          type="tel"
-          placeholder=""
-          value={ProvidedCode[1]}
-          onChange={event => handleVerificationCodeChange(event, 1)}
-        />
-
-        <input
-          maxLength={1}
-          type="tel"
-          placeholder=""
-          value={ProvidedCode[2]}
-          onChange={event => handleVerificationCodeChange(event, 2)}
-        />
-
-        <input
-          maxLength={1}
-          type="tel"
-          placeholder=""
-          value={ProvidedCode[3]}
-          onChange={event => handleVerificationCodeChange(event, 3)}
-        />
-
-        <input
-          maxLength={1}
-          type="tel"
-          placeholder=""
-          value={ProvidedCode[4]}
-          onChange={event => handleVerificationCodeChange(event, 4)}
-        />
-
-        <input
-          maxLength={1}
-          type="tel"
-          placeholder=""
-          value={ProvidedCode[5]}
-          onChange={event => handleVerificationCodeChange(event, 5)}
+          value={providedCode}
+          onChange={handleVerificationCodeChange}
+          style={{
+            width: '100px',
+            height: '40px',
+            fontSize: '1.2em',
+            textAlign: 'left',
+            marginRight: '5px',
+            border: '1px solid #ccc',
+            borderRadius: '5px'
+          }}
         />
       </div>
       <p>{errorMessage}</p>

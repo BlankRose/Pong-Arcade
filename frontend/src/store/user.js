@@ -6,25 +6,36 @@ const userSlice = createSlice ({
     initialState: { 
         id: -1,
         username: '',
-        avatarUrl: '',
+        avatar: '',
         win: 0,
         lose: 0,
         rank: 0,
-        is2FAEnabled: false,
+        _2FAEnabled: false,
+        is2FANeeded: false,
         status: 'offline'
        
     },
     reducers: {
         updateUser(state, action) {
-            state.user = action.payload;
+            return {
+                ...state,
+               ...action.payload
+                
+            }
         },
-        setOnline(state) {
-            state.status = 'online';
+        setOnline(state){
+            return{
+                ...state,
+                ...{status: 'online'}
+            }
         },
-        setOffline(state) {
-            state.status = 'offline';
+        setOffline(state){
+            return{
+                ...state,
+                ...{status: 'offline'}
+            }
         },
-    },
+    }
 })
 
 export default userSlice

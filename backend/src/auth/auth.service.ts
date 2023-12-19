@@ -39,7 +39,7 @@ export class AuthService {
 		return this.generateNewJWT(user);
 	}
 
-	async login42(@Request() req, login42Dto: Login42Dto) {
+	async login42(login42Dto: Login42Dto) {
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 

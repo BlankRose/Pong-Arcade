@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+import '../styles/ChatPage.css';
 
-function ChatPage({ onLogout }) {
-	/*const [channels, setChannels] = useState([]);
+import API_Access from './API_Access';
+import { apiBaseURL } from './API_Access';
+
+function ChatPage() {
+	const [channels, setChannels] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState(null);
 	const [messages, setMessages] = useState([]);
 	const [newMessage, setNewMessage] = useState('');
@@ -28,7 +33,7 @@ function ChatPage({ onLogout }) {
 	}, [selectedChannel]);
 
 	useEffect(() => {
-		API_Access.get('/channels', withAuth())
+		API_Access.get('/channels')
 			.then(res => {
 				console.log(`Return: ${res}`)
 			})
@@ -55,7 +60,7 @@ function ChatPage({ onLogout }) {
 		.catch(console.error);
 	};
 
-	const handleJoinChannel = (channelId) => {
+	const handleJoinChannel = (channelId, channelName) => {
 		setSelectedChannel(channelId);
 		fetch(`${apiBaseURL}/channels/${channelId}/messages`)
 			.then(response => response.json())
@@ -81,14 +86,13 @@ function ChatPage({ onLogout }) {
 	return (
 		<div className="chatPage">
 			<h2>Messagerie</h2>
-			<button onClick={onLogout}>Déconnexion</button>
 
 			<div className="chatContainer">
 				<div className="channelList">
 					{channels ? channels.map(channel => (
 						<div
 							key={channel.id}
-							onClick={() => handleJoinChannel(channel.id)}
+							onClick={() => handleJoinChannel(channel.id, channel.name)}
 							className={channel.id === selectedChannel ? 'selected' : ''}
 						>
 							{channel.name}
@@ -124,14 +128,7 @@ function ChatPage({ onLogout }) {
 				</div>
 			</div>
 		</div>
-	);*/
-
-	return(
-		<div>test</div>
-	)
-
+	);
 }
-
-		
 
 export default ChatPage;

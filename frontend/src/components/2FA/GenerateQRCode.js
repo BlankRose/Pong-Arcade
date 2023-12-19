@@ -12,7 +12,6 @@ const GenerateQRCode = () => {
           `http://localhost:5501/auth/2fa/generateQr`,
           {
             method: "GET",
-            credentials: "include",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`
             }

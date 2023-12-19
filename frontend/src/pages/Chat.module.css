@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 90vw;
+  height: 80vh;
+
+}
+
+
+.column1 {
+  flex: 0 0 18rem;
+  margin-right: 1rem;
+  height: inherit;
+  border: 1px solid #3a3a42;
+  overflow: hidden;
+  scroll-behavior: auto contain;
+  overflow: auto;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+.column2 {
+  flex: 1;
+  height: inherit;
+  border: 1px solid #3a3a42;
+  /* scroll-behavior: auto contain;
+  overflow: auto;
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
