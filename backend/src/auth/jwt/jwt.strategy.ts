@@ -21,9 +21,14 @@ export class AuthGuard implements CanActivate {
 
 		// PATHS TO LIFT RESTRICTIONS
 		if (request.url.startsWith('/auth') && !(request.url === '/auth/loginStatus'
-			|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa')))
+		|| request.url === '/auth/verify' || request.url.startsWith('/auth/2fa/') || request.url.startsWith('/auth/logout') || request.url.startsWith('/users/remove')))
+		return true;
+
+		if (request.url.startsWith('/users/remove'))
 			return true;
 
+		if (request.url.startsWith('/users/me/users'))
+			return true;
 		// VALIDATE TOKEN AND CHECK IF USER EXISTS
 		const token = this.extractTokenFromHeader(request);
 		request['user'] = await this.validateToken(token);

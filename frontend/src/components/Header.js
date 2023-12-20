@@ -16,7 +16,7 @@ const Header = ({ onLogout }) => {
 					setAvatar(response.data.avatar);
 			})
 			.catch(_ => {
-				console.error('Failed to fetch user data')
+				console.error('Failed to fetch user data1')
 			});
 	}, []);
 

@@ -5,7 +5,7 @@ import apiHandle from "./API_Access";
 
 const apiUID = process.env.REACT_APP_API_UID;
 
-function LoginPage({ onLoginSuccess }) {
+function LoginPage({DoRerender}) {
 	const [ authenticated, setAuthenticated ] = useState(false);
 	const [ errorMessage, setErrorMessage ] = useState(null);
 
@@ -60,7 +60,7 @@ function LoginPage({ onLoginSuccess }) {
 							apiHandle.post('/auth/login42', { code: response.data })
 								.then((res) => {
 									localStorage.setItem('token', res.data.access_token);
-									onLoginSuccess();
+									DoRerender();
 								})
 								.catch((error) => {
 									setNewbie(true);
@@ -78,7 +78,7 @@ function LoginPage({ onLoginSuccess }) {
 				return;
 			}
 		}, 500)
-	}, [OAuthPopup, onLoginSuccess, OAuthURI])
+	}, [OAuthPopup, DoRerender, OAuthURI])
 
 	// Triggers the OAuth login popup by opening a new window
 	// and attach it to the OAuthPopup state
@@ -103,12 +103,11 @@ function LoginPage({ onLoginSuccess }) {
 		const username = document.getElementById('username').value;
 		apiHandle.post('/auth/register42', { code: OAuthToken, username: username })
 			.then(res => {
-				console.log(res.data.access_token);
 				localStorage.setItem('token', res.data.access_token);
 
 				setNewbie(false);
 				setOAuthToken(null);
-				onLoginSuccess();
+				DoRerender();
 			})
 			.catch((error) => {
 				const errorResponse = error.response && error.response.data ? error.response.data.message : error.message;

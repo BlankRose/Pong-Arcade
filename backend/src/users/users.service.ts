@@ -8,6 +8,7 @@ import {InjectRepository} from '@nestjs/typeorm';
 import {In, Not, Repository} from 'typeorm';
 import {UploadAvatarDto} from './dto/upload-avatar.dto';
 import {Game} from 'src/game/entities/game.entity';
+import { UpdateUser } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +46,6 @@ export class UsersService {
 		delete user.password;
 		delete user.id42;
 		delete user._2FAToken;
-		delete user._2FAEnabled;
 
 		return user;
 	}
@@ -99,9 +99,13 @@ export class UsersService {
 		return savedUser;
 	}
 
-	async updateUser(target: number, user: User)
-	{
-		await this.usersRepo.update(target, user);
+	async updateUser(id: number, updatedinfo: UpdateUser) {
+		try {
+			const user = await this.findOneByID(id)
+			return this.usersRepo.save({...user, ...updatedinfo})
+		} catch (err) {
+			console.error(err)
+		}
 	}
 
 	async removeUser (id: number) {
@@ -183,8 +187,7 @@ export class UsersService {
 			if (!user) {
 				throw new NotFoundException()
 			}
-			user.status = UserStatus.Offline;
-			this.updateUser(user.id, user);
+			this.updateUser(user.id, {id: userId, status: UserStatus.Offline})
 		} catch (err) {
 			console.log(err)
 		}
@@ -270,6 +273,7 @@ export class UsersService {
             const user = await this.usersRepo.findOne({where: { id: userID },})
             if (user) {
                 user._2FAEnabled = true
+	
                 return this.usersRepo.save(user)
             }
             console.log(`User with id ${userID} does not exist`)

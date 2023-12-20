@@ -16,12 +16,13 @@ const Navbar = () => {
         { to: '/friends', text: 'Friends', icon: faUser}
     ];
 
+    
     return (
         <header>
             <nav className={styles.nav}>
                 <div className={styles.container}>
                     <div className={styles.leftContainer}>
-                        {
+                        {isLoggedIn === 'online' &&
                             navLinks.map((link, index) => (
                                 <NavLink
                                     key={index}
@@ -33,12 +34,15 @@ const Navbar = () => {
                                     <FontAwesomeIcon icon={link.icon} />
                                     {link.text}
                                 </NavLink>
-
+                                
                             ))
                         }
                     </div>
                     <div className={styles.centerContainer}>
+                        {isLoggedIn === 'online' && (
                             <LogoutButton></LogoutButton>
+                        )}
+        
                     </div>
                 </div>
             </nav>

@@ -221,7 +221,10 @@ function App() {
             children: [
                 {
                     path: 'profile',
-                    element: <Check2FAForOtherRoutes><Profil /></Check2FAForOtherRoutes>,
+                    element: 
+					    <Check2FAForOtherRoutes>
+						   <Profil />
+						</Check2FAForOtherRoutes>, 
 					loader: UserLoader
                 },
                 {
@@ -252,8 +255,8 @@ function App() {
 					element:
 							<Check2FAForSignIn>
 							   		<>
-		                                <Login  onLoginSuccess={handleLRerender}/>,
-	                                	<Login42  onLoginSuccess={handleLRerender} />,
+									   <Login  DoRerender={handleLRerender}/>,
+	                                	<Login42  DoRerender={handleLRerender} />, 
 	                                </>
 							</Check2FAForSignIn>
 				},

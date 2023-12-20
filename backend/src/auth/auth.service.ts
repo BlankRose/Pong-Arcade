@@ -36,15 +36,23 @@ export class AuthService {
 			throw new UnauthorizedException();
 		}
 
+		this.usersService.turnOnline(user.id);
+		this.usersService.setIsNeed2FA(user.id);
 		return this.generateNewJWT(user);
 	}
 
 	async login42(login42Dto: Login42Dto) {
+
   		const data = await this.api42Service.getUserData(login42Dto.code);
 		const user = await this.usersService.findOne42(data.id);
 
-		if (user)
+		if (user) {
+			const payload = { id: user.id };
+			this.usersService.turnOnline(user.id)
+			this.usersService.setIsNeed2FA(user.id)
+
 			return this.generateNewJWT(user);
+		}
 		throw new UnauthorizedException();
 	}
 
@@ -52,18 +60,22 @@ export class AuthService {
 		await this.usersService.createUser({
 			username: registerDto.username,
 			password: registerDto.password,
+			status: 'online',
+			is2FANeeded: false,
 		});
 	}
 
 	async register42(registerDto: Register42Dto): Promise<any> {
 		const data = await this.api42Service.getUserData(registerDto.code);
 
+		
 		const user = await this.usersService.createUserFrom42({
 			username: registerDto.username,
 			code: data.id,
-			status: 'online'
-		});
+			status: 'online',
+			is2FANeeded: false,
 
+		});
 		return this.generateNewJWT(user);
 	}
 
@@ -83,69 +95,71 @@ export class AuthService {
 		return null;
 	}
 
-	// ****************************2FA Part****************************
+		// ****************************2FA Part****************************
 
-	async turnOn2fa(@Request() req, @Body() body) {
-		const user = await this.usersService.findOneByID(req.user['id'])
-		if(!user){
-			throw new NotFoundException('User does not exist!')
+		async turnOn2fa(@Request() req, @Body() body) {
+			const user = await this.usersService.findOneByID(req.user['id'])
+			if(!user){
+				throw new NotFoundException('User does not exist!')
+			}
+			
+			const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
+			if (!isCodeValid) {
+				throw new UnauthorizedException('Wrong Code')
+			}
+			this.usersService.turnOn2FA(user.id)
+			return true
 		}
-		const isCodeValid = this.is2FASecretValid(body.twoFactorAuthenticationCode, user)
-		if (!isCodeValid) {
-			throw new UnauthorizedException('Wrong Code')
+	
+		async turnOff2fa(@Request() req) {
+			const user = await this.usersService.findOneByID(req.user['id'])
+	
+			if(!user){
+				throw new NotFoundException('User does not exist!')
+			}
+			this.usersService.turnOff2FA(user.id)
+			return true
+	
 		}
-		this.usersService.turnOn2FA(user.id)
-		return true
-	}
-
-	async turnOff2fa(@Request() req) {
-		const user = await this.usersService.findOneByID(req.user['id'])
-
-		if(!user){
-			throw new NotFoundException('User does not exist!')
+	
+	
+		async generate2FASecret(user: User){
+			const secret: string = authenticator.generateSecret()
+			const otpauthurl: string = authenticator.keyuri(user.username, 'Pong_Arcade', secret)
+			await this.usersService.set2FASecret(secret, user.id)
+			return{secret,otpauthurl}
 		}
-		this.usersService.turnOff2FA(user.id)
-		return true
-
-	}
-
-
-	async generate2FASecret(user: User){
-		const secret: string = authenticator.generateSecret()
-		const otpauthurl: string = authenticator.keyuri(user.username, 'Pong_Arcade', secret)
-		await this.usersService.set2FASecret(secret, user.id)
-		return{secret,otpauthurl}
-	}
-
-	async turnUrlToQrCode (otpauthurl: string){
-		return toDataURL(otpauthurl)
-	}
-
-	async generateQrCode (@Request() req) {
-		const user = await this.usersService.findOneByID(req.user['id']) 
-		if (!user) {
-			throw new NotFoundException('User does not exist!')
+	
+		async turnUrlToQrCode (otpauthurl: string){
+			return toDataURL(otpauthurl)
 		}
-		const secretUrl = await this.generate2FASecret(user)
-		const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
-		return qrCode
-	}
-
-	is2FASecretValid (ProvidedCode: string, user: User):boolean {
-		const L = authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
-		return (L)
-	}
-
-	async codeVerification (@Request() req, @Body() body ) {
-		const user = await this.usersService.findOneByID(req.user['id'])
-		if(!user) {
-			throw new NotFoundException('User does not exist')
+	
+		async generateQrCode (@Request() req) {
+			const user = await this.usersService.findOneByID(req.user['id']) 
+			if (!user) {
+				throw new NotFoundException('User does not exist!')
+			}
+			const secretUrl = await this.generate2FASecret(user)
+			const qrCode = await this.turnUrlToQrCode(secretUrl.otpauthurl)
+			return qrCode
 		}
-		const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
-		if (!isCodeValid){
-			throw new UnauthorizedException('Wrong Code!')
+	
+	
+		is2FASecretValid (ProvidedCode: string, user: User):boolean {
+			const L = authenticator.verify ({token: ProvidedCode, secret: user._2FAToken})
+			return (L)
 		}
-        return true
-	}
-	// ****************************2Fa Part****************************
+	
+		async codeVerification (@Request() req, @Body() body ) {
+			const user = await this.usersService.findOneByID(req.user['id'])
+			if(!user) {
+				throw new NotFoundException('User does not exist')
+			}
+			const isCodeValid = this.is2FASecretValid(body.ProvidedCode, user)
+			if (!isCodeValid){
+				throw new UnauthorizedException('Wrong Code!')
+			}
+			this.usersService.toogleIsNeed2FA(user.id);
+			return true
+		}
 }

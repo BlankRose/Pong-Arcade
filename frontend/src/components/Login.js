@@ -1,30 +1,36 @@
-import React, { useState } from 'react';
+
 import apiHandle from './API_Access';
 import '../styles/Login.css';
+import React, {  useState } from "react";
 
-function LoginPage({ onLoginSuccess }) {
+
+
+function LoginPage({DoRerender}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isLogin, setIsLogin] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const endpoint = isLogin ? '/auth/login' : '/auth/register';
 
+
         apiHandle.post(endpoint, { username: username, password: password })
             .then( res => {
                 // Si c'est une connexion :
                 if (isLogin) {
                     localStorage.setItem('token', res.data.access_token);
+                    DoRerender();
 
                     // Appel de la méthode onLoginSuccess pour signaler la réussite de la connexion
-                    onLoginSuccess();
                 } else {
                     // L'utilisateur a été enregistré. Switch to login mode.
                     setIsLogin(true);
                     setErrorMessage('Inscription réussie! Vous pouvez maintenant vous connecter.');
+                    DoRerender();
                 }
             })
             .catch(err => {
@@ -56,9 +62,9 @@ function LoginPage({ onLoginSuccess }) {
             {isLogin ? (
                 <p>
                     Pas encore de compte?{' '}
-                    <span style={{color: 'blue', cursor: 'pointer'}}  onClick={() => setIsLogin(false)}>
+                    <button  onClick={() => setIsLogin(false)}>
                         S'inscrire
-                    </span>
+                    </button>
                 </p>
             ) : (
                 <p>

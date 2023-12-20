@@ -105,7 +105,10 @@
 
 .button-h {
     margin-left: 45%;
+    margin-right: 45%;
     border-radius: 10%;
+    max-height: 50px;
+    max-width: 150px;
     box-shadow: 10px 5px 5px black;
     text-align: center;
     vertical-align: middle;

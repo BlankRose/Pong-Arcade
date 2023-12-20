@@ -10,11 +10,11 @@ const LogoutButton = () => {
     setIsLoading(true)
 
         apiHandle.post('/auth/logout', {}, withAuth())
-		.then(res => {
+		    .then(res => {
             console.log("confirm log in")
 				store.dispatch(userSlice.actions.setOffline())
-                setIsLoading(false)
-                localStorage.removeItem('token');
+        setIsLoading(false)
+        localStorage.removeItem('token');
 		})
 		.catch(err => {
 			console.warn(err.response);
