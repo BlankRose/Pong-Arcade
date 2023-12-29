@@ -8,6 +8,7 @@ import ChatInterface from "../components/Chat/ChatInterface"
 import styles from "./Chat.module.css"
 import {apiBaseURL} from "../components/API_Access"
 import MembersInfo from "../components/Chat/MembersInfo"
+import User from "../components/Chat/User"
 
 const ChatPage = () => {
 
@@ -74,12 +75,14 @@ const ChatPage = () => {
 
     useEffect(() => {
       const fetchData = () => {
+        checkSelectedChat();
         if (selectedChat) {
           if (!updateMessages) {
             getAllMsg();
           }
           getChUsers();
           getBlockedUsers();
+          getAllChannels();
           // getMutedUsers()
           getAllMsg();
           if (
@@ -112,6 +115,7 @@ const ChatPage = () => {
 
     useEffect(() => {
       const fetchData = () => {
+        checkSelectedChat();
         if(selectedChat) {
           getMutedUsers()
         }
@@ -124,6 +128,7 @@ const ChatPage = () => {
 
     useEffect(() => {
       const fetchData = () => {
+        checkSelectedChat();
         if(selectedChat) {
           getBlockedUsers()
         }
@@ -146,6 +151,16 @@ const ChatPage = () => {
     }
 
 
+    const checkSelectedChat = () => {
+      const isChatJoined = channels.some(
+        (x) => x.id === selectedChat
+      )
+      if (isChatJoined === false)
+      {
+         store.dispatch(chatSlice.actions.selectChat(0))
+        store.dispatch(chatSlice.actions.selectChatName(""))
+      }
+    }
     const getAllMsg = () => {
         if (socket !== undefined) {
             socket.emit(
@@ -422,7 +437,8 @@ const ChatPage = () => {
         
       }
 
-      
+      console.log("banned users: ", bannedUsers)
+      console.log("userData: ", userData)
     return (
             <div className={styles.container}>
                 <ChannelInterface
@@ -434,7 +450,7 @@ const ChatPage = () => {
                     changePassword={changePassword}
                     handleselectedChat={handleselectedChat}
                 />
-                <ChatInterface
+                {<ChatInterface
                     channels={channels}
                     selectedChat={selectedChat}
                     messages={messages}
@@ -442,9 +458,17 @@ const ChatPage = () => {
                     amImuted={mutedMembers.some(
                         (x) => x === userData.id
                     )}
+                    amIbanned={bannedUsers.some(
+                      (x) => x.id === userData.id
+                    )}
+                    amIjoined={channels.some(
+                      (x) => x.id === selectedChat
+                    )
+
+                    }
                     blockedUsers={blockedUsers}
                     handleselectedChat={handleselectedChat}
-                />
+                />}
                 <MembersInfo
                     users={members}
                     blockedUsers={blockedUsers}
