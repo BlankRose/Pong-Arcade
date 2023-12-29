@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import Avatar from '../../assets/avatar.jpeg';
 
 const User = ({
   id,
@@ -132,7 +133,7 @@ const User = ({
     <div className={styles.container}>
       <div className={styles.left}>
         <img
-          src={avatarUrl}
+          src={avatarUrl? avatarUrl : Avatar}
           alt="Avatar"
           onContextMenu={id !== myId ? handleContextMenu : undefined}
         />
