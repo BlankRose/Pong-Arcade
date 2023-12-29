@@ -1,10 +1,11 @@
 .usersBox {
+    margin-top: 2%;
     flex: 0 0 18rem;
     padding-left: 2rem;
     margin-left: 1rem;
     height: inherit;
     border-radius: 10px;
-    border: 1px solid #3a3a42;
+    border: 1px solid #141416;
     background: var(--color-black-transparent);
     opacity: 100;
     scroll-behavior: auto contain;
@@ -21,11 +22,13 @@
 .usersBox h2 {
     font-weight: 500;
     font-size: 16px;
+    font-family: 'Retro';
     line-height: 18px;
     margin-top: 50px;
     color: var(--color-white);
     text-align: center;
 }
+
 
 @media screen and (max-width: 1200px) {
     .usersBox {

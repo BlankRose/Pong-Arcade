@@ -13,14 +13,15 @@
   flex: 1;
   padding: 10px;
   box-sizing: border-box;
-  border: 10px solid #000;
+  border: 10px solid #000000;
 }
 
 .column1 {
+  margin-top: 2%;
   flex: 0 0 18rem;
   margin-right: 1rem;
   height: inherit;
-  border: 1px solid #3a3a42;
+  border: 1px solid #292931;
   overflow: hidden;
   scroll-behavior: auto contain;
   overflow: auto;
@@ -30,6 +31,7 @@
 
 .column2 {
   flex: 1;
+  margin-top: 2%;
   height: inherit;
   border: 1px solid #3a3a42;
   scroll-behavior: auto contain;

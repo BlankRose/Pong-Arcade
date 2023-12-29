@@ -160,6 +160,7 @@ import Profil from './components/Profil';
 import UpdateProfil from './components/UpdateProfil';
 import ChatPage from './pages/Chat';
 import Game from './components/Game';
+import Leader from './components/Leader';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
@@ -244,6 +245,11 @@ function App() {
                     path: 'friends',
                     element: <Check2FAForOtherRoutes><FriendsPage/></Check2FAForOtherRoutes>,
                 },
+				{
+					path: 'leader',
+					element: <Check2FAForOtherRoutes><Leader /></Check2FAForOtherRoutes>
+
+				},
                 {
                     path: '2fa',
 					loader: UserLoader,

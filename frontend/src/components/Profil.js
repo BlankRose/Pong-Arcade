@@ -108,9 +108,6 @@ function Profil({ username }) {
 				</div>
 
 				</div>
-				<div className='Friend-list'>
-					Comming Soon (TM)
-				</div>
 				<button className='button-h' onClick={toogle2FA}>
 					{is2FAEnabled ? "Turn 2FA off" : "Turn 2FA On"}
 				</button>

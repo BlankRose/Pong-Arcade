@@ -20,7 +20,7 @@ const UserBox = props => {
     <div className={`${styles.usersBox}`}>
       <h2> online </h2>
       {props.users.map(user =>
-        user.status !== "offline" ? (
+        user.status === "online" ? (
           <User
             key={user.id}
             id={user.id}

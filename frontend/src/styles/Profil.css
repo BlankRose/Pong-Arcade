@@ -6,10 +6,10 @@
     width: auto;
     display: grid;
     grid-template-areas:
-	    "profil friendlist"
-	    "stats  friendlist"
-	    "historique friendlist";
-    grid-template-columns: 1fr 30%;
+	    "profil"
+	    "stats"
+	    "historique";
+    grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 1rem;
 }
@@ -37,13 +37,6 @@
     border-radius: 5%;
     font-family: Retro;
 }
-
-.Friend-list{
-    grid-area: friendlist;
-    border: 1px solid black;
-    background-color: gray;
-}
-
 
 .Profil-avatar{
     height: 150px;

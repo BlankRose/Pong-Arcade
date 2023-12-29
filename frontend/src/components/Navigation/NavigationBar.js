@@ -2,7 +2,7 @@ import styles from './NavigationBar.module.css';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faComments, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faComments, faGamepad, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import LogoutButton from '../Logout/LogoutButton'
 
 const Navbar = () => {
@@ -13,6 +13,7 @@ const Navbar = () => {
         // { to: '/2fa', text: '2FA', icon: faLock },
         { to: '/chat', text: 'Chat', icon: faComments },
         { to: '/game', text: 'Game', icon: faGamepad },
+        {to: '/leader', text: 'Leader', icon: faTrophy },
         { to: '/friends', text: 'Friends', icon: faUser}
     ];
 
