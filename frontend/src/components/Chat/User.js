@@ -164,7 +164,7 @@ const User = ({
                   ) : (
                     <li onClick={banUserHandler}>Ban</li>
                   )}
-                  {!isMuted && <li onClick={muteUserHandler}>Mute</li>}
+                  {!isMuted && <li onClick={muteUserHandler}>Mute</li>}                   
                 </ul>
               ) : (
                 amIadmin &&

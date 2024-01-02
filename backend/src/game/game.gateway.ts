@@ -24,11 +24,12 @@ class GameGateway
 	gameThread: NodeJS.Timeout
 
 	afterInit(server: Server) {
-		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/20);
+		const fps = 40;
+		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/fps);
 	}
 
 	handleConnection(client: UserSocket, ...args: any[]) {
-		this.gameService.connect(client);
+		void this.gameService.connect(client);
 	}
 
 	handleDisconnect(client: UserSocket) {
@@ -36,7 +37,7 @@ class GameGateway
 	}
 
 	@SubscribeMessage('joinQueue')
-	joinQueue(client: UserSocket, data: string): WsResponse {
+	joinQueue(client: UserSocket): WsResponse {
 		const success = this.gameService.joinQueue(client, this.server);
 		return success
 			? { event: 'joinQueueSuccess', data: '' }
@@ -44,7 +45,7 @@ class GameGateway
 	}
 
 	@SubscribeMessage('leaveQueue')
-	leaveQueue(client: UserSocket, data: string): WsResponse {
+	leaveQueue(client: UserSocket): WsResponse {
 		const success = this.gameService.leaveQueue(client);
 		return success
 			? { event: 'leaveQueueSuccess', data: '' }
@@ -75,6 +76,6 @@ class GameGateway
 	paddleStopDown(client: UserSocket) {
 		this.gameService.shiftDirection(client, false, false);
 	}
-};
+}
 
 export default GameGateway;

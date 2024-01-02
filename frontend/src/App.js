@@ -157,6 +157,7 @@ import Login42 from './components/42Login';
 
 import Template from './components/Template/template';
 import Profil from './components/Profil';
+import ProfilContainer from './components/ProfilContainer';
 import UpdateProfil from './components/UpdateProfil';
 import ChatPage from './pages/Chat';
 import Game from './components/Game';
@@ -228,6 +229,13 @@ function App() {
 						</Check2FAForOtherRoutes>, 
 					loader: UserLoader
                 },
+				{
+					path: 'profile/:username',
+					element:
+					<Check2FAForOtherRoutes>
+						<ProfilContainer />
+					</Check2FAForOtherRoutes>,
+				},
                 {
                     path: 'updateProfile',
                     loader: UserLoader,

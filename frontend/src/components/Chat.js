@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+/*import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import '../styles/ChatPage.css';
 
@@ -129,6 +129,10 @@ function ChatPage() {
 			</div>
 		</div>
 	);
-}
+}*/
+
+return(
+	<div>test</div>
+)
 
 export default ChatPage;
