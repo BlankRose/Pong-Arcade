@@ -6,6 +6,7 @@ import { UserSocket } from "./entities/gamestate.entity";
 import { Server, ServerOptions } from "socket.io";
 import { GameService } from "./game.service";
 
+
 @WebSocketGateway(<ServerOptions>{
 	path: '/game',
 	connectTimeout: 10000,
@@ -23,12 +24,11 @@ class GameGateway
 	gameThread: NodeJS.Timeout
 
 	afterInit(server: Server) {
-		const fps = 40;
-		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/fps);
+		this.gameThread = setInterval(() => this.gameService.updateGames(server), 1000/20);
 	}
 
 	handleConnection(client: UserSocket, ...args: any[]) {
-		void this.gameService.connect(client);
+		this.gameService.connect(client);
 	}
 
 	handleDisconnect(client: UserSocket) {
@@ -36,7 +36,7 @@ class GameGateway
 	}
 
 	@SubscribeMessage('joinQueue')
-	joinQueue(client: UserSocket): WsResponse {
+	joinQueue(client: UserSocket, data: string): WsResponse {
 		const success = this.gameService.joinQueue(client, this.server);
 		return success
 			? { event: 'joinQueueSuccess', data: '' }
@@ -44,7 +44,7 @@ class GameGateway
 	}
 
 	@SubscribeMessage('leaveQueue')
-	leaveQueue(client: UserSocket): WsResponse {
+	leaveQueue(client: UserSocket, data: string): WsResponse {
 		const success = this.gameService.leaveQueue(client);
 		return success
 			? { event: 'leaveQueueSuccess', data: '' }
@@ -75,11 +75,6 @@ class GameGateway
 	paddleStopDown(client: UserSocket) {
 		this.gameService.shiftDirection(client, false, false);
 	}
-
-	@SubscribeMessage('fastMove')
-	paddleFastMove(client: UserSocket, data: number) {
-		this.gameService.quickMovePaddle(client, data);
-	}
-}
+};
 
 export default GameGateway;

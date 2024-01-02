@@ -129,7 +129,7 @@ function Game() {
 	return(
 		<div className='pGame'>
 			{
-			! gameSocket?.connected
+			 !gameSocket?.connected
 				? <div>Connecting...</div>
 				: <> {
 					gameContext.gameState
