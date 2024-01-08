@@ -6,7 +6,7 @@ import { NewMessageDto } from "./dto/create-message.dto";
 import { ChatService} from "./chat.service";
 import { User } from "src/users/user.entity";
 
-@WebSocketGateway({namespace: 'chat', cors: {origin: '*'}, connectTimeout: 10000})
+@WebSocketGateway({namespace: 'chat', cors: true, connectTimeout: 10000})
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 	constructor(private readonly chatService: ChatService,) {}
 
