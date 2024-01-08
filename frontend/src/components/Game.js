@@ -152,7 +152,7 @@ function Game() {
 									Give Up
 							</button>
 							<button style={{ color: localStorage.getItem('mute') === 'true' ? 'red' : 'green' }}
-								onClick={() => toggleMute()}>
+								onClick={() =>  toggleMute()}>
 									Mute
 							</button>
 						</div>

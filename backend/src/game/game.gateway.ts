@@ -8,7 +8,8 @@ import { GameService } from "./game.service";
 
 
 @WebSocketGateway(<ServerOptions>{
-	path: '/game',
+	namespace: 'game',
+	cors: true,
 	connectTimeout: 10000,
 })
 class GameGateway

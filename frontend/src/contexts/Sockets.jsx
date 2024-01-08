@@ -27,6 +27,7 @@ const SocketProvider = ({ children }) => {
 		if (!gameSocket) {
 			setGameSocket(newSocket("game"));
 		}
+		
 
 		if (!chatSocket) {
 

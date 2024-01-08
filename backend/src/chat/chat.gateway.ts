@@ -14,7 +14,6 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	@WebSocketServer()
 	server: Server;
 
-	gameThread: NodeJS.Timeout
 
 	afterInit(server: Server) {
 		console.log("Chat socket is lunched")
