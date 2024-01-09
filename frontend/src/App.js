@@ -162,6 +162,7 @@ import UpdateProfil from './components/UpdateProfil';
 import ChatPage from './pages/Chat';
 import Game from './components/Game';
 import Leader from './components/Leader';
+import Home from './components/Home';
 
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';

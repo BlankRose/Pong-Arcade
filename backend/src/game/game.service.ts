@@ -1,11 +1,12 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Game } from "./entities/game.entity";
-import { Repository } from "typeorm";
-import { GameConstants, GameState, PlayerState, UserSocket } from "./entities/gamestate.entity";
-import { AuthGuard } from "src/auth/jwt/jwt.strategy";
-import { Server } from "socket.io";
-import { UsersService } from "src/users/users.service";
+import {Injectable} from "@nestjs/common";
+import {InjectRepository} from "@nestjs/typeorm";
+import {Game} from "./entities/game.entity";
+import {Repository} from "typeorm";
+import {GameConstants, GameState, PlayerState, UserSocket} from "./entities/gamestate.entity";
+import {AuthGuard} from "src/auth/jwt/jwt.strategy";
+import {Server} from "socket.io";
+import {UsersService} from "src/users/users.service";
+import {UserStatus} from "../users/user.entity";
 
 @Injectable()
 export class GameService {
@@ -29,47 +30,51 @@ export class GameService {
 		return sanitized;
 	}
 
+	scoringInspector(game: GameState): GameState {
+		if (game.ballX >= GameConstants.LEFT
+				&& game.ballVelX >= 0) {
+			game.score1 += 1;
+			game.ballVelX = -2;
+		}
+		else if (game.ballX <= GameConstants.RIGHT
+			&& game.ballVelX <= 0) {
+			game.score2 += 1;
+			game.ballVelX = 2;
+		}
+		game.ballVelY = 0;
+		game.ballX = 0;
+		game.ballY = 0;
+		game.paddle1 = 0;
+		game.paddle2 = 0;
+		return game;
+	}
+
 	updateGames(server: Server) {
 		for (let game of this.activeGames) {
 			let playSound = false;
 			// Scoring Detect
-			if (game.ballX >= GameConstants.LEFT
-				&& game.ballVelX >= 0) {
-				game.score1 += 1;
-				game.ballVelX = -2;
-			}
-			else if (game.ballX <= GameConstants.RIGHT
-				&& game.ballVelX <= 0) {
-				game.score2 += 1;
-				game.ballVelX = 2;
-			}
-			if (game.ballX <= GameConstants.RIGHT || game.ballX >= GameConstants.LEFT)
-			{
-				game.ballVelY = 0;
-				game.ballX = 0;
-				game.ballY = 0;
-				game.paddle1 = 0;
-				game.paddle2 = 0;
-			}
+			if ((game.ballX >= GameConstants.LEFT && game.ballVelX >= 0)
+				|| (game.ballX <= GameConstants.RIGHT && game.ballVelX <= 0))
+				game = this.scoringInspector(game);
 
 			// Ending Trigger
 			if ((game.score1 > 10 || game.score2 > 10)
 				&& (Math.abs(game.score1 - game.score2) >= 2))
 			{
-				this.endGame(server, game);
+				void this.endGame(server, game);
 				continue;
 			}
 
 			// Movements PADDLE
 			if (game.player1_pressDown)
-				game.paddle1 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 += 2 : game.paddle1;
+				game.paddle1 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 += 3 : game.paddle1;
 			if (game.player1_pressUp)
-				game.paddle1 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 -= 2 : game.paddle1;
+				game.paddle1 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle1 -= 3 : game.paddle1;
 
 			if (game.player2_pressDown)
-				game.paddle2 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 += 2 : game.paddle2;
+				game.paddle2 < GameConstants.TOP - (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 += 3 : game.paddle2;
 			if (game.player2_pressUp)
-				game.paddle2 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 -= 2 : game.paddle2;
+				game.paddle2 > GameConstants.BOTTOM + (GameConstants.PADDLE_HEIGHT / 2) ? game.paddle2 -= 3 : game.paddle2;
 
 			// Ball Movements
 			game.ballX += game.ballVelX;
@@ -111,7 +116,7 @@ export class GameService {
 			return;
 		}
 
-		const user = this.authGuard.validateToken(token);
+		const user = await this.authGuard.validateToken(token);
 		if (!user) {
 			console.log('Client disconnected: Invalid token');
 			client.disconnect(true);
@@ -120,28 +125,17 @@ export class GameService {
 
 		client.data.state = PlayerState.NONE;
 		client.data.game = undefined;
-		client.data.user = (await user).id;
+		client.data.user = user.id;
 
+		if (await this.userService.sessionStatus(user.id) != UserStatus.Playing)
+			void this.userService.toggleStatus(user.id, UserStatus.Online);
 		console.log('New client connected', client.data);
 	}
 
-	async disconnect(server: Server, client: UserSocket) {
-		for (let game of this.activeGames) {
-			if (game.player1_socket == client.id) {
-				game.score1 = -1;
-				game.score2 = 11;
-				this.endGame(server, game);
-				break;
-			}
-
-			if (game.player2_socket == client.id) {
-				game.score1 = 11;
-				game.score2 = -1;
-				this.endGame(server, game);
-				break;
-			}
-		}
-
+	disconnect(server: Server, client: UserSocket) {
+		this.abondonGame(server, client);
+		if (client?.data?.user)
+			void this.userService.toggleStatus(client.data.user, UserStatus.Offline);
 		console.log('Client disconnected');
 	}
 
@@ -186,6 +180,7 @@ export class GameService {
 			players[i].data.game = this.activeGames.indexOf(game);
 			players[i].join(room_name);
 			players[i].emit('gameStart', sanitizedGame);
+			void this.userService.toggleStatus(players[i].data.user, UserStatus.Playing);
 		}
 	}
 
@@ -241,11 +236,10 @@ export class GameService {
 			winner.elo +=  100;
 			loser.elo -= (loser.elo < 0 ? 0: 25);
 
+			void this.userService.updateUser(winner.id, winner);
+			void this.userService.updateUser(loser.id, loser);
 
-			this.userService.updateUser(winner.id, winner);
-			this.userService.updateUser(loser.id, loser);
-
-			this.gameRepository.save(game_entry);
+			void this.gameRepository.save(game_entry);
 		}
 
 		server.to(room_name).emit('gameEnd', {
@@ -253,6 +247,8 @@ export class GameService {
 			game: this.sanitizeGameState(game)
 		});
 
+		void this.userService.toggleStatus(game.player1, UserStatus.Online);
+		void this.userService.toggleStatus(game.player2, UserStatus.Online);
 		this.activeGames.splice(this.activeGames.indexOf(game), 1);
 	}
 
@@ -280,14 +276,14 @@ export class GameService {
 			if (game.player1_socket == client.id) {
 				game.score1 = -1;
 				game.score2 = 11;
-				this.endGame(server, game);
+				void this.endGame(server, game);
 				break;
 			}
 
 			if (game.player2_socket == client.id) {
 				game.score1 = 11;
 				game.score2 = -1;
-				this.endGame(server, game);
+				void this.endGame(server, game);
 				break;
 			}
 		}
@@ -310,6 +306,23 @@ export class GameService {
 				game.player2_pressUp = press;
 			else
 				game.player2_pressDown = press;
+		}
+	}
+
+	quickMovePaddle(client: UserSocket, height: number) {
+		if (client.data.state != PlayerState.PLAYING)
+			return;
+		const game = this.activeGames[client.data.game];
+
+		if (height >= GameConstants.TOP - GameConstants.PADDLE_HEIGHT / 2)
+			height = GameConstants.TOP - GameConstants.PADDLE_HEIGHT / 2;
+		if (height <= GameConstants.BOTTOM + GameConstants.PADDLE_HEIGHT / 2)
+			height = GameConstants.BOTTOM + GameConstants.PADDLE_HEIGHT / 2;
+
+		if (game.player1_socket == client.id) {
+			game.paddle1 = height;
+		} else {
+			game.paddle2 = height;
 		}
 	}
 }

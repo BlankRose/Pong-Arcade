@@ -8,8 +8,7 @@ import { GameService } from "./game.service";
 
 
 @WebSocketGateway(<ServerOptions>{
-	namespace: 'game',
-	cors: true,
+	path: '/game',
 	connectTimeout: 10000,
 })
 class GameGateway
@@ -76,6 +75,11 @@ class GameGateway
 	@SubscribeMessage('stopDown')
 	paddleStopDown(client: UserSocket) {
 		this.gameService.shiftDirection(client, false, false);
+	}
+
+	@SubscribeMessage('fastMove')
+	paddleFastMove(client: UserSocket, data: number) {
+		this.gameService.quickMovePaddle(client, data);
 	}
 }
 

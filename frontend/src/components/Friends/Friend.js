@@ -41,6 +41,17 @@ const Friend = ({
       })
   }
 
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "online":
+        return styles.online;
+      case "playing":
+        return styles.playing;
+      default:
+        return styles.offline;
+    }
+  };
+
   return (
     <div className={styles.container}>
       {!successfullyDone && (
@@ -67,12 +78,12 @@ const Friend = ({
               
             </button>
           </div>
-          <div
-            className={styles.profilePicture}
-          ></div>
+          <img
+            className={styles.profilePicture} src={avatarUrl}
+          />
           <div className={styles.nameAndStatus}> 
               <h3>{nickname}</h3>
-            <p>{status}</p>
+              <p className={getStatusClass(status)}>{status}</p>              
           </div>
         </>
       )}
