@@ -174,22 +174,42 @@ import { UserLoader } from './userLoader';
 import { statusLoader } from './Loader'
 import FriendsPage from './pages/FriendsPage';
 import { SocketContext } from './contexts/Sockets';
-
+import apiHandle from './components/API_Access';
+import { withAuth } from './components/API_Access';
 const Check2FAForSignIn = ({children}) => {
 	const loggedIn = useSelector(state => state.user.status)
 	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
 	const is2FAEnabled = useSelector (state => state.user._2FAEnabled)
+	const [isLoggedIn, setIsLoggedIn] = useState('offline')
 
-	if (loggedIn === 'offline') {
+	console.log("********************Check2FAForSignIn")
+	apiHandle.get('/auth/loginStatus', withAuth())
+		.then(res => {
+			if (res.data === 'online') {
+				
+				setIsLoggedIn('online')
+			} else {
+				setIsLoggedIn('offline')
+			}
+		})
+		.catch(err => {
+			console.warn(err.response);
+		});
+
+	if (isLoggedIn === 'offline') {
+		console.log("*******************************************Cas1")
 		return children
 	}
-	else if (loggedIn === 'online' && is2FAEnabled && is2FANeeded) {
+	else if (isLoggedIn === 'online' && is2FAEnabled && is2FANeeded) {
+		console.log("*******************************************Cas2")
 		return <Navigate to="/TFAVerify"/>
 	}
-	else if (loggedIn === 'online' && is2FANeeded === false ) {
+	else if (isLoggedIn === 'online' && is2FANeeded === false ) {
+		console.log("*******************************************Cas3")
 		return <Navigate to="/profile"/>
 	}
 	else {
+		console.log("*******************************************Cas7")
 	    return children
 	}
 }
@@ -197,14 +217,34 @@ const Check2FAForSignIn = ({children}) => {
 const Check2FAForOtherRoutes  = ({children}) => {
 	const loggedIn = useSelector(state => state.user.status)
 	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
+	const [isLoggedIn, setIsLoggedIn] = useState('')
+
+	console.log("********************Check2FAForOtherRoutes")
+	apiHandle.get('/auth/loginStatus', withAuth())
+		.then(res => {
+            console.log("res**: ", res)
+			if (res.data === 'online') {
+				console.log("LILILILILILILILI")
+				setIsLoggedIn('online')
+			} else {
+				console.log("MIMIMIMIMIMIMI")
+				setIsLoggedIn('offline')
+			}
+		})
+		.catch(err => {
+			console.warn(err.response);
+		});
 
 	if (loggedIn === 'offline') {
+		console.log("*******************************************Cas4")
 		return <Navigate to="/"/>
 	}
-	else if (loggedIn === 'online' && is2FANeeded === true) {
+	else if (isLoggedIn === 'online' && is2FANeeded === true) {
+		console.log("*******************************************Cas5")
 		return <Navigate to="/TFAVerify"/>
 	}
 	else {
+		console.log("*******************************************Cas6")
 	    return children
 	}
 }

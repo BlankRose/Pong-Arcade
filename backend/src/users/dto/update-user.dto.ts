@@ -4,5 +4,6 @@ import { IsNotEmpty } from 'class-validator'
 
 export class UpdateUser extends PartialType(CreateUser) {
     @IsNotEmpty()
-    id: number
+    id: number;
+    status: string
 }
