@@ -9,7 +9,7 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 	// ANTI-FLICKERING: ALLOW TIME FOR BACKEND TO REGISTER CORRECTLY
 	const last = parseInt(localStorage.getItem(key_name)) || 0;
 	if (Date.now() < last + 500) // 500 MS
-		return;
+		return null;
 
 	// const userStatus = useSelector(state=> state.user.status)
     // console.log("userstatus: ", userStatus)
@@ -30,6 +30,7 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 		.catch(err => {
 			console.warn(err.response);
 		});
+	return null;
 }
 
 
