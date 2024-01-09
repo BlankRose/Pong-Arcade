@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
-import apiHandle, { withAuth } from './API_Access';
+import apiHandle, {webBaseURL, withAuth} from './API_Access';
 
 import Avatar from "../assets/avatar.jpeg";
 import GameCanvas from './GameCanvas';
@@ -46,23 +46,33 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
-			setGameContext({ ...gameContext, inQueue: true });
+			console.log("HELP A");
+			setGameContext({ ...gameContext, inQueue: true, code: null });
 		})
 
 		newSocketEvent(gameSocket, 'leaveQueueSuccess', () => {
-			setGameContext({ ...gameContext, inQueue: false });
+			setGameContext({ ...gameContext, inQueue: false, code: null });
+		})
+
+		newSocketEvent(gameSocket, 'joinPrivateSuccess', data => {
+			console.log("HELP B");
+			setGameContext({ ...gameContext, inQueue: true, code: data });
+		})
+
+		newSocketEvent(gameSocket, 'joinPrivateError', () => {
+			console.warn("Failed to join private game");
 		})
 
 		newSocketEvent(gameSocket, 'gameStart', data => {
-			setGameContext({ inQueue: false, gameState: data })
+			setGameContext({ inQueue: false, gameState: data, code: null });
 		})
 
 		newSocketEvent(gameSocket, 'gameUpdate', data => {
-			setGameContext({ ...gameContext, gameState: data })
+			setGameContext({ ...gameContext, gameState: data });
 		})
 
 		newSocketEvent(gameSocket, 'gameEnd', _ => {
-			setGameContext({ inQueue: false, gameState: null })
+			setGameContext({ inQueue: false, gameState: null, code: null });
 			setPlayers([null, null]);
 		})
 
@@ -126,6 +136,22 @@ function Game() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [gameContext])
 
+	const copyToClipboard = () => {
+		if (gameContext?.code)
+			navigator?.clipboard?.writeText(gameContext.code)
+				.catch(() => {/* IGNORED */});
+	}
+
+	const joinPrivate = () => {
+		console.log("hello world");
+		let elem = document.getElementById('game_code')?.value
+			?.replaceAll(' ', '').replaceAll('\t', '').toUpperCase();
+		if (!elem || elem.length <= 0) return;
+
+		console.log("Lol");
+		gameSocket?.emit('joinPrivate', elem);
+	}
+
 	return(
 		<div className='pGame'>
 			{
@@ -161,13 +187,33 @@ function Game() {
 						: gameContext.inQueue
 							? <div className='queue force-center'>
 								<div>... Waiting for opponent ...</div>
-								<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
+								{
+									gameContext.code
+										? <div>Private Code: {gameContext.code}</div>
+										: undefined
+								}
+								<div>
+									<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
+									{ gameContext.code ? <button onClick={copyToClipboard}>Copy Code</button> : undefined }
+								</div>
 							</div>
 							: <div className='game'>
 								<div className='Title-game'>Welcome to 42_PONG !</div>
-								<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>
-									<img src={Solo} alt='solo' className='img-solo' />Rejoindre une partie !
-								</button>
+								<div className='selector'>
+									<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>
+										<img src={Solo} alt='solo' className='img-solo' />World Matchmaking
+									</button>
+									<button className='btn-party' onClick={() => {gameSocket.emit('newPrivate')}}>
+										<img src={Solo} alt='solo' className='img-solo' />Create Friend Match
+									</button>
+									<div>
+										<input type="text"
+											id='game_code'
+											className='form-control'
+											placeholder='Private Match Code'/>
+										<button className='btn-join' onClick={joinPrivate}>Join Friend Match</button>
+									</div>
+								</div>
 								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
 							</div>
 				}

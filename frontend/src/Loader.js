@@ -33,12 +33,8 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 	return null;
 }
 
-
 apiHandle.get('/auth/loginStatus', withAuth())
-.then(res => {
-
-})
+.then(() => {/* IGNORED */})
 .catch(err => {
     console.warn(err.response);
-
 });

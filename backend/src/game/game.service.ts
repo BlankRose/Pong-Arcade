@@ -108,6 +108,16 @@ export class GameService {
 		}
 	}
 
+	generateCode(): string {
+		const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		const charlen = charset.length;
+
+		let code = "";
+		for (let i = 0; i < 12; i++)
+			code += charset.charAt(Math.floor(Math.random() * charlen));
+		return code;
+	}
+
 	async connect(client: UserSocket) {
 		const token = client.handshake.auth.token;
 		if (!token) {
@@ -139,23 +149,7 @@ export class GameService {
 		console.log('Client disconnected');
 	}
 
-	startGame(server: Server) {
-		const room = server.sockets.adapter.rooms.get('queue');
-		if (room.size < 2)
-			return;
-
-		let room_iter = room.values();
-		let players: UserSocket[] = [undefined, undefined]
-
-		for (let i = 0; i < 2; i++) {
-			const target = server.sockets.sockets.get(room_iter.next().value) as UserSocket;
-			target.data.state = PlayerState.PLAYING;
-			target.data.game = this.activeGames.length;
-
-			target.leave('queue');
-			players[i] = target;
-		}
-
+	startGame(server: Server, players: UserSocket[]) {
 		const room_name = 'game_' + players[0].id + '_' + players[1].id;
 		const game: GameState = {
 			paddle1: 0, paddle2: 0,
@@ -178,6 +172,7 @@ export class GameService {
 		const sanitizedGame = this.sanitizeGameState(game);
 		for (let i = 0; i < 2; i++) {
 			players[i].data.game = this.activeGames.indexOf(game);
+			players[i].rooms.forEach(value => players[i].leave(value));
 			players[i].join(room_name);
 			players[i].emit('gameStart', sanitizedGame);
 			void this.userService.toggleStatus(players[i].data.user, UserStatus.Playing);
@@ -252,13 +247,78 @@ export class GameService {
 		this.activeGames.splice(this.activeGames.indexOf(game), 1);
 	}
 
+	queueStart(server: Server) {
+		const room_name = 'queue';
+		const room = server.sockets.adapter.rooms.get(room_name);
+		if (!room || room.size < 2)
+			return;
+
+		let room_iter = room.values();
+		let players: UserSocket[] = [undefined, undefined];
+
+		for (let i = 0; i < 2; i++) {
+			const target = server.sockets.sockets.get(room_iter.next().value) as UserSocket;
+			target.data.state = PlayerState.PLAYING;
+			target.data.game = this.activeGames.length;
+
+			target.leave(room_name);
+			players[i] = target;
+		}
+		this.startGame(server, players);
+	}
+
+	privateStart(server: Server, code: string) {
+		const room_name = 'priv_' + code;
+		const room = server.sockets.adapter.rooms.get(room_name);
+		if (!room || room.size < 2)
+			return;
+
+		let room_iter = room.values();
+		let players: UserSocket[] = [undefined, undefined];
+		const size = room.size;
+
+		for (let i = 0; i < size; i++) {
+			const target = server.sockets.sockets.get(room_iter.next().value) as UserSocket;
+			if (i < 2) {
+				target.data.state = PlayerState.PLAYING;
+				target.data.game = this.activeGames.length;
+				players[i] = target;
+				target.leave(room_name);
+			} else {
+				this.leaveQueue(target);
+				target.emit('privateKicked', code);
+			}
+		}
+		this.startGame(server, players);
+	}
+
 	joinQueue(client: UserSocket, server: Server): boolean {
 		if (client.data.state != PlayerState.NONE)
 			return false;
 
 		client.data.state = PlayerState.WAITING;
 		client.join('queue');
-		this.startGame(server);
+		this.queueStart(server);
+		return true;
+	}
+
+	newPrivate(client: UserSocket): string {
+		if (client.data.state != PlayerState.NONE)
+			return null;
+
+		const new_code = this.generateCode();
+		client.data.state = PlayerState.WAITING;
+		client.join('priv_' + new_code);
+		return new_code;
+	}
+
+	joinPrivate(client: UserSocket, server: Server, code: string): boolean {
+		if (client.data.state != PlayerState.NONE)
+			return false;
+
+		client.data.state = PlayerState.WAITING;
+		client.join('priv_' + code);
+		this.privateStart(server, code);
 		return true;
 	}
 
@@ -267,7 +327,9 @@ export class GameService {
 			return false;
 
 		client.data.state = PlayerState.NONE;
-		client.leave('queue');
+		client.rooms.forEach(value => {
+			client.leave(value);
+		});
 		return true;
 	}
 

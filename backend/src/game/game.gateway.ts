@@ -36,6 +36,24 @@ class GameGateway
 		this.gameService.disconnect(this.server, client);
 	}
 
+	@SubscribeMessage('newPrivate')
+	newPrivate(client: UserSocket): WsResponse {
+		const code = this.gameService.newPrivate(client);
+		return code
+			? { event: 'joinPrivateSuccess', data: code }
+			: { event: 'joinPrivateError', data: null }
+	}
+
+	@SubscribeMessage('joinPrivate')
+	joinPrivate(client: UserSocket, code: string): WsResponse {
+		if (typeof code != "string")
+			return { event: 'joinPrivateError', data: null };
+		const success = this.gameService.joinPrivate(client, this.server, code);
+		return success
+			? { event: 'joinPrivateSuccess', data: code }
+			: { event: 'joinPrivateError', data: null };
+	}
+
 	@SubscribeMessage('joinQueue')
 	joinQueue(client: UserSocket): WsResponse {
 		const success = this.gameService.joinQueue(client, this.server);
