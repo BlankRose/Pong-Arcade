@@ -3,17 +3,19 @@ import apiHandle, { withAuth } from './components/API_Access.js'
 import userSlice from './store/user.js';
 import { useSelector } from 'react-redux';
 
-export async function statusLoader() {
+export async function statusLoader({ connectSockets, disconnectSockets }) {
 
-    // const userStatus = useSelector(state=> state.user.status)
+	// const userStatus = useSelector(state=> state.user.status)
     // console.log("userstatus: ", userStatus)
     console.log("statusLoader")
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
             console.log("res: ", res)
 			if (res.data === 'online') {
+				connectSockets();
 				store.dispatch(userSlice.actions.setOnline())
 			} else {
+				disconnectSockets();
 				store.dispatch(userSlice.actions.setOffline())
 			}
 		})

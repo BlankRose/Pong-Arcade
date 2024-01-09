@@ -148,7 +148,7 @@ export default App;*/
 
 import './styles/App.css';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from 'react';
 
@@ -173,6 +173,7 @@ import { Navigate } from 'react-router-dom'
 import { UserLoader } from './userLoader';
 import { statusLoader } from './Loader'
 import FriendsPage from './pages/FriendsPage';
+import { SocketContext } from './contexts/Sockets';
 
 const Check2FAForSignIn = ({children}) => {
 	const loggedIn = useSelector(state => state.user.status)
@@ -215,12 +216,17 @@ function App() {
         setRerenderKey(prevKey => prevKey + 1);
     };
 
+	const { connectSockets, disconnectSockets } = useContext(SocketContext);
+	const dynamicLoader = async () => {
+		return statusLoader({ connectSockets, disconnectSockets });
+	}
+
 	const router = createBrowserRouter([
         {
             path: '/',
             // element: isLoggedIn ? <Template /> : <main><Outlet></Outlet></main>,
 			element: <Template />,
-            loader: statusLoader,
+            loader: dynamicLoader,
             children: [
                 {
                     path: 'profile',
@@ -266,7 +272,7 @@ function App() {
                 },
 				{
 					path: '/',
-					loader: statusLoader,
+					loader: dynamicLoader,
 					element:
 							<Check2FAForSignIn>
 							   		<>
