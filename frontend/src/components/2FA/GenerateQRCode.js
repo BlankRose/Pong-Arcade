@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import React from "react"
+import {apiBaseURL} from "../API_Access";
 
 const GenerateQRCode = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -9,7 +10,7 @@ const GenerateQRCode = () => {
     const fetchQRCode = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5501/auth/2fa/generateQr`,
+          `${apiBaseURL}/auth/2fa/generateQr`,
           {
             method: "GET",
             headers: {

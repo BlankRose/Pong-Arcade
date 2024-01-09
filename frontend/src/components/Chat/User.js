@@ -1,11 +1,11 @@
 import styles from "./User.module.css"
-import IconMsg from "../../assets/icon/message.svg"
-import IconInviteToPlay from "../../assets/icon/invite_to_play.svg"
-import IconBlocked from "../../assets/icon/block_user.svg"
+//import IconMsg from "../../assets/icon/message.svg"
+//import IconInviteToPlay from "../../assets/icon/invite_to_play.svg"
+//import IconBlocked from "../../assets/icon/block_user.svg"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
+//import { useNavigate } from "react-router-dom"
 import Avatar from '../../assets/avatar.jpeg';
 
 const User = ({
@@ -127,6 +127,7 @@ const User = ({
     return () => {
       document.removeEventListener("click", handleOutsideClick)
     }
+	// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showContextMenu])
 
   return (
@@ -190,7 +191,7 @@ const User = ({
           </p>
         </div>
       </div>
-      {id != myId && !isBlocked && (
+      {id !== myId && !isBlocked && (
         <div className={styles.right}>
           <div>
             {!isDM && (

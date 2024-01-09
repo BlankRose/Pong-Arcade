@@ -1,8 +1,9 @@
 import CodeValidation from "../components/2FA/CodeVerification";
 import React from 'react'
+import {apiBaseURL} from "../components/API_Access";
 
 const TFACodeVerification = () => {
-    const url = 'http://localhost:5501/auth/2fa/authenticate'
+    const url = `${apiBaseURL}/auth/2fa/authenticate`
 
     return (
         <div>

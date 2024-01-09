@@ -8,7 +8,6 @@ import ChatInterface from "../components/Chat/ChatInterface"
 import styles from "./Chat.module.css"
 import {apiBaseURL} from "../components/API_Access"
 import MembersInfo from "../components/Chat/MembersInfo"
-import User from "../components/Chat/User"
 
 const ChatPage = () => {
 
@@ -61,6 +60,7 @@ const ChatPage = () => {
         } else {
             console.log('Failed to connect socket')
         }
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChat])
 
     useEffect(() => {
@@ -71,6 +71,7 @@ const ChatPage = () => {
       }
       const intervalId = setInterval(fetchData, 500);
       return () => clearInterval(intervalId);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket])
 
     useEffect(() => {
@@ -111,6 +112,7 @@ const ChatPage = () => {
       const intervalId = setInterval(fetchData, 500);
     
       return () => clearInterval(intervalId);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChat, updateMessages, channels]); 
 
     useEffect(() => {
@@ -124,6 +126,7 @@ const ChatPage = () => {
       fetchData();
       const intervalId = setInterval(fetchData, 500);
       return () => clearInterval(intervalId);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     useEffect(() => {
@@ -138,6 +141,7 @@ const ChatPage = () => {
       const intervalId = setInterval(fetchData, 500);
       return () => clearInterval(intervalId);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     const getMutedUsers = () => {

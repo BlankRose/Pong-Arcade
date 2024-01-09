@@ -1,9 +1,6 @@
-
 import apiHandle from './API_Access';
 import '../styles/Login.css';
 import React, {  useState } from "react";
-
-
 
 function LoginPage({DoRerender}) {
     const [username, setUsername] = useState('');
@@ -35,7 +32,7 @@ function LoginPage({DoRerender}) {
             })
             .catch(err => {
                 const errorResponse = err.response && err.response.data ? err.response.data.message : err.message;
-                console.error(`Login Request Failed: ${endpoint} | ${err}`)
+                console.error(`Login Request Failed: ${endpoint}`)
                 setErrorMessage(`Erreur: ${errorResponse}`);
             })
     };

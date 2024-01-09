@@ -79,7 +79,7 @@ const Friend = ({
             </button>
           </div>
           <img
-            className={styles.profilePicture} src={avatarUrl}
+            className={styles.profilePicture} src={avatarUrl} alt="avatar"
           />
           <div className={styles.nameAndStatus}> 
               <h3>{nickname}</h3>

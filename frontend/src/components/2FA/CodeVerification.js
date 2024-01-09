@@ -1,6 +1,7 @@
 import { useState } from "react"
 import store from "../../store/index"
 import authSlice from '../../store/auth'
+import {webBaseURL} from "../API_Access";
 
 
 const CodeValidation = ({ url, logOutButton }) => {
@@ -33,9 +34,7 @@ const CodeValidation = ({ url, logOutButton }) => {
           store.dispatch(authSlice.actions.confirm2FAAuth(false))
           store.dispatch(authSlice.actions.require2FAAuth())
 
-        
-        window.location.href = "http://localhost:5500/profile"
-        
+        window.location.href = `${webBaseURL}/profile`
       } else {
         const errorMessage = data.error || "An error occurred"
         setErrorMessage(errorMessage)

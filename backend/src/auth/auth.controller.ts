@@ -52,9 +52,7 @@ export class AuthController {
 		return this.authService.token42(req.query.code, req.query.uri);
 	}
 
-
     @Get('/loginStatus')
-	@Header('Access-Control-Allow-Origin', 'http://localhost:5500')
     getStatus(@Request() req) {
         if (req ) {
 		  return "online"

@@ -2,8 +2,10 @@ import axios from 'axios';
 import { io } from 'socket.io-client';
 
 const apiPort = process.env.REACT_APP_API_PORT;
+const webPort = window.location.port;
 const hostname = window.location.hostname;
 const apiBaseURL = `http://${hostname}:${apiPort}`;
+const webBaseURL = `http://${hostname}:${webPort}`;
 
 const apiHandle = axios.create({
 	baseURL: apiBaseURL,
@@ -35,4 +37,4 @@ const newSocket = (target) => {
 }
 
 export default apiHandle;
-export { hostname, apiPort, apiBaseURL, withAuth, newSocket };
+export { hostname, apiPort, webPort, apiBaseURL, webBaseURL, withAuth, newSocket };

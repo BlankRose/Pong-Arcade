@@ -1,14 +1,14 @@
 import { useState } from "react"
-import { useSelector } from "react-redux"
+//import { useSelector } from "react-redux"
 import SimpleConfirm from "../utils/SimpleConfirm"
 import SimpleInput from "../utils/SimpleInput"
 
 const ChannelItems = props => {
   const [open, setOpen] = useState(false)
   const [showInput, setShowInput] = useState(false)
-  const selectedChat = useSelector(
+  /*const selectedChat = useSelector(
     state => state.chat.selectedChat
-  )
+  )*/
 
   const showModal = () => {
     if (props.channel.password !== '') {

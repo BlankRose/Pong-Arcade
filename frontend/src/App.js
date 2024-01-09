@@ -211,7 +211,7 @@ const Check2FAForOtherRoutes  = ({children}) => {
 
 function App() {
 
-	const [rerenderKey, setRerenderKey] = useState(0);
+	const [/*rerenderKey*/, setRerenderKey] = useState(0);
 	const handleLRerender = () => {
         setRerenderKey(prevKey => prevKey + 1);
     };

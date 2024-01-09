@@ -106,7 +106,7 @@ const ChatFeed = ({ messages, blockedUsers}) => {
   }
 
   function ChatInterface(props) {
-    const [isChatValid, setIsChatValid] = useState(true);
+    const [isChatValid, /*setIsChatValid*/] = useState(true);
     const selectedChatName = useSelector(state => state.chat.chatName);
     const h1Styles = {
       fontFamily: 'Roboto', 
