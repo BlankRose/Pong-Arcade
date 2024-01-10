@@ -3,6 +3,7 @@ import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import Friend from '../assets/icon-btn-game/duo.gif'
+import Rejoin from '../assets/icon-btn-game/Starlow.webp'
 import apiHandle, {webBaseURL, withAuth} from './API_Access';
 
 import Avatar from "../assets/avatar.jpeg";
@@ -218,7 +219,7 @@ function Game() {
 										<img src={Friend} alt='friend' className='img-solo' />Create Friend Match
 									</button>
 									<button className='btn-party' id='btnC' onClick={joinPrivate}>
-										Join Friend Match
+									<img src={Rejoin} alt='join' className='img-solo' />Join Friend Match
 									</button>
 									<input
 										type="text"
