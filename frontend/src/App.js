@@ -168,6 +168,7 @@ import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
 
 // import { statusLoader } from './Loader';389
+
 import {useSelector} from 'react-redux'
 import { Navigate } from 'react-router-dom'
 import { UserLoader } from './userLoader';
@@ -268,6 +269,12 @@ function App() {
 			element: <Template />,
             loader: dynamicLoader,
             children: [
+				{
+					path: 'home',
+					element: <Check2FAForOtherRoutes>
+						<Home />
+					</Check2FAForOtherRoutes>,
+				},
                 {
                     path: 'profile',
                     element: 
@@ -291,6 +298,7 @@ function App() {
                 {
                     path: 'game',
                     element: <Check2FAForOtherRoutes><Game /></Check2FAForOtherRoutes>,
+					loader: UserLoader
                 },
                 {
                     path: 'chat',

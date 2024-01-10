@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, useReducer } from 'react';
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
+import Friend from '../assets/icon-btn-game/duo.gif'
 import apiHandle, {webBaseURL, withAuth} from './API_Access';
 
 import Avatar from "../assets/avatar.jpeg";
@@ -145,11 +146,21 @@ function Game() {
 	const joinPrivate = () => {
 		console.log("hello world");
 		let elem = document.getElementById('game_code')?.value
-			?.replaceAll(' ', '').replaceAll('\t', '').toUpperCase();
+			?.replaceAll(' ', '').replaceAll('\t', '').toUpperCase()
+			.replace(/[^A-Z0-9]/g, '');
 		if (!elem || elem.length <= 0) return;
 
 		console.log("Lol");
 		gameSocket?.emit('joinPrivate', elem);
+	}
+
+	const enforceString = (event) => {
+		const base = event?.target?.value;
+		if (!base)
+			return;
+		event.target.value = base
+			.replaceAll(' ', '').replaceAll('\t', '').toUpperCase()
+			.replace(/[^A-Z0-9]/g, '');
 	}
 
 	return(
@@ -200,19 +211,21 @@ function Game() {
 							: <div className='game'>
 								<div className='Title-game'>Welcome to 42_PONG !</div>
 								<div className='selector'>
-									<button className='btn-party' onClick={() => {gameSocket.emit('joinQueue')}}>
+									<button className='btn-party' id='btnA' onClick={() => {gameSocket.emit('joinQueue')}}>
 										<img src={Solo} alt='solo' className='img-solo' />World Matchmaking
 									</button>
-									<button className='btn-party' onClick={() => {gameSocket.emit('newPrivate')}}>
-										<img src={Solo} alt='solo' className='img-solo' />Create Friend Match
+									<button className='btn-party' id='btnB' onClick={() => {gameSocket.emit('newPrivate')}}>
+										<img src={Friend} alt='friend' className='img-solo' />Create Friend Match
 									</button>
-									<div>
-										<input type="text"
-											id='game_code'
-											className='form-control'
-											placeholder='Private Match Code'/>
-										<button className='btn-join' onClick={joinPrivate}>Join Friend Match</button>
-									</div>
+									<button className='btn-party' id='btnC' onClick={joinPrivate}>
+										Join Friend Match
+									</button>
+									<input
+										type="text"
+										id='game_code'
+										className='form-control input-party'
+										placeholder='Private Match Code'
+										onChange={enforceString}/>
 								</div>
 								<p className= 'hidden-text'>Rejoignez une partie contre un autre utilisateur !</p>
 							</div>
