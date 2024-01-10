@@ -58,6 +58,8 @@ function Profil({ username }) {
 			})
 	}, [username]);
 
+	console.log("%%%%%%%%%%%%%%%%%%%%%user", user)
+
 	return (
 		user
 			?
@@ -65,7 +67,8 @@ function Profil({ username }) {
 				<div className='CardProfil'>
 					<div className='profil'>
 						<img className='Profil-avatar' alt='profil' src= {avatar}/>
-						<h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { user?.status ? user.status : 'offline' }</h2>
+						<h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { user?.status }</h2>
+						{/* <h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { user?.status ? user.status : user.status }</h2> */}
 						{ (!username && <Link to='/updateProfile' className= "updateProfile" >Modifier Profil</Link>)
 							|| <Link to='/' className= "updateProfile" >Retour</Link> }
 					</div>

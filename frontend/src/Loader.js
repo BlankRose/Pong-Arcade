@@ -16,7 +16,6 @@ export async function statusLoader({ connectSockets, disconnectSockets })
     console.log("statusLoader")
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
-            console.log("res: ", res)
 			if (res.data === 'online') {
 				connectSockets();
 				store.dispatch(userSlice.actions.setOnline())

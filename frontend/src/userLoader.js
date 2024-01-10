@@ -6,7 +6,6 @@ import store from './store/index'
 export async function UserLoader() {
     apiHandle.get('/users/me', withAuth())
     .then (res=>{
-        console.log("res: ", res)
         store.dispatch(userSlice.actions.updateUser(res.data))
     })
     .catch (err => {
