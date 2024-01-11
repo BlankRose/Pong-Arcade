@@ -16,6 +16,7 @@ function Profil({ username }) {
 	const [avatar, setAvatar] = useState(Avatar);
 	const [isHistory, setIsHistory] = useState(false);
 	const [history, setHistory] = useState(null);
+	const [status, setStatus] = useState('');
 
 	const [is2FAEnabled, set2FAOption] = useState(useSelector(state => state.user._2FAEnabled))
 	const navigate = useNavigate();
@@ -58,6 +59,16 @@ function Profil({ username }) {
 			})
 	}, [username]);
 
+	useEffect (()=> {
+		apiHandle.get('/auth/loginStatus', withAuth())
+		.then(res => {
+			setStatus(res.data)
+		})
+		.catch(err => {
+			console.warn(err.response);
+		});
+	})
+
 	console.log("%%%%%%%%%%%%%%%%%%%%%user", user)
 
 	return (
@@ -67,7 +78,7 @@ function Profil({ username }) {
 				<div className='CardProfil'>
 					<div className='profil'>
 						<img className='Profil-avatar' alt='profil' src= {avatar}/>
-						<h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { user?.status }</h2>
+						<h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { status }</h2>
 						{/* <h2 className="Profil-username">{user ? user.username : undefined }<br/>>> { user?.status ? user.status : user.status }</h2> */}
 						{ (!username && <Link to='/updateProfile' className= "updateProfile" >Modifier Profil</Link>)
 							|| <Link to='/' className= "updateProfile" >Retour</Link> }

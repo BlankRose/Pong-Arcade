@@ -4,9 +4,12 @@ import { useSelector } from 'react-redux';
  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faComments, faGamepad, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import LogoutButton from '../Logout/LogoutButton'
+import React, { useEffect, useState } from 'react';
+import apiHandle from '../API_Access';
+import { withAuth } from '../API_Access';
 
 const Navbar = () => {
-    const isLoggedIn = useSelector((state) => state.user.status);
+    const [isLoggedIn, setIsLoggedIn] = useState(useSelector((state) => state.user.status));
 
     const navLinks = [
         { to: '/profile', text: 'Profile', icon: faUser },
@@ -17,6 +20,17 @@ const Navbar = () => {
         { to: '/friends', text: 'Friends', icon: faUser}
     ];
 
+    useEffect (()=> {
+		apiHandle.get('/auth/loginStatus', withAuth())
+		.then(res => {
+            console.log("&&&&&&&&&&&", res.data)
+			setIsLoggedIn(res.data)
+		})
+		.catch(err => {
+			console.warn(err.response);
+		});
+	})
+console.log ("(((((((((((((((((", isLoggedIn)
     
     return (
         <header>
