@@ -269,12 +269,6 @@ function App() {
 			element: <Template />,
             loader: dynamicLoader,
             children: [
-				{
-					path: 'home',
-					element: <Check2FAForOtherRoutes>
-						<Home />
-					</Check2FAForOtherRoutes>,
-				},
                 {
                     path: 'profile',
                     element: 
@@ -298,7 +292,6 @@ function App() {
                 {
                     path: 'game',
                     element: <Check2FAForOtherRoutes><Game /></Check2FAForOtherRoutes>,
-					loader: UserLoader
                 },
                 {
                     path: 'chat',
