@@ -25,7 +25,6 @@ const FriendsPage = () => {
       apiHandle
         .get("users/me/getFriendsAndRequests", withAuth())
         .then(res => {
-          console.log("res.data: ", res.data)
             const { userId, acceptedConnections, pendingConnections } = res.data
           setFriendList({
             userId,

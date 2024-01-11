@@ -10,6 +10,19 @@ import { withAuth } from '../API_Access';
 
 const Navbar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(useSelector((state) => state.user.status));
+    const [refresh, setRefresh] = useState(0);
+    
+    
+  const handleLogout = () => {
+    if (refresh === 0)
+    {
+        setRefresh((prevRefresh) => prevRefresh + 1);
+    }
+    else {
+        setRefresh((prevRefresh) => prevRefresh - 1);
+    }
+  };
+
 
     const navLinks = [
         { to: '/profile', text: 'Profile', icon: faUser },
@@ -20,17 +33,25 @@ const Navbar = () => {
         { to: '/friends', text: 'Friends', icon: faUser}
     ];
 
-    useEffect (()=> {
+    useEffect (() => {
+        const fetchData = () => {
 		apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
-            console.log("&&&&&&&&&&&", res.data)
-			setIsLoggedIn(res.data)
+            if (res){
+                setIsLoggedIn(res.data)
+            } else {
+                setIsLoggedIn('offline')
+            }
 		})
 		.catch(err => {
+            setIsLoggedIn('offline')
 			console.warn(err.response);
 		});
-	})
-console.log ("(((((((((((((((((", isLoggedIn)
+    }
+
+        const intervalId = setInterval(fetchData, 500);
+        return () => clearInterval(intervalId);
+	},[refresh])
     
     return (
         <header>
@@ -55,7 +76,7 @@ console.log ("(((((((((((((((((", isLoggedIn)
                     </div>
                     <div className={styles.centerContainer}>
                         {isLoggedIn === 'online' && (
-                            <LogoutButton></LogoutButton>
+                            <LogoutButton onLogout={handleLogout}/>
                         )}
         
                     </div>

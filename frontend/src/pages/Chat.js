@@ -440,9 +440,6 @@ const ChatPage = () => {
         }
         
       }
-
-      console.log("banned users: ", bannedUsers)
-      console.log("userData: ", userData)
     return (
             <div className={styles.container}>
                 <ChannelInterface

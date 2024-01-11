@@ -10,10 +10,6 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 	const last = parseInt(localStorage.getItem(key_name)) || 0;
 	if (Date.now() < last + 500) // 500 MS
 		return null;
-
-	// const userStatus = useSelector(state=> state.user.status)
-    // console.log("userstatus: ", userStatus)
-    console.log("statusLoader")
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
 			if (res.data === 'online') {

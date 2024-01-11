@@ -13,7 +13,6 @@ const Friend = ({
 }) => {
 
 
-  console.log("iscreatedby me: ", createdByMe)
   const [successfullyDone, setSuccessfullyDone] = useState(false)
 
   const removeFriendship = async id => {

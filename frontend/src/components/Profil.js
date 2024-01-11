@@ -11,7 +11,6 @@ import {useNavigate} from 'react-router-dom';
 import '../styles/Profil.css';
 
 function Profil({ username }) {
-	console.log("profile")
 	const [user, setUser] = useState(null);
 	const [avatar, setAvatar] = useState(Avatar);
 	const [isHistory, setIsHistory] = useState(false);
@@ -38,7 +37,6 @@ function Profil({ username }) {
 	useEffect(() => {
 		apiHandle.get(`/users/${username || 'me'}`, withAuth())
 			.then(response => {
-				console.log("*******",response)
 				setUser(response.data);
 				if (response.data && response.data.avatar)
 					setAvatar(response.data.avatar);
@@ -69,7 +67,6 @@ function Profil({ username }) {
 		});
 	})
 
-	console.log("%%%%%%%%%%%%%%%%%%%%%user", user)
 
 	return (
 		user

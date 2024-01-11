@@ -177,109 +177,68 @@ import FriendsPage from './pages/FriendsPage';
 import { SocketContext } from './contexts/Sockets';
 import apiHandle from './components/API_Access';
 import { withAuth } from './components/API_Access';
-const Check2FAForSignIn = ({children}) => {
-	const loggedIn = useSelector(state => state.user.status)
-	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
-	const is2FAEnabled = useSelector (state => state.user._2FAEnabled)
-	const [isLoggedIn, setIsLoggedIn] = useState('offline')
-	const navigate = useNavigate()
+import { useEffect } from 'react';
 
-	
-	apiHandle.get('/auth/loginStatus', withAuth())
-		.then(res => {
-			console.log("********************Check2FAForSignIn", res.data)
-			setIsLoggedIn(res.data);
-		})
-		.catch(err => {
-			console.warn(err.response);
-		})
-		.finally(() => {
-			if (isLoggedIn === 'offline') {
-			  console.log("*******************************************Cas1");
-			  return children;
-			} else if (isLoggedIn === 'online' && is2FAEnabled && is2FANeeded) {
-			  console.log("*******************************************Cas2");
-			  navigate('/TFAVerify');
-			} else if (isLoggedIn === 'online' && !is2FANeeded) {
-			  console.log("*******************************************Cas3");
-			  navigate('/profile');
-			} else {
-			  console.log("*******************************************Cas7");
-			}
-		  });
 
-	// if (isLoggedIn === 'offline') {
-	// 	console.log("*******************************************Cas1")
-	// 	return children
-	// }
-	// else if (isLoggedIn === 'online' && is2FAEnabled && is2FANeeded) {
-	// 	console.log("*******************************************Cas2")
-	// 	return <Navigate to="/TFAVerify"/>
-	// }
-	// else if (isLoggedIn === 'online' && is2FANeeded === false ) {
-	// 	console.log("*******************************************Cas3")
-	// 	return <Navigate to="/profile"/>
-	// }
-	// else {
-	// 	console.log("*******************************************Cas7")
-	//     return children
-	// }
-}
-
-const Check2FAForOtherRoutes  = ({children}) => {
-	const loggedIn = useSelector(state => state.user.status)
-	const is2FANeeded = useSelector (state => state.user.is2FANeeded)
-	const [isLoggedIn, setIsLoggedIn] = useState('')
+const Check2FAForSignIn = ({ children }) => {
+	const isLoggedIn = useSelector((state) => state.user.status);
+	const is2FANeeded = useSelector((state) => state.user.is2FANeeded);
+	const is2FAEnabled = useSelector((state) => state.user._2FAEnabled);
 	const navigate = useNavigate();
+  
+	useEffect(() => {
+	  const fetchData = async () => {
+		try {
+		  const res = await apiHandle.get('/auth/loginStatus', withAuth());  
+		  if (res.data === 'offline') {
+			navigate('/');
+		  } else if (res.data === 'online' && is2FAEnabled && is2FANeeded) {
+			navigate('/TFAVerify');
+		  } else if (res.data === 'online' && !is2FANeeded) {
+			navigate('/profile');
+		  } else {
+		  }
+		} catch (err) {
+		  console.warn(err.response);
+		}
+	  };
+  
+	  fetchData();
+	}, [is2FAEnabled, is2FANeeded, navigate]);
+  
 
+	if (window.location.pathname !== '/TFAVerify') {
+	  return children;
+	}
 
-	console.log("********************Check2FAForOtherRoutes")
-	apiHandle.get('/auth/loginStatus', withAuth())
-		.then(res => {
-            console.log("*************res**: ", res.data, typeof res.data)
-			// if (res.data == 'online') {
-			// 	console.log("LILILILILILILILI")
-			// 	setIsLoggedIn(res.data)
-			// } else {
-			// 	console.log("MIMIMIMIMIMIMI")
-			// 	setIsLoggedIn(res.data)
-			// }
-			if (res.data == 'offline') {
-				console.log("*******************************************Cas4")
-				// return <Navigate to="/"/>
-				navigate('/')
-			}
-			else if (res.data == 'online' && is2FANeeded == true) {
-				console.log("*******************************************Cas5")
-				// return <Navigate to="/TFAVerify"/>
-				navigate('/TFAVerify')
-			}
-			else {
-				console.log("*******************************************Cas6")
-				// return children
-				setIsLoggedIn(res.data)
-			}
+	return null;
+  };
+
+  const Check2FAForOtherRoutes = ({ children }) => {
+	const is2FANeeded = useSelector(state => state.user.is2FANeeded);
+	const [isLoggedIn, setIsLoggedIn] = useState('');
+	const navigate = useNavigate();
+  
+	useEffect(() => {
+	  apiHandle.get('/auth/loginStatus', withAuth())
+		.then(res => {		  
+		  if (res.data === 'offline') {
+			navigate('/');
+		  } else if (res.data === 'online' && is2FANeeded) {
+			navigate('/TFAVerify');
+		  } else {
+			setIsLoggedIn(res.data);
+		  }
 		})
 		.catch(err => {
-			console.warn(err.response);
+		  console.warn(err.response);
 		});
+	}, [is2FANeeded, navigate, isLoggedIn]);
+  
+	return (isLoggedIn == 'online' && !is2FANeeded) ? children : null;
+	// return null;
+  };
 
-		return (isLoggedIn && is2FANeeded == false) ? children: null;
-
-		// console.log("****************islogged", isLoggedIn)
-	// if (isLoggedIn == 'offline') {
-	// 	console.log("*******************************************Cas4")
-	// 	return <Navigate to="/"/>
-	// }
-	// else if (isLoggedIn == 'online' && is2FANeeded == true) {
-	// 	console.log("*******************************************Cas5")
-	// 	return <Navigate to="/TFAVerify"/>
-	// }
-	// else {
-	// 	console.log("*******************************************Cas6")
-	//     return children
-	// }
-}
 
 function App() {
 
