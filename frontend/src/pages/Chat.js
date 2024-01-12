@@ -45,10 +45,10 @@ const ChatPage = () => {
                 getAllChannels()
             })
 
-            chatSocket.on('UserKicked', () => {
-              setSelectedChat(0)
-              store.dispatch(chatSlice.actions.selectChat(0))
-            })
+            // chatSocket.on('UserKicked', () => {
+            //   setSelectedChat(0)
+            //   store.dispatch(chatSlice.actions.selectChat(0))
+            // })
 
             return () => {
                 chatSocket.off('newChannel')
@@ -126,7 +126,6 @@ const ChatPage = () => {
       fetchData();
       const intervalId = setInterval(fetchData, 500);
       return () => clearInterval(intervalId);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     useEffect(() => {
@@ -141,7 +140,6 @@ const ChatPage = () => {
       const intervalId = setInterval(fetchData, 500);
       return () => clearInterval(intervalId);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     const getMutedUsers = () => {
@@ -159,6 +157,7 @@ const ChatPage = () => {
       const isChatJoined = channels.some(
         (x) => x.id === selectedChat
       )
+      console.log("$$$$$$$$$$$$$$$$$$", isChatJoined)
       if (isChatJoined === false)
       {
          store.dispatch(chatSlice.actions.selectChat(0))

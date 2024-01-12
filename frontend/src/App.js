@@ -273,6 +273,7 @@ function App() {
 					<Check2FAForOtherRoutes>
 						<ProfilContainer />
 					</Check2FAForOtherRoutes>,
+					loader: UserLoader
 				},
                 {
                     path: 'updateProfile',
@@ -285,6 +286,7 @@ function App() {
                 },
                 {
                     path: 'chat',
+					loader: UserLoader,
                     element: <Check2FAForOtherRoutes><ChatPage/></Check2FAForOtherRoutes>,
                 },
 				{

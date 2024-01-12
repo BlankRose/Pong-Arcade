@@ -4,8 +4,10 @@ import store from './store/index'
 
 
 export async function UserLoader() {
+    console.log("phiphi")
     apiHandle.get('/users/me', withAuth())
     .then (res=>{
+        console.log("(((((((((((((((9",res)
         store.dispatch(userSlice.actions.updateUser(res.data))
     })
     .catch (err => {
