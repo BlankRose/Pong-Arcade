@@ -24,6 +24,9 @@ const SocketProvider = ({ children }) => {
 	const [ gameContext, setGameContext ] = useState(defaultGameContext);
 	const [ chatContext, setChatContext ] = useState({});
 
+	const [ gamePlayer1, setPlayer1 ] = useState(null);
+	const [ gamePlayer2, setPlayer2 ] = useState(null);
+
 	const connectSockets = () => {
 		if (!gameSocket) {
 			setGameSocket(newSocket("game"));
@@ -47,12 +50,21 @@ const SocketProvider = ({ children }) => {
 		setChatContext({});
 	}
 
+	const resetGameStates = () => {
+		setGameContext({ inQueue: false, gameState: null, code: null });
+		setPlayer1(null);
+		setPlayer2(null);
+	}
+
 	return (
 		<SocketContext.Provider value={{
 			gameSocket, chatSocket,
 			gameContext, chatContext,
 			setGameContext, setChatContext,
-			connectSockets, disconnectSockets
+			connectSockets, disconnectSockets,
+			gamePlayer1, gamePlayer2,
+			setPlayer1, setPlayer2,
+			resetGameStates
 		}}>
 			{children}
 		</SocketContext.Provider>

@@ -17,8 +17,10 @@ function Game() {
 	const savedTheme = localStorage.getItem('theme');
 
 	const [, forceUpdate] = useReducer(x => x + 1, 0);
-	const { gameSocket, gameContext, setGameContext } = useContext(SocketContext);
-	const [ players, setPlayers ] = useState([null, null]);
+	const {
+		gameSocket, gameContext, setGameContext, resetGameStates,
+		gamePlayer1, gamePlayer2, setPlayer1, setPlayer2
+	} = useContext(SocketContext);
 	const [ theme, setTheme ] = useState(savedTheme || themes[0]);
 
 	const changeTheme = (theme) => {
@@ -48,7 +50,6 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'joinQueueSuccess', () => {
-			console.log("HELP A");
 			setGameContext({ ...gameContext, inQueue: true, code: null });
 		})
 
@@ -57,7 +58,6 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'joinPrivateSuccess', data => {
-			console.log("HELP B");
 			setGameContext({ ...gameContext, inQueue: true, code: data });
 		})
 
@@ -66,6 +66,16 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'gameStart', data => {
+			if (data?.player1 && !gamePlayer1) {
+				apiHandle.get(`/users/${data.player1}`, withAuth())
+					.then(res => { setPlayer1(res.data) })
+					.catch(_ => { /* IGNORED */ });
+			}
+			if (data?.player2 && !gamePlayer2) {
+				apiHandle.get(`/users/${data.player2}`, withAuth())
+					.then(res => { setPlayer2(res.data) })
+					.catch(_ => { /* IGNORED */ })
+			}
 			setGameContext({ inQueue: false, gameState: data, code: null });
 		})
 
@@ -74,8 +84,7 @@ function Game() {
 		})
 
 		newSocketEvent(gameSocket, 'gameEnd', _ => {
-			setGameContext({ inQueue: false, gameState: null, code: null });
-			setPlayers([null, null]);
+			resetGameStates();
 		})
 
 		gameSocket.connect();
@@ -123,21 +132,6 @@ function Game() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		if (!gameContext.gameState)
-			return;
-
-		apiHandle.get(`/users/${gameContext.gameState.player1}`, withAuth())
-			.then(res => { setPlayers([res.data, players[1]]) })
-			.catch(_ => { });
-		apiHandle.get(`/users/${gameContext.gameState.player2}`, withAuth())
-			.then(res => { setPlayers([players[0], res.data]) })
-			.catch(_ => { })
-
-	//  --> Only run when game updates
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [gameContext])
-
 	const copyToClipboard = () => {
 		if (gameContext?.code)
 			navigator?.clipboard?.writeText(gameContext.code)
@@ -173,12 +167,12 @@ function Game() {
 					gameContext.gameState
 						? <>
 						<div className='players-display'>
-							<img className='players-icon' src={players[0]?.avatar ? players[0].avatar : Avatar} alt='avatar'/>
+							<img className='players-icon' src={gamePlayer1?.avatar ? gamePlayer1.avatar : Avatar} alt='avatar'/>
 							<div className='players-name'>
-								{players[0]?.username} VS {players[1]?.username}<br/>
+								{gamePlayer1?.username} VS {gamePlayer2?.username}<br/>
 								{gameContext.gameState.score1} - {gameContext.gameState.score2}
 							</div>
-							<img className='players-icon' src={players[1]?.avatar ? players[1].avatar : Avatar} alt='avatar'/>
+							<img className='players-icon' src={gamePlayer2?.avatar ? gamePlayer2.avatar : Avatar} alt='avatar'/>
 						</div>
 						<div className='force-center'>
 							<GameCanvas ctx={gameContext.gameState} theme={theme}/><br/>

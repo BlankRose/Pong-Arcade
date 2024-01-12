@@ -265,7 +265,7 @@ function App() {
 					    <Check2FAForOtherRoutes>
 						   <Profil />
 						</Check2FAForOtherRoutes>, 
-					loader: UserLoader
+					loader: UserLoader,
                 },
 				{
 					path: 'profile/:username',
@@ -277,7 +277,6 @@ function App() {
 				},
                 {
                     path: 'updateProfile',
-                    loader: UserLoader,
                     element: <Check2FAForOtherRoutes><UpdateProfil /></Check2FAForOtherRoutes>,
                 },
                 {
@@ -297,6 +296,10 @@ function App() {
 					path: 'leader',
 					element: <Check2FAForOtherRoutes><Leader /></Check2FAForOtherRoutes>
 
+				},
+				{
+					path: '*',
+					element: <Check2FAForOtherRoutes><Home /></Check2FAForOtherRoutes>
 				},
                 {
                     path: '2fa',
