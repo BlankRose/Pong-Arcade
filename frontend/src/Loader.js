@@ -12,7 +12,7 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 		return null;
 	apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
-			if (res.data === 'online') {
+			if (res.data !== 'offline') {
 				connectSockets();
 				store.dispatch(userSlice.actions.setOnline())
 				localStorage.setItem(key_name, Date.now().toString());
@@ -27,9 +27,3 @@ export async function statusLoader({ connectSockets, disconnectSockets })
 		});
 	return null;
 }
-
-apiHandle.get('/auth/loginStatus', withAuth())
-.then(() => {/* IGNORED */})
-.catch(err => {
-    console.warn(err.response);
-});

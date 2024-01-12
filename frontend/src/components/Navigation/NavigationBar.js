@@ -9,81 +9,82 @@ import apiHandle from '../API_Access';
 import { withAuth } from '../API_Access';
 
 const Navbar = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(useSelector((state) => state.user.status));
-    const [refresh, setRefresh] = useState(0);
-    
-    
+	const [isLoggedIn, setIsLoggedIn] = useState(useSelector((state) => state.user.status));
+	const [refresh, setRefresh] = useState(0);
+		
+		
   const handleLogout = () => {
-    if (refresh === 0)
-    {
-        setRefresh((prevRefresh) => prevRefresh + 1);
-    }
-    else {
-        setRefresh((prevRefresh) => prevRefresh - 1);
-    }
+	if (refresh === 0)
+	{
+		setRefresh((prevRefresh) => prevRefresh + 1);
+	}
+	else {
+		setRefresh((prevRefresh) => prevRefresh - 1);
+	}
   };
 
 
-    const navLinks = [
-        { to: '/profile', text: 'Profile', icon: faUser },
-        // { to: '/2fa', text: '2FA', icon: faLock },
-        { to: '/chat', text: 'Chat', icon: faComments },
-        { to: '/game', text: 'Game', icon: faGamepad },
-        {to: '/leader', text: 'Leader', icon: faTrophy },
-        { to: '/friends', text: 'Friends', icon: faUser}
-    ];
+	const navLinks = [
+		{ to: '/profile', text: 'Profile', icon: faUser },
+		// { to: '/2fa', text: '2FA', icon: faLock },
+		{ to: '/chat', text: 'Chat', icon: faComments },
+		{ to: '/game', text: 'Game', icon: faGamepad },
+		{to: '/leader', text: 'Leader', icon: faTrophy },
+		{ to: '/friends', text: 'Friends', icon: faUser}
+	];
 
-    useEffect (() => {
-        const fetchData = () => {
-		apiHandle.get('/auth/loginStatus', withAuth())
-		.then(res => {
-            if (res){
-                setIsLoggedIn(res.data)
-            } else {
-                setIsLoggedIn('offline')
-            }
-		})
-		.catch(err => {
-            setIsLoggedIn('offline')
-			console.warn(err.response);
-		});
-    }
+	useEffect (() => {
+		const fetchData = () => {
+			apiHandle.get('/auth/loginStatus', withAuth())
+			.then(res => {
+				if (res){
+					setIsLoggedIn(res.data)
+				} else {
+					setIsLoggedIn('offline')
+				}
+			})
+			.catch(err => {
+				setIsLoggedIn('offline')
+				console.warn(err.response);
+			});
+		}
 
-        const intervalId = setInterval(fetchData, 500);
-        return () => clearInterval(intervalId);
+		fetchData();
+		const intervalId = setInterval(fetchData, 5000);
+		return () => clearInterval(intervalId);
 	},[refresh])
-    
-    return (
-        <header>
-            <nav className={styles.nav}>
-                <div className={styles.container}>
-                    <div className={styles.leftContainer}>
-                        {isLoggedIn === 'online' &&
-                            navLinks.map((link, index) => (
-                                <NavLink
-                                    key={index}
-                                    to={link.to}
-                                    className={({ isActive }) =>
-                                        isActive ? styles.active : undefined
-                                    }
-                                >
-                                    <FontAwesomeIcon icon={link.icon} />
-                                    {link.text}
-                                </NavLink>
-                                
-                            ))
-                        }
-                    </div>
-                    <div className={styles.centerContainer}>
-                        {isLoggedIn === 'online' && (
-                            <LogoutButton onLogout={handleLogout}/>
-                        )}
-        
-                    </div>
-                </div>
-            </nav>
-        </header>
-    );
+		
+	return (
+		<header>
+			<nav className={styles.nav}>
+				<div className={styles.container}>
+					<div className={styles.leftContainer}>
+						{isLoggedIn === 'online' &&
+							navLinks.map((link, index) => (
+								<NavLink
+									key={index}
+									to={link.to}
+									className={({ isActive }) =>
+										isActive ? styles.active : undefined
+									}
+								>
+									<FontAwesomeIcon icon={link.icon} />
+									{link.text}
+								</NavLink>
+								
+							))
+						}
+					</div>
+					<div className={styles.centerContainer}>
+						{isLoggedIn === 'online' && (
+							<LogoutButton onLogout={handleLogout}/>
+						)}
+		
+					</div>
+				</div>
+			</nav>
+		</header>
+	);
 };
 
 export default Navbar;

@@ -35,6 +35,7 @@ function Profil({ username }) {
 	}
 
 	useEffect(() => {
+		console.log("Retrieving user data...")
 		apiHandle.get(`/users/${username || 'me'}`, withAuth())
 			.then(response => {
 				setUser(response.data);
@@ -55,9 +56,7 @@ function Profil({ username }) {
 			.catch(_ => {
 				console.error('Failed to fetch user history')
 			})
-	}, [username]);
 
-	useEffect (()=> {
 		apiHandle.get('/auth/loginStatus', withAuth())
 		.then(res => {
 			setStatus(res.data)
@@ -65,8 +64,7 @@ function Profil({ username }) {
 		.catch(err => {
 			console.warn(err.response);
 		});
-	})
-
+	}, [username]);
 
 	return (
 		user
