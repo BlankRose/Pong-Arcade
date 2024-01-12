@@ -295,6 +295,10 @@ function App() {
 					element: <Check2FAForOtherRoutes><Leader /></Check2FAForOtherRoutes>
 
 				},
+				{
+					path: '*',
+					element: <Check2FAForOtherRoutes><Home /></Check2FAForOtherRoutes>
+				},
                 {
                     path: '2fa',
 					loader: UserLoader,
