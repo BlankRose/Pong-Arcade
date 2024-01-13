@@ -46,9 +46,10 @@ const ChatPage = () => {
             })
 
             chatSocket.on('UpdateChatPage', () => {
-              setupdateMessages(true)
-              setSelectedChat(0)
-              store.dispatch(chatSlice.actions.selectChat(0))
+              setupdateMessages(true);
+              checkSelectedChat();
+              // setSelectedChat(0)
+              // store.dispatch(chatSlice.actions.selectChat(0))
             })
 
             chatSocket.on('UpdateChatPageNoReset', () => {
@@ -75,11 +76,10 @@ const ChatPage = () => {
       fetchData();
       // const intervalId = setInterval(fetchData, 10000);
       // return () => clearInterval(intervalId);
-    }, [socket])
+    }, [socket, selectedChat])
 
     useEffect(() => {
       const fetchData = () => {
-        checkSelectedChat();
         if (selectedChat) {
           if (!updateMessages) {
             getAllMsg();
@@ -117,7 +117,6 @@ const ChatPage = () => {
 
     useEffect(() => {
       const fetchData = () => {
-        checkSelectedChat();
         if(selectedChat) {
           getMutedUsers()
         }
@@ -130,7 +129,6 @@ const ChatPage = () => {
 
     useEffect(() => {
       const fetchData = () => {
-        checkSelectedChat();
         if(selectedChat) {
           getBlockedUsers()
         }
@@ -154,13 +152,14 @@ const ChatPage = () => {
 
 
     const checkSelectedChat = () => {
-      const isChatJoined = channels.some(
-        (x) => x.id === selectedChat
-      )
+      const isChatJoined = channels.some((channel) =>
+         channel.members.some((member) => member.id === userData.id ) && channel.id === selectedChat
+      );
       if (isChatJoined === false)
       {
          store.dispatch(chatSlice.actions.selectChat(0))
         store.dispatch(chatSlice.actions.selectChatName(""))
+        setSelectedChat(0)
       }
     }
     const getAllMsg = () => {
