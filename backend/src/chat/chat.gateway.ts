@@ -85,11 +85,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async joinChannel(@MessageBody() data) {
         const [channelId, userId, password] = data
         try {
-            return await this.chatService.addUserToChannel (
+            await this.chatService.addUserToChannel (
                 channelId,
                 userId,
                 password
             )
+            this.server.emit("UpdateChatPageNoReset")
         } catch (error) {
             console.log('Error in joining channel. Error: ', error)
         }
@@ -99,7 +100,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async removeUser(@MessageBody() data) {
         try {
             const [channelId, userId] = data
-            return await this.chatService.removeUserFromChannel (channelId, userId)
+            await this.chatService.removeUserFromChannel (channelId, userId)
+            this.server.emit("UpdateChatPage")
         } catch (error) {
             console.log('Error in removing user from the channel, Error: ', error)
         }
@@ -108,8 +110,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async removeChannel(@MessageBody() data: any) {
         try {
             const [channelId, userId] = data;
-            return await this.chatService.deleteChannel(channelId, userId)
-            // this.server.emit('updateData', data)
+            await this.chatService.deleteChannel(channelId, userId)
+            this.server.emit("UpdateChatPage")
         } catch (error) {
             console.log('Failed to delete the channel. Error: ', error)
         }
@@ -129,9 +131,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('createDM')
     // @UsePipes(ValidationPipe)
     async createDirectChannel(@MessageBody() [userId, otherUserId]: [number, number]) {
-        console.log("Backend: create DM")
         const channel = await this.chatService.createDirectMsgChannel(userId, otherUserId)
-        console.log("Backend: complete DM")
         this.server.emit('newChannel', channel)
         return channel
     }
@@ -140,7 +140,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async blockUserHandler(@MessageBody() [blockerId, toBlockId]: [number, number]) {
       try {
           await this.chatService.blockMember(blockerId, toBlockId);
-          return { message: 'User blocked successfully' };
+          this.server.emit('UpdateChatPage')
       } catch (error) {
           console.error(`Failed to block user with blockerUserId: ${blockerId} and toBlockUserId: ${toBlockId}`);
       }
@@ -150,7 +150,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async unblockUserHanlder(@MessageBody() [blockerId, toUnblockId]: [number, number]) {
         try {
             this.chatService.unblockMember(blockerId, toUnblockId)
-            return { message: 'User unblocked successfully' }
+            this.server.emit('UpdateChatPage')
         } catch (error) {
             console.log(`Failed to unblock user with blockerUserId: ${blockerId} and toBlockUserId: ${toUnblockId}`)
         }
@@ -169,6 +169,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async setAdmin(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
         try {
             await this.chatService.setAsAdmin(userId, targetId, channelId)
+            this.server.emit('UpdateChatPage')
             return { message: 'User is now admin' }
         } catch (error) {
             console.log('Failed to set admin')
@@ -179,6 +180,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async unsetAdmin(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
         try {
             this.chatService.unsetAdmin(userId, targetId, channelId)
+            this.server.emit('UpdateChatPage')
             return { message: 'User it is no longer admin' }
         } catch (error) {
             console.log('Failed to unset admin')
@@ -189,7 +191,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async kickUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
         try {
             this.chatService.kickMember(userId, targetId, channelId)
-            this.server.emit("UserKicked")
+            this.server.emit("UpdateChatPage")
             return { message: 'User kicked successfully' }
         } catch (error) {
             console.log('Failed to kick user')
@@ -201,7 +203,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         try {
             console.log("I'm in ban backend")
             this.chatService.banMember(userId, targetId, channelId)
-            this.server.emit("UserKicked")
+            this.server.emit("UpdateChatPage")
             return { message: 'User banned successfully' }
         } catch (error) {
             console.log('Failed to ban user')
@@ -212,6 +214,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async unbanUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
         try {
             this.chatService.unbanMember(userId, targetId, channelId)
+            this.server.emit('UpdateChatPage')
             return { message: 'User unbanned successfully' }
         } catch (error) {
             console.log('Failed to unban user')
@@ -231,6 +234,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     async muteUser(@MessageBody() [userId,targetId,channelId]: [number, number, number]) {
         try {
             this.chatService.muteMember(userId, targetId, channelId)
+            this.server.emit('UpdateChatPage')
             return { message: 'User muted successfully' }
         } catch (error) {
             console.log('Failed to mute user')

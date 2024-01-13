@@ -45,9 +45,14 @@ const ChatPage = () => {
                 getAllChannels()
             })
 
-            chatSocket.on('UserKicked', () => {
+            chatSocket.on('UpdateChatPage', () => {
+              setupdateMessages(true)
               setSelectedChat(0)
               store.dispatch(chatSlice.actions.selectChat(0))
+            })
+
+            chatSocket.on('UpdateChatPageNoReset', () => {
+              setupdateMessages(true)
             })
 
             return () => {
@@ -58,7 +63,8 @@ const ChatPage = () => {
         } else {
             console.log('Failed to connect socket')
         }
-    }, [selectedChat])
+        setupdateMessages(false);
+    }, [selectedChat, updateMessages])
 
     useEffect(() => {
       const fetchData = () => {
@@ -66,12 +72,12 @@ const ChatPage = () => {
             getAllChannels()
         }
       }
-      const intervalId = setInterval(fetchData, 1000);
-      return () => clearInterval(intervalId);
+      fetchData();
+      // const intervalId = setInterval(fetchData, 10000);
+      // return () => clearInterval(intervalId);
     }, [socket])
 
     useEffect(() => {
-      console.log("Correct useEffect")
       const fetchData = () => {
         checkSelectedChat();
         if (selectedChat) {
@@ -105,9 +111,8 @@ const ChatPage = () => {
       };
     
       fetchData();    
-      const intervalId = setInterval(fetchData, 1000);
-    
-      return () => clearInterval(intervalId);
+      // const intervalId = setInterval(fetchData, 10000);
+      // return () => clearInterval(intervalId);
     }, [selectedChat, updateMessages, channels]); 
 
     useEffect(() => {
@@ -119,8 +124,8 @@ const ChatPage = () => {
         setupdateMessages(false)
       }
       fetchData();
-      const intervalId = setInterval(fetchData, 1000);
-      return () => clearInterval(intervalId);
+      // const intervalId = setInterval(fetchData, 10000);
+      // return () => clearInterval(intervalId);
     },[selectedChat, updateMessages])
 
     useEffect(() => {
@@ -132,8 +137,8 @@ const ChatPage = () => {
         setupdateMessages(false)
       }
       fetchData();
-      const intervalId = setInterval(fetchData, 1000);
-      return () => clearInterval(intervalId);
+      // const intervalId = setInterval(fetchData, 10000);
+      // return () => clearInterval(intervalId);
 
     },[selectedChat, updateMessages])
 
@@ -152,7 +157,6 @@ const ChatPage = () => {
       const isChatJoined = channels.some(
         (x) => x.id === selectedChat
       )
-      console.log("$$$$$$$$$$$$$$$$$$", isChatJoined)
       if (isChatJoined === false)
       {
          store.dispatch(chatSlice.actions.selectChat(0))
@@ -387,7 +391,6 @@ const ChatPage = () => {
       }
       
       const banUser = targetUserId => {
-        console.log("BanUser")
         if (socket !== undefined) {
           socket.emit(
             "banUser",

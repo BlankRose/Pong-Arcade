@@ -60,7 +60,7 @@ export class ChatService
 		return (this.channelRepo.save(createdChannel))
 	}
 
-	async addUserToChannel (channelId: number, userId: number, password: string) :Promise<Channel> {
+	async addUserToChannel (channelId: number, userId: number, password: string) :Promise<void> {
 		const channel = await this.channelRepo.findOne({relations: ['members', 'bannedUsers'], where: {id: channelId}});
 		const user = await this.userRepo.findOne({where: { id: userId }})
 		if (channel.password != '') {
@@ -81,14 +81,14 @@ export class ChatService
             }
         }
 		channel.members.push(user)
-		return await this.channelRepo.save(channel)
+		await this.channelRepo.save(channel)
 	}
 
-	async removeUserFromChannel (channelId: number, userId: number): Promise<Channel> {
+	async removeUserFromChannel (channelId: number, userId: number): Promise<void> {
 		const channel = await this.channelRepo.findOne({relations: ['members'], where: {id: channelId}})
 		const user = await this.userRepo.findOne({where: { id: userId }})
 		channel.members = channel.members.filter(x => x.id !== user.id)
-		return await this.channelRepo.save(channel)
+		await this.channelRepo.save(channel)
 	}
 
 	async changeChannelPassword (channelId: number, password: string): Promise<boolean> {
@@ -105,7 +105,7 @@ export class ChatService
 
 	async deleteChannel (channelId: number, userId: number) {
 		const channel = await this.channelRepo.findOne({where: {id: channelId}})
-		return await this.channelRepo.remove(channel)
+		await this.channelRepo.remove(channel)
 	}
 
 	async getChannels() {

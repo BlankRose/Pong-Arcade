@@ -139,13 +139,11 @@ function Game() {
 	}
 
 	const joinPrivate = () => {
-		console.log("hello world");
 		let elem = document.getElementById('game_code')?.value
 			?.replaceAll(' ', '').replaceAll('\t', '').toUpperCase()
 			.replace(/[^A-Z0-9]/g, '');
 		if (!elem || elem.length <= 0) return;
 
-		console.log("Lol");
 		gameSocket?.emit('joinPrivate', elem);
 	}
 

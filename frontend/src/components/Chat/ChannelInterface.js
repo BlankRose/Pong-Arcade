@@ -143,7 +143,6 @@ const ChannelList = props => {
     let notJoinedChan = []
     let notJoinedAndNotDms = []
 
-    console.log("*******************Props:", userData)
   
     if (props.allChan.length !== 0) {
       allUserChan = props.allChan.filter(chan =>
@@ -178,7 +177,6 @@ const ChannelList = props => {
       notJoinedAndNotDms = notJoinedChan.filter(
         channel => channel.type !== 'direct'
       )
-      console.log("%%%%%%%%%%%", notJoinedChan)
     }
   
     return (
