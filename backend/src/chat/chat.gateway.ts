@@ -201,6 +201,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         try {
             console.log("I'm in ban backend")
             this.chatService.banMember(userId, targetId, channelId)
+            this.server.emit("UserKicked")
             return { message: 'User banned successfully' }
         } catch (error) {
             console.log('Failed to ban user')
