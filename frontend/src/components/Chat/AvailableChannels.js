@@ -47,7 +47,7 @@ const ChannelItems = props => {
 
   return (
     <>
-       {props.channel.type !== 'private' && (
+       { (
        <li onClick={showModal}>
         <div>{props.channel.name}</div>
        </li>

@@ -244,7 +244,7 @@ const NewChannel = ({ handleCreation }) => {
     const [inputPasswordValue, setInputPasswordValue] = useState("")
     const [channelType, setChannelType] = useState("public")
     const [channelErrorMessage, setChannelErrorMessage] = useState("")
-    const [passwordErrorMessage, /*setPasswordErrorMessage*/] = useState("")
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState("")
     const userData = useSelector(state => state.user)
   
     const handleChannelInputChange = event => {
@@ -284,10 +284,10 @@ const NewChannel = ({ handleCreation }) => {
           return false
         }
         setChannelErrorMessage("")
-        // if (inputPasswordValue.trim() === "") {
-        //   setPasswordErrorMessage("Password is required")
-        //   return false
-        // }
+        if (inputPasswordValue.trim() === "") {
+          setPasswordErrorMessage("Password is required")
+          return false
+        }
       }
       return true
     }
