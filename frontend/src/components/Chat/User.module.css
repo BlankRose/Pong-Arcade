@@ -79,3 +79,13 @@
     border-radius: 50%;
     margin-right: 5%;
 }
+
+.profil{
+    color: black;
+    font-style: italic;
+    text-decoration: none;
+}
+
+.profil:hover{
+    font-size: larger;
+}

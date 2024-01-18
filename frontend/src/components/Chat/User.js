@@ -5,6 +5,7 @@ import styles from "./User.module.css"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useEffect, useRef } from "react"
+import { Link } from 'react-router-dom';
 //import { useNavigate } from "react-router-dom"
 import Avatar from '../../assets/avatar.jpeg';
 
@@ -185,7 +186,7 @@ const User = ({
           </div>
         )}
         <div>
-          <h5>{nickname}</h5>
+          <Link className={styles.profil} to={`../profile/${id}`}>{nickname}</Link>
           <p className={styles.status}>
             {status === "playing" ? "playing" : ""}
           </p>

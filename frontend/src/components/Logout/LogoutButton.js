@@ -5,9 +5,13 @@ import userSlice from "../../store/user";
 import { useNavigate } from "react-router-dom";
 
 
+
 const LogoutButton = ({onLogout}) => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
+  
+
+
 
   const submitLogout = async () => {
     setIsLoading(true)
