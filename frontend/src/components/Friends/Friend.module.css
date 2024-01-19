@@ -45,3 +45,12 @@
     color: black;
     font-weight: bold;
 }
+
+.friendName {
+    text-decoration: none;
+    color: #3a3c42;
+}
+
+.friendName:hover {
+    font-weight: bolder;
+}

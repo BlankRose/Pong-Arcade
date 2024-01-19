@@ -1,4 +1,5 @@
 import styles from "./Friend.module.css"
+import { Link } from 'react-router-dom';
 import { useState } from "react"
 import apiHandle from "../API_Access"
 import { withAuth } from "../API_Access"
@@ -81,8 +82,8 @@ const Friend = ({
             className={styles.profilePicture} src={avatarUrl} alt="avatar"
           />
           <div className={styles.nameAndStatus}> 
-              <h3>{nickname}</h3>
-              <p className={getStatusClass(status)}>{status}</p>              
+				<Link className={styles.friendName} to={`/profile/${nickname}`}>{nickname}</Link>
+				<p className={getStatusClass(status)}>{status}</p>              
           </div>
         </>
       )}

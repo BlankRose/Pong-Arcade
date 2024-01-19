@@ -1,5 +1,6 @@
 import styles from "./FriendList.module.css"
 import Friend from "./Friend"
+import Avatar from "../../assets/avatar.jpeg";
 
 const FriendList = ({ friendList }) => {
   return (
@@ -13,7 +14,7 @@ const FriendList = ({ friendList }) => {
               key={friend.id}
               id={friend.id}
               nickname={user?.username}
-              avatarUrl={user?.avatar}
+              avatarUrl={user?.avatar ? user.avatar : Avatar}
               status={user?.status}
               isPending={friend.isPending}
               createdByMe={friend.createdBy?.id === friendList.userId}
@@ -30,7 +31,7 @@ const FriendList = ({ friendList }) => {
               key={FriendshipRequests.id}
               id={FriendshipRequests.id}
               nickname={user?.username}
-              avatarUrl={user?.avatar}
+              avatarUrl={user?.avatar ? user.avatar : Avatar}
               status={user?.status}
               isPending={FriendshipRequests.isPending}
               createdByMe={FriendshipRequests.createdBy?.id === friendList.userId}
