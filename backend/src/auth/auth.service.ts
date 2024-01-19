@@ -34,20 +34,22 @@ export class AuthService {
 		if (!base)
 			return;
 		const clean = base
-			.replaceAll(' ', '').replaceAll('\t', '').toUpperCase()
+			.replaceAll(' ', '').replaceAll('\t', '')
 			.replace(/[^a-zA-Z0-9]/g, '');
 		return clean == base;
 	}
 
 	async login(req: LoginDto) {
 		if (!req.username || !req.password
-			|| !req.username.length || !req.username.length)
+			|| !req.username.length || !req.username.length
 			|| req.username.length <= 0 || req.username.length <= 0)
 			throw new BadRequestException("Missing credentials");
-		if (!checkString(req.username))
+
+		const username = req.username.replaceAll(' ', '').replaceAll('\t', '');
+		if (!this.checkString(username))
 			throw new BadRequestException("Username must be alphanumeric");
 
-		const user = await this.validateUser(req.username, req.password);
+		const user = await this.validateUser(username, req.password);
 		if (!user) {
 			throw new UnauthorizedException("Invalid user or password");
 		}
@@ -77,11 +79,13 @@ export class AuthService {
 			|| !req.username.length || !req.username.length
 			|| req.username.length <= 0 || req.username.length <= 0)
 			throw new BadRequestException("Missing credentials");
-		if (!checkString(req.username))
+
+		const username = req.username.replaceAll(' ', '').replaceAll('\t', '');
+		if (!this.checkString(username))
 			throw new BadRequestException("Username must be alphanumeric");
 
 		await this.usersService.createUser({
-			username: req.username,
+			username: username,
 			password: req.password,
 			status: 'online',
 			is2FANeeded: false,
