@@ -41,14 +41,14 @@ function UpdateProfil() {
 					setErrorAvatar(null);
 				})
 				.catch(err => {
-					if (413 === err.response.status)
+					if (413 === err?.response?.status)
 					{
 						setErrorAvatar('Provided image is too large');
 						setMessage('');
 					}
 					else
 					{
-						setErrorAvatar(err.response.data.message);
+						setErrorAvatar(err?.response?.data?.message);
 						setMessage('');
 					}
 				});
