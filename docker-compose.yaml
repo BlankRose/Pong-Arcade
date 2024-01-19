@@ -5,7 +5,7 @@
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /        Last Updated: January 09, 2024 [12:47 pm]               #
+#       //\   /        Last Updated: January 19, 2024 [03:21 pm]               #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
@@ -19,11 +19,11 @@ services:
     image: pong-front:latest
     build: ./frontend
     ports:
-      - ${WEB_ACCESS_PORT}:${WEB_ACCESS_PORT}
+      - ${WEB_ACCESS_PORT:-5500}:${WEB_ACCESS_PORT:-5500}
     environment:
-      - PORT=${WEB_ACCESS_PORT}
-      - REACT_APP_API_PORT=${API_ACCESS_PORT}
-      - REACT_APP_API_UID=${API_UID}
+      - PORT=${WEB_ACCESS_PORT:-5500}
+      - REACT_APP_API_PORT=${API_ACCESS_PORT:-5501}
+      - REACT_APP_API_UID=${API_UID:?}
     volumes:
       - ${PWD:-.}/frontend/src:/app/src:ro
       - ${PWD:-.}/frontend/public:/app/public:ro
@@ -35,14 +35,14 @@ services:
     image: pong-back:latest
     build: ./backend
     ports:
-      - ${API_ACCESS_PORT}:3001
+      - ${API_ACCESS_PORT:-5501}:3001
     environment:
-      - API_UID=${API_UID}
-      - API_SECRET=${API_SECRET}
-      - JWT_SECRET=${JWT_SECRET}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - API_UID=${API_UID:?}
+      - API_SECRET=${API_SECRET:?}
+      - JWT_SECRET=${JWT_SECRET:?}
+      - POSTGRES_USER=${POSTGRES_USER:?}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?}
+      - POSTGRES_DB=${POSTGRES_DB:?}
     volumes:
       - ${PWD:-.}/backend/src:/app/src
     networks:
@@ -56,9 +56,9 @@ services:
     expose:
       - "5432"
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER:?}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?}
+      - POSTGRES_DB=${POSTGRES_DB:?}
     volumes:
       - pong-data:/var/lib/postgresql/data
     networks:

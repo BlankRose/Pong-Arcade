@@ -6,7 +6,7 @@
 #    By: chajjar <chajjar@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by  Friday, Au       #+#    #+#              #
-#    Updated: 2023/10/10 14:01:07 by chajjar          ###   ########.fr        #
+#    Updated: 2024/01/19 15:38:14 by flcollar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,6 @@ start: .env
 sd: start_detached
 start_detached: .env
 	-@docker-compose up --build -d -t 3
-
-.env:
-	@sh envgen.sh
 
 e: stop
 stop:
@@ -53,6 +50,7 @@ ip:
 
 # ############################################################################ #
 #                               macOS Specific                                 #
+#                                For CHARLES                                   #
 # ############################################################################ #
 
 # Enable following rules ONLY on macOS

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
@@ -31,9 +31,14 @@ export class AuthService {
 	}
 
 	async login(req: LoginDto) {
+		if (!req.username || !req.password
+			|| !req.username.length || !req.username.length
+			|| req.username.length <= 0 || req.username.length <= 0)
+			throw new BadRequestException("Missing credentials");
+
 		const user = await this.validateUser(req.username, req.password);
 		if (!user) {
-			throw new UnauthorizedException();
+			throw new UnauthorizedException("Invalid user or password");
 		}
 
 		this.usersService.turnOnline(user.id);
@@ -53,13 +58,18 @@ export class AuthService {
 
 			return this.generateNewJWT(user);
 		}
-		throw new UnauthorizedException();
+		throw new UnauthorizedException("No user bound");
 	}
 
-	async register(registerDto: RegisterDto): Promise<any> {
+	async register(req: RegisterDto): Promise<any> {
+		if (!req.username || !req.password
+			|| !req.username.length || !req.username.length
+			|| req.username.length <= 0 || req.username.length <= 0)
+			throw new BadRequestException("Missing credentials");
+
 		await this.usersService.createUser({
-			username: registerDto.username,
-			password: registerDto.password,
+			username: req.username,
+			password: req.password,
 			status: 'online',
 			is2FANeeded: false,
 		});
