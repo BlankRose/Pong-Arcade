@@ -113,7 +113,7 @@ const GameCanvas = ({ ctx, theme }) => {
 		}
 
 		if (ctx.playSound && localStorage.getItem('mute') === 'true')
-			audio.play();
+			audio.play().catch(/* IGNORED: Mostly because user disabled audio perms */);
 	}, [ctx, theme]);
 
 	return <canvas className="gameCanvas" id="canvas" ref={canvasRef} width={CanvasConstants.WIDTH} height={CanvasConstants.HEIGHT} />
