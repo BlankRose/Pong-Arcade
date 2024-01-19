@@ -4,12 +4,11 @@ import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import Friend from '../assets/icon-btn-game/duo.gif'
 import Rejoin from '../assets/icon-btn-game/Starlow.webp'
-import apiHandle, {webBaseURL, withAuth} from './API_Access';
+import apiHandle, { withAuth } from './API_Access';
 
 import Avatar from "../assets/avatar.jpeg";
 import GameCanvas from './GameCanvas';
 import CanvasConstants from "../contexts/CanvasConstants";
-//import PlayerDisplay from "./PlayerDisplay";
 
 function Game() {
 

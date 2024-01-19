@@ -10,11 +10,10 @@ import {apiBaseURL} from "../components/API_Access"
 import MembersInfo from "../components/Chat/MembersInfo"
 
 const ChatPage = () => {
-
-    
+ 
     const userData = useSelector((state) => state.user)
     const [selectedChat, setSelectedChat] = useState(useSelector((state) => state.chat.selectedChat))
-  
+
     const [channels, setChannels] = useState([])
     const [messages, setMessages] = useState([])
     const [members, setMembers] = useState([])
@@ -65,6 +64,8 @@ const ChatPage = () => {
             console.log('Failed to connect socket')
         }
         setupdateMessages(false);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChat, updateMessages])
 
     useEffect(() => {
@@ -76,6 +77,8 @@ const ChatPage = () => {
       fetchData();
       // const intervalId = setInterval(fetchData, 10000);
       // return () => clearInterval(intervalId);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [socket, selectedChat])
 
     useEffect(() => {
@@ -113,6 +116,8 @@ const ChatPage = () => {
       fetchData();    
       // const intervalId = setInterval(fetchData, 10000);
       // return () => clearInterval(intervalId);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedChat, updateMessages, channels]); 
 
     useEffect(() => {
@@ -125,6 +130,8 @@ const ChatPage = () => {
       fetchData();
       // const intervalId = setInterval(fetchData, 10000);
       // return () => clearInterval(intervalId);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     useEffect(() => {
@@ -138,6 +145,7 @@ const ChatPage = () => {
       // const intervalId = setInterval(fetchData, 10000);
       // return () => clearInterval(intervalId);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
     },[selectedChat, updateMessages])
 
     const getMutedUsers = () => {
@@ -149,7 +157,6 @@ const ChatPage = () => {
         setupdateMessages(true)        
       }
     }
-
 
     const checkSelectedChat = () => {
       const isChatJoined = channels.some((channel) =>

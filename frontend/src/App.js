@@ -1,151 +1,3 @@
-/*import './styles/App.css';
-
-import { useContext, useEffect, useState } from 'react';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import React from 'react';
-
-import apiHandle, { withAuth } from './components/API_Access';
-import Login from './components/Login';
-import Login42 from './components/42Login';
-
-import Template from './components/Template/template';
-import Profil from './components/Profil';
-import UpdateProfil from './components/UpdateProfil';
-import ProfilContainer from './components/ProfilContainer';
-import ChatPage from './pages/Chat';
-import Game from './components/Game';
-import Leader from './components/Leader';
-import Home from './components/Home';
-
-import TFATurnOn from './pages/2FATurnOn';
-import TFACodeVerification from './pages/2FACodeVerification';
-import { SocketContext } from './contexts/Sockets';
-
-//Fonts
-import "./assets/fonts/SuperMario256.ttf"
-
-// import { statusLoader } from './Loader'
-
-const router = (onLogout) => {
-	return createBrowserRouter ([
-		{
-			path: "/",
-			element: <Template />,
-			// errorElement: <ErrorPage/>,
-			// loader: statusLoader,
-			children:[
-				{
-					inde: true,
-					path: "/",
-					element: (
-						<Home />
-					)
-				},
-				{
-					index: true,
-					path: "profile",
-					// loader: userLoader, 
-					element: (
-						<Profil />
-					)
-				},
-				{
-					path: "profile/:username",
-					// loader: userLoader, 
-					element: (
-						<ProfilContainer />
-					)
-				},
-				{
-					path: "updateProfile",
-					// loader: userLoader, 
-					element: (
-						<UpdateProfil />
-					)
-				},
-				{
-					path: "game",
-					// loader: userLoader, 
-					element: (
-						<Game />
-					)
-				},
-				{
-					path: "chat",
-					// loader: userLoader,
-					element: (
-						<ChatPage onLogout={onLogout}/>
-					)
-				},
-				{
-					path: "2fa",
-					element: <TFATurnOn/>
-				},
-				{
-					path: "leader",
-					element: <Leader />
-				}
-			]
-		},
-		{
-			path: 'TFAVerify',
-			element: <TFACodeVerification />,
-		}
-	])
-}
-
-function App() {
-
-	const [ isLoggedIn, setIsLoggedIn ] = useState(false);
-	const { connectSockets, disconnectSockets } = useContext(SocketContext);
-
-	const onLoginSuccess = () => {
-		setIsLoggedIn(true);
-		connectSockets();
-	};
-
-	const onLogout = () => {
-		localStorage.removeItem('token');
-		setIsLoggedIn(false);
-		disconnectSockets();
-	};
-
-	useEffect(() => {
-		const lastTry = localStorage.getItem('lastTry');
-
-		// If last try was less than 3 minutes ago, don't try to verify token
-		// This is to avoid spamming the server with requests and helps prevent
-		// re-rendering the app too often
-		if (isLoggedIn && lastTry && Date.now() - lastTry < 3 * 60 * 1000)
-			return;
-
-		if (localStorage.getItem('token')) {
-			apiHandle.get('/auth/verify', withAuth())
-				.then((_) => {
-					localStorage.setItem('lastTry', Date.now());
-					onLoginSuccess();
-				})
-				.catch((_) => {
-					console.warn("Warning: Token is invalid or has expired!")
-					onLogout();
-				})
-		}
-	})
-
-	return (
-		isLoggedIn ? (
-				<RouterProvider router={router(onLogout)} />			
-		) : (
-			<>
-				<Login onLoginSuccess={onLoginSuccess} />
-				<Login42 onLoginSuccess={onLoginSuccess} />
-			</>
-		)
-	)
-}
-
-export default App;*/
-
 import './styles/App.css';
 
 import { useContext, useState } from 'react';
@@ -167,10 +19,7 @@ import Home from './components/Home';
 import TFATurnOn from './pages/2FATurnOn';
 import TFACodeVerification from './pages/2FACodeVerification';
 
-// import { statusLoader } from './Loader';389
-
-import {useSelector} from 'react-redux'
-import { Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { UserLoader } from './userLoader';
 import { statusLoader } from './Loader'
 import FriendsPage from './pages/FriendsPage';
@@ -181,7 +30,6 @@ import { useEffect } from 'react';
 
 
 const Check2FAForSignIn = ({ children }) => {
-	const isLoggedIn = useSelector((state) => state.user.status);
 	const is2FANeeded = useSelector((state) => state.user.is2FANeeded);
 	const is2FAEnabled = useSelector((state) => state.user._2FAEnabled);
 	const navigate = useNavigate();
@@ -235,8 +83,7 @@ const Check2FAForSignIn = ({ children }) => {
 		});
 	}, [is2FANeeded, navigate, isLoggedIn]);
   
-	return (isLoggedIn == 'online' && !is2FANeeded) ? children : null;
-	// return null;
+	return (isLoggedIn === 'online' && !is2FANeeded) ? children : null;
   };
 
 
