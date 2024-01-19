@@ -38,8 +38,6 @@ const User = ({
   const userData = useSelector(state => state.user)
   const myId = userData.id
 
-
-
   const [showContextMenu, setShowContextMenu] = useState(false)
   const [contextMenuPosition, setContextMenuPosition] = useState({
     x: 0,
@@ -152,6 +150,9 @@ const User = ({
             onClick={handleContextMenuClose}
           >
             <ul>
+				{!isDM && !isBlocked && (
+					<li onClick={createDmHandler}>Direct Message</li>
+				)}
               {toggleBlockUser}
               {amIowner ? (
                 <ul>
@@ -192,18 +193,6 @@ const User = ({
           </p>
         </div>
       </div>
-      {id !== myId && !isBlocked && (
-        <div className={styles.right}>
-          <div>
-            {!isDM && (
-              <button onClick={createDmHandler}>
-              DM
-            </button>
-            
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
