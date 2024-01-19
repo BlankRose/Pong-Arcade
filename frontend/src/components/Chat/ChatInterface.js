@@ -112,7 +112,8 @@ function ChatInterface(props) {
       maxHeight: '1000px',
       overflowY: 'auto',
       scrollBehavior: 'auto contain', // Use camelCase for property names
-      overflow: 'auto',
+      overflowX: 'hidden',
+      wordBreak: 'break-all',
       msOverflowStyle: 'none',
       scrollbarWidth: 'none',
     };
