@@ -83,6 +83,8 @@ export class AuthService {
 		const username = req.username.replaceAll(' ', '').replaceAll('\t', '');
 		if (!this.checkString(username))
 			throw new BadRequestException("Username must be alphanumeric");
+		if (username.length > 40)
+			throw new BadRequestException("Username must be less or equal to 40 characters");
 
 		await this.usersService.createUser({
 			username: username,
@@ -137,7 +139,7 @@ export class AuthService {
 			this.usersService.turnOn2FA(user.id)
 			return true
 		}
-	
+
 		async turnOff2fa(@Request() req) {
 			const user = await this.usersService.findOneByID(req.user['id'])
 	
@@ -148,8 +150,7 @@ export class AuthService {
 			return true
 	
 		}
-	
-	
+
 		async generate2FASecret(user: User){
 			const secret: string = authenticator.generateSecret()
 			const otpauthurl: string = authenticator.keyuri(user.username, 'Pong_Arcade', secret)
