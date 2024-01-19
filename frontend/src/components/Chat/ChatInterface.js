@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import styles from "./Chat.module.css"
 
-
-
 const SendForm = ({ sendMessage }) => {
     const userData = useSelector(state => state.user)
     const selectedChat = useSelector(state => state.chat.selectedChat)
@@ -43,14 +41,13 @@ const SendForm = ({ sendMessage }) => {
         />
       </div>
     )
-  }
+}
 
-
-  const Msg = ({ msg, blockedUsers }) => {
+const Msg = ({ msg, blockedUsers }) => {
     const userData = useSelector(state => state.user)
     const myNickname = userData.username
-    const isCreatorBlocked = blockedUsers.indexOf(msg.creator) !== -1
-  
+    const isCreatorBlocked = blockedUsers.indexOf(msg.senderId) !== -1
+
     return (
       <>
             {msg.username === myNickname ? (
@@ -67,7 +64,7 @@ const SendForm = ({ sendMessage }) => {
                     {/* add avatar */}
                     <div >
                         <p>
-                            <b>{'BLOCKED'} : </b> {'blalblalblblalbal'}
+                            <b>BLOCKED : </b> [...]
                         </p>
                     </div>
                 </div>
@@ -83,12 +80,9 @@ const SendForm = ({ sendMessage }) => {
             )}
         </>
     )
-  }
-  
+}
 
-const ChatFeed = ({ messages, blockedUsers}) => {
-
-  
+const ChatFeed = ({ messages, blockedUsers}) => {  
   const isFeedFull = useRef(null)
   
     useEffect(() => {
@@ -103,9 +97,9 @@ const ChatFeed = ({ messages, blockedUsers}) => {
         ))}
       </div>
     )
-  }
+}
 
-  function ChatInterface(props) {
+function ChatInterface(props) {
     const [isChatValid, /*setIsChatValid*/] = useState(true);
     const selectedChatName = useSelector(state => state.chat.chatName);
     const h1Styles = {
@@ -122,10 +116,6 @@ const ChatFeed = ({ messages, blockedUsers}) => {
       msOverflowStyle: 'none',
       scrollbarWidth: 'none',
     };
-
-
-
-   
 
     return (
       <div className={styles.column2}>
@@ -154,7 +144,7 @@ const ChatFeed = ({ messages, blockedUsers}) => {
        }
       </div>
     );
-  }
+}
   
 
 export default ChatInterface
