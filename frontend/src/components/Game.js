@@ -1,16 +1,19 @@
 import { useContext, useEffect, useState, useReducer } from 'react';
+import { useSearchParams } from "react-router-dom";
 import { SocketContext, newSocketEvent } from '../contexts/Sockets';
 import "../styles/Game.css"
 import Solo from '../assets/icon-btn-game/mario_dancing.gif'
 import Friend from '../assets/icon-btn-game/duo.gif'
 import Rejoin from '../assets/icon-btn-game/Starlow.webp'
-import apiHandle, { withAuth } from './API_Access';
+import apiHandle, { withAuth, webBaseURL } from './API_Access';
 
 import Avatar from "../assets/avatar.jpeg";
 import GameCanvas from './GameCanvas';
 import CanvasConstants from "../contexts/CanvasConstants";
 
 function Game() {
+	const [searchParams, ] = useSearchParams();
+	const inputCode = searchParams.get('code');
 
 	const themes = ['1972', 'Ace Attorney', 'Mario', 'Minecraft', 'Street Fighter 2', 'Zelda'];
 	const savedTheme = localStorage.getItem('theme');
@@ -41,7 +44,9 @@ function Game() {
 			return;
 
 		newSocketEvent(gameSocket, 'connect', () => {
-			forceUpdate();
+			if (inputCode)
+				gameSocket?.emit('joinPrivate', inputCode);
+			else forceUpdate();
 		})
 
 		newSocketEvent(gameSocket, 'disconnect', () => {
@@ -131,10 +136,12 @@ function Game() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const copyToClipboard = () => {
+	const copyToClipboard = (withLink) => {
 		if (gameContext?.code)
-			navigator?.clipboard?.writeText(gameContext.code)
-				.catch(() => {/* IGNORED */});
+			navigator?.clipboard?.writeText(withLink
+				? `${webBaseURL}/game?code=${gameContext.code}`
+				: gameContext.code)
+			.catch(() => {/* IGNORED */});
 	}
 
 	const joinPrivate = () => {
@@ -197,7 +204,10 @@ function Game() {
 								}
 								<div>
 									<button onClick={() => {gameSocket.emit('leaveQueue')}}>Leave Queue</button>
-									{ gameContext.code ? <button onClick={copyToClipboard}>Copy Code</button> : undefined }
+									{ gameContext.code ? <>
+										<button onClick={() => copyToClipboard(false)}>Copy Code</button>
+										<button onClick={() => copyToClipboard(true)}>Code Link</button>
+									</>: undefined }
 								</div>
 							</div>
 							: <div className='game'>
