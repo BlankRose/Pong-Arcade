@@ -1,11 +1,11 @@
 # ############################################################################ #
 #          .-.                                                                 #
 #    __   /   \   __                                                           #
-#   (  `'.\   /.'`  )   Pong-Arcade - Dockerfile                               #
+#   (  `'.\   /.'`  )  Dockerfile                                              #
 #    '-._.(;;;)._.-'                                                           #
 #    .-'  ,`"`,  '-.                                                           #
 #   (__.-'/   \'-.__)   By: Rosie (https://github.com/BlankRose)               #
-#       //\   /         Last Updated: Tuesday, August 15, 2023 3:30 PM         #
+#       //\   /        Last Updated: January 20, 2024 [12:20 pm]               #
 #      ||  '-'                                                                 #
 # ############################################################################ #
 
@@ -18,6 +18,8 @@ RUN mkdir -p ${APP_DIR}
 WORKDIR ${APP_DIR}
 COPY ./package.json .
 RUN npm install
+RUN npm install -g serve
 
 # STEP 3: Start the application
-ENTRYPOINT ["npm", "start"]
+COPY ./start.sh .
+ENTRYPOINT ["sh", "start.sh"]
